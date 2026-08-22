@@ -8,6 +8,7 @@ import AboutPage from './theme/components/AboutPage.vue'
 import KnowledgeBase from './theme/components/KnowledgeBase.vue'
 import TopicHub from './theme/components/TopicHub.vue'
 import MathNoteNav from './theme/components/MathNoteNav.vue'
+import KnowledgeNoteNav from './theme/components/KnowledgeNoteNav.vue'
 import MathSpecial from './theme/components/MathSpecial.vue'
 import ArticleAtmosphere from './theme/components/ArticleAtmosphere.vue'
 import AnnotationLanding from './theme/components/AnnotationLanding.vue'
@@ -27,6 +28,7 @@ import './theme/styles/custom-gate.css'
 import './theme/styles/custom-nav.css'
 import './theme/styles/custom-home-layout.css'
 import './theme/styles/custom-knowledge.css'
+import './theme/styles/custom-knowledge-note.css'
 import './theme/styles/custom-topics.css'
 import './theme/styles/custom-math-special.css'
 import './theme/styles/custom-math-note.css'
@@ -53,5 +55,5 @@ export default defineClientConfig({
     app.component('yiji-landing', YijiLanding)
     app.component('moyin-landing', MoyinLanding)
   },
-  rootComponents: [CosmicCanvas, PageGate, ArticleAtmosphere, MathNoteNav, ProjectHome, AiChatDock],
+  rootComponents: [CosmicCanvas, PageGate, ArticleAtmosphere, MathNoteNav, KnowledgeNoteNav, ProjectHome, AiChatDock],
 })

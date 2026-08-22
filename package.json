@@ -8,7 +8,9 @@
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "sync:math": "node scripts/sync-math-special.mjs"
+    "sync:math": "node scripts/sync-math-special.mjs",
+    "sync:knowledge": "node scripts/sync-knowledge.mjs",
+    "sync:all": "npm run sync:math && npm run sync:knowledge"
   },
   "devDependencies": {
     "@lucide/vue": "^1.28.0",

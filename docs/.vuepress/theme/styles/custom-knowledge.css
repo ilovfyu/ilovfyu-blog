@@ -309,6 +309,61 @@
   font: 600 28px/1.2 var(--font-disp);
   letter-spacing: 0;
 }
+.knowledge-series {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(150, 138, 118, 0.08);
+}
+.knowledge-series button {
+  min-height: 28px;
+  padding: 0 12px;
+  border: 1px solid rgba(150, 138, 118, 0.16);
+  border-radius: 3px;
+  color: var(--text-2);
+  background: rgba(150, 138, 118, 0.035);
+  font: 10px var(--font-code);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.knowledge-series button:hover,
+.knowledge-series button.active {
+  border-color: rgba(154, 126, 96, 0.62);
+  color: #cbb194;
+  background: rgba(154, 126, 96, 0.11);
+}
+.knowledge-pagination {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 0 4px;
+}
+.knowledge-pagination button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--space-line);
+  border-radius: 4px;
+  color: var(--text-2);
+  background: rgba(150, 138, 118, 0.04);
+  font-size: 11px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.knowledge-pagination button:hover:not(:disabled) {
+  border-color: rgba(224, 163, 72, 0.52);
+  color: var(--cyan);
+  background: rgba(224, 163, 72, 0.08);
+}
+.knowledge-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.knowledge-pagination span {
+  color: var(--text-3);
+  font: 9px var(--font-code);
+}
 .knowledge-taxonomy > header > button,
 .knowledge-result-state button,
 .knowledge-empty button {

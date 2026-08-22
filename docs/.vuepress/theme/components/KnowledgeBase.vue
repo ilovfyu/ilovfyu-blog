@@ -297,6 +297,28 @@ const knowledgeNotes: Article[] = knowledgeArticles.map((article) => ({
 // 手工精选文章在前，同步的知识库笔记在后
 const allArticles: Article[] = [...articles, ...knowledgeNotes]
 
+// 系列筛选：手工文章归入「随笔/项目」，知识笔记按 series 分组
+const seriesOptions = [
+  { key: 'all', label: '全部' },
+  { key: 'posts', label: '随笔' },
+  { key: 'projects', label: '项目' },
+  { key: 'OS', label: 'OS' },
+  { key: 'Language', label: 'Language' },
+  { key: 'AI', label: 'AI' },
+  { key: '容器', label: '容器' },
+  { key: '项目整理', label: '项目整理' },
+]
+
+function articleSeries(article: Article) {
+  if (article.path.startsWith('/posts/')) return 'posts'
+  if (article.path.startsWith('/projects/')) return 'projects'
+  return article.series ?? ''
+}
+
+const activeSeries = ref('all')
+const pageSize = 30
+const currentPage = ref(1)
+
 const activeTags = ref<string[]>([])
 const resultSection = ref<HTMLElement | null>(null)
 const topicCount = topicGroups.reduce((count, group) => count + group.tags.length, 0)
@@ -307,11 +329,38 @@ function matchesTag(article: Article, tag: string) {
   return [...article.tags, ...article.topics].some((item) => item.toLocaleLowerCase() === normalized)
 }
 
-const filteredArticles = computed(() => (
-  activeTags.value.length
-    ? allArticles.filter((article) => activeTags.value.every((tag) => matchesTag(article, tag)))
-    : allArticles
-))
+const filteredArticles = computed(() => {
+  let list = allArticles
+  if (activeSeries.value !== 'all') {
+    list = list.filter((article) => articleSeries(article) === activeSeries.value)
+  }
+  if (activeTags.value.length) {
+    list = list.filter((article) => activeTags.value.every((tag) => matchesTag(article, tag)))
+  }
+  // 按日期倒序（最新在前），无日期的排末尾
+  return [...list].sort((a, b) => {
+    if (!a.date && !b.date) return 0
+    if (!a.date) return 1
+    if (!b.date) return -1
+    return b.date.localeCompare(a.date)
+  })
+})
+
+const paginatedArticles = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return filteredArticles.value.slice(start, start + pageSize)
+})
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredArticles.value.length / pageSize)))
+
+function selectSeries(key: string) {
+  activeSeries.value = key
+  currentPage.value = 1
+}
+
+function goPage(page: number) {
+  currentPage.value = Math.min(Math.max(1, page), totalPages.value)
+}
 
 function countArticles(tag: string) {
   const tags = isSelected(tag) ? activeTags.value : [...activeTags.value, tag]
@@ -333,6 +382,7 @@ async function selectTag(tag: string, revealResults = false) {
   activeTags.value = isSelected(tag)
     ? activeTags.value.filter((item) => item !== tag)
     : [...activeTags.value, tag]
+  currentPage.value = 1
   updateUrl()
   if (revealResults && window.innerWidth < 900) {
     await nextTick()
@@ -345,6 +395,7 @@ async function selectTag(tag: string, revealResults = false) {
 
 function clearFilter() {
   activeTags.value = []
+  currentPage.value = 1
   updateUrl()
 }
 
@@ -414,13 +465,26 @@ onMounted(() => {
         <header class="knowledge-results-head">
           <div>
             <p>// PUBLISHED NOTES</p>
-            <h2>{{ activeTags.length ? '标签交集' : '全部文章' }}</h2>
+            <h2>{{ activeTags.length ? '标签交集' : (activeSeries === 'all' ? '全部文章' : (seriesOptions.find((s) => s.key === activeSeries)?.label ?? '全部文章')) }}</h2>
           </div>
           <div class="knowledge-result-state" aria-live="polite">
             <span>{{ filteredArticles.length }} 篇文章</span>
             <button v-if="activeTags.length" type="button" title="清除标签筛选" @click="clearFilter"><RotateCcw /> 清除筛选</button>
           </div>
         </header>
+
+        <nav class="knowledge-series" aria-label="按系列筛选">
+          <button
+            v-for="option in seriesOptions"
+            :key="option.key"
+            type="button"
+            :class="{ active: activeSeries === option.key }"
+            :aria-pressed="activeSeries === option.key"
+            @click="selectSeries(option.key)"
+          >
+            {{ option.label }}
+          </button>
+        </nav>
 
         <div v-if="activeTags.length" class="knowledge-active-tags" aria-label="已选择的标签">
           <span>同时匹配</span>
@@ -429,9 +493,9 @@ onMounted(() => {
           </button>
         </div>
 
-        <div v-if="filteredArticles.length" class="knowledge-article-list">
-          <article v-for="(article, index) in filteredArticles" :key="article.path" class="knowledge-article">
-            <span class="knowledge-article-index">{{ String(index + 1).padStart(2, '0') }}</span>
+        <div v-if="paginatedArticles.length" class="knowledge-article-list">
+          <article v-for="(article, index) in paginatedArticles" :key="article.path" class="knowledge-article">
+            <span class="knowledge-article-index">{{ String((currentPage - 1) * pageSize + index + 1).padStart(2, '0') }}</span>
             <div class="knowledge-article-copy">
               <time>{{ article.date }}<template v-if="article.status"> · {{ article.status }}</template></time>
               <a :href="withBase(article.path)"><h3>{{ article.title }}</h3><ArrowUpRight /></a>
@@ -458,6 +522,12 @@ onMounted(() => {
           <p>可以移除部分标签，或者查看全部已发布文章。</p>
           <button type="button" @click="clearFilter"><BookOpen /> 查看全部文章</button>
         </div>
+
+        <nav v-if="totalPages > 1" class="knowledge-pagination" aria-label="分页">
+          <button type="button" :disabled="currentPage === 1" @click="goPage(currentPage - 1)">‹ 上一页</button>
+          <span>{{ currentPage }} / {{ totalPages }}</span>
+          <button type="button" :disabled="currentPage === totalPages" @click="goPage(currentPage + 1)">下一页 ›</button>
+        </nav>
 
         <footer class="knowledge-published-tags">
           <span>已发布标签</span>

@@ -1,0 +1,282 @@
+/* ===== KNOWLEDGE-NOTE-READER (/kb/) ===== */
+.kb-note-dock {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 90;
+  display: grid;
+  grid-template-columns: 42px minmax(130px, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 350px;
+  padding: 8px;
+  border: 1px solid rgba(150, 138, 118, 0.18);
+  border-top-color: rgba(126, 154, 96, 0.42);
+  border-radius: 4px;
+  background: rgba(18, 16, 13, 0.92);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 56px -24px rgba(0, 0, 0, 0.85);
+}
+.kb-note-dock a {
+  color: inherit;
+  text-decoration: none;
+}
+.kb-note-dock-home,
+.kb-note-dock nav > a,
+.kb-note-dock nav > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(150, 138, 118, 0.12);
+  border-radius: 3px;
+  color: var(--text-3);
+  background: rgba(150, 138, 118, 0.035);
+}
+.kb-note-dock-home:hover,
+.kb-note-dock nav > a:hover {
+  border-color: rgba(126, 154, 96, 0.46);
+  color: #9fce7c;
+  background: rgba(126, 154, 96, 0.07);
+}
+.kb-note-dock svg {
+  width: 15px;
+  height: 15px;
+}
+.kb-note-dock-copy {
+  display: grid;
+  min-width: 0;
+}
+.kb-note-dock-copy span {
+  color: var(--text-3);
+  font: 7px var(--font-code);
+  letter-spacing: 0.08em;
+}
+.kb-note-dock-copy strong {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kb-note-dock nav {
+  display: flex;
+  gap: 6px;
+}
+.kb-note-directory {
+  position: relative;
+}
+.kb-note-directory summary {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(150, 138, 118, 0.12);
+  border-radius: 3px;
+  color: var(--text-3);
+  background: rgba(150, 138, 118, 0.035);
+  cursor: pointer;
+  list-style: none;
+}
+.kb-note-directory summary::-webkit-details-marker {
+  display: none;
+}
+.kb-note-directory summary:hover {
+  border-color: rgba(126, 154, 96, 0.46);
+  color: #9fce7c;
+  background: rgba(126, 154, 96, 0.07);
+}
+.kb-note-directory summary span {
+  display: none;
+}
+.kb-note-directory-panel {
+  position: absolute;
+  right: 0;
+  bottom: 44px;
+  width: 300px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid rgba(150, 138, 118, 0.18);
+  border-radius: 5px;
+  background: rgba(16, 14, 11, 0.96);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.9);
+}
+.kb-note-directory-panel header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--space-line);
+  color: var(--text-3);
+}
+.kb-note-directory-panel header svg {
+  width: 15px;
+  height: 15px;
+}
+.kb-note-directory-panel header div {
+  display: grid;
+  gap: 2px;
+}
+.kb-note-directory-panel header span {
+  font: 7px var(--font-code);
+  letter-spacing: 0.1em;
+}
+.kb-note-directory-panel header strong {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 500;
+}
+.kb-note-directory-panel a {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 6px;
+  align-items: baseline;
+  padding: 7px 8px;
+  border-radius: 3px;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.4;
+  transition: color 0.2s, background 0.2s;
+}
+.kb-note-directory-panel a:hover,
+.kb-note-directory-panel a.active {
+  color: #cfe3b8;
+  background: rgba(126, 154, 96, 0.1);
+}
+.kb-note-directory-panel a span {
+  color: var(--text-3);
+  font: 7px var(--font-code);
+}
+
+/* 笔记正文排版 */
+.theme-plume.knowledge-note-page {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+.knowledge-note-page .vp-doc-container .main {
+  position: relative;
+  padding: 34px clamp(22px, 4vw, 46px) 48px;
+  border: 1px solid rgba(150, 138, 118, 0.11);
+  border-top-color: rgba(126, 154, 96, 0.28);
+  border-radius: 5px;
+  background: linear-gradient(145deg, rgba(22, 19, 16, 0.82), rgba(18, 16, 13, 0.62) 58%, rgba(22, 19, 16, 0.74));
+  box-shadow: 0 28px 80px -56px rgba(126, 154, 96, 0.4), inset 0 1px rgba(255, 255, 255, 0.022);
+}
+.knowledge-note-page .vp-doc-container {
+  padding-bottom: 92px;
+}
+.knowledge-note-page .vp-doc-title {
+  display: block;
+}
+.knowledge-note-page .vp-doc-title::before {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  color: #9fce7c;
+  content: 'KNOWLEDGE / NOTE';
+  font: 8px var(--font-code);
+  letter-spacing: 0.16em;
+}
+.knowledge-note-page .vp-doc-title .page-title {
+  margin: 0;
+  color: transparent;
+  background: linear-gradient(112deg, rgba(238, 232, 220, 0.97), rgba(196, 184, 162, 0.92) 58%, #b89b7a 110%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  font: 650 clamp(30px, 3.7vw, 46px)/1.24 var(--font-disp);
+  letter-spacing: 0;
+  -webkit-text-fill-color: transparent;
+}
+.knowledge-note-page .vp-doc-meta {
+  padding: 18px 0 20px;
+  margin-bottom: 32px;
+  border-bottom-color: rgba(150, 138, 118, 0.12);
+  color: var(--text-3);
+  font: 8px var(--font-code);
+}
+.knowledge-note-page .vp-doc {
+  font-size: 15px;
+  line-height: 1.88;
+}
+.knowledge-note-page .vp-doc h2 {
+  position: relative;
+  padding: 28px 0 12px;
+  margin-top: 58px;
+  border-bottom: 1px solid var(--space-line);
+  font-family: var(--font-disp);
+  letter-spacing: 0;
+}
+.knowledge-note-page .vp-doc h2::before {
+  content: '§ ';
+  color: #9fce7c;
+  font: 500 0.56em var(--font-code);
+}
+.knowledge-note-page .vp-doc h3 {
+  margin-top: 38px;
+  color: rgba(236, 228, 214, 0.93);
+}
+.knowledge-note-page .vp-doc h3::before {
+  content: '# ';
+  color: var(--violet);
+  font-family: var(--font-code);
+}
+.knowledge-note-page .vp-doc p,
+.knowledge-note-page .vp-doc li {
+  color: rgba(200, 190, 172, 0.82);
+}
+.knowledge-note-page .vp-doc li::marker {
+  color: rgba(126, 154, 96, 0.72);
+}
+.knowledge-note-page .vp-doc strong {
+  color: rgba(238, 232, 220, 0.95);
+}
+.knowledge-note-page .vp-doc a {
+  color: #9fce7c;
+}
+.knowledge-note-page .vp-doc code {
+  color: #cfe3b8;
+  background: rgba(126, 154, 96, 0.1);
+}
+.knowledge-note-page .vp-doc pre code {
+  color: rgba(228, 222, 208, 0.92);
+  background: transparent;
+}
+.knowledge-note-page .vp-doc blockquote {
+  border-left-color: rgba(126, 154, 96, 0.5);
+  color: var(--text-3);
+}
+.knowledge-note-page .vp-doc table {
+  margin: 20px 0;
+  border-collapse: collapse;
+}
+.knowledge-note-page .vp-doc th {
+  color: rgba(236, 228, 214, 0.92);
+  background: rgba(126, 154, 96, 0.07);
+}
+.knowledge-note-page .vp-doc td,
+.knowledge-note-page .vp-doc th {
+  border: 1px solid rgba(150, 138, 118, 0.14);
+  padding: 8px 14px;
+}
+.knowledge-note-page .vp-doc tr:nth-child(2n) td {
+  background: rgba(150, 138, 118, 0.035);
+}
+.knowledge-note-page .page-nav {
+  margin-top: 40px;
+}
+
+@media (max-width: 900px) {
+  .kb-note-dock {
+    right: 12px;
+    bottom: 14px;
+    min-width: 0;
+    grid-template-columns: 38px minmax(90px, 1fr) auto auto;
+  }
+  .kb-note-dock-copy strong {
+    max-width: 150px;
+  }
+}
