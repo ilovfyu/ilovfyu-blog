@@ -1,0 +1,872 @@
+---
+title: 教学视频板书实现方案
+createTime: 2026/08/08 10:00:00
+permalink: /projects/moyin/board-system/
+tags:
+  - AI
+  - Education
+  - Board
+---
+
+# 教学视频板书实现方案
+
+> [!abstract] 推荐方案
+> 把板书实现为可编辑的"语义动作 + 矢量对象 + 笔画轨迹 + 时间轴"，而不是让文生视频模型直接生成黑板录像。LLM 负责决定写什么和何时写，排版引擎负责布局，SVG/Canvas 负责绘制，Motion Canvas 或 Remotion 负责按音频时间轴播放。
+
+## 1. 板书需要解决什么问题
+
+教学板书并不只是模仿手写字体。高质量板书必须同时满足：
+
+- 内容与旁白同步出现。
+- 公式和图形准确。
+- 写入顺序符合教师思维过程。
+- 重点可以圈选、加框、下划线和变色。
+- 旧内容可以保留、淡化、移动或擦除。
+- 镜头能够跟随当前书写区域。
+- 横屏、竖屏和不同分辨率可以重新排版。
+- 每个字、公式和图形都能人工修改，而非重新生成整段视频。
+
+因此板书应当是一个小型场景图和动画系统，而不是一张最终图片。
+
+## 2. 推荐技术路线
+
+```text
+原始课程内容
+    ↓
+Blackboard Agent 提取板书教学意图
+    ↓
+生成 Blackboard Script
+    ↓
+布局引擎计算区域和对象位置
+    ↓
+文字、公式、图形转换为 SVG Path / Stroke
+    ↓
+与 TTS 字词时间戳对齐
+    ↓
+Motion Canvas / Remotion 逐笔画渲染
+    ↓
+FFmpeg 合入最终视频
+```
+
+### 2.1 为什么首选矢量板书
+
+| 方法 | 优点 | 问题 | 建议 |
+|---|---|---|---|
+| 文生视频生成手写 | 快速、有真实感 | 文字错误、不可编辑、时序不可控 | 不用于核心教学内容 |
+| 真实手写录屏 | 最自然 | 难批量、难改、依赖真人 | 可作为高级人工模式 |
+| 手写字体逐字显示 | 实现简单 | 不是真正笔画顺序 | 适合 MVP 文本板书 |
+| SVG Path 动画 | 清晰、可缩放、可编辑 | 需要字形和路径处理 | 推荐主方案 |
+| Canvas 笔画轨迹 | 自然、性能好 | 语义编辑弱于 SVG | 适合自由线条和圈画 |
+| Manim | 数学推导强 | 普通中文板书开发成本高 | 复杂数学场景选用 |
+
+推荐组合：
+
+```text
+普通中文和英文：手写字体轮廓 → SVG Path
+公式：KaTeX/MathJax → SVG → 按符号或子表达式显现
+箭头和图形：参数化 SVG/Canvas Stroke
+圈画和下划线：程序化手绘曲线
+复杂数学：可选 Manim 片段
+```
+
+## 3. 板书的四层数据模型
+
+### 3.1 语义层
+
+描述教师想表达什么，不包含坐标：
+
+```json
+{
+  "intent": "compare",
+  "concepts": ["string", "number", "union"],
+  "teachingSequence": [
+    "write string",
+    "write number",
+    "draw two sets",
+    "connect with union symbol",
+    "write common operations only"
+  ]
+}
+```
+
+### 3.2 对象层
+
+描述黑板中有哪些可编辑对象：
+
+```ts
+type BlackboardObject =
+  | TextObject
+  | FormulaObject
+  | ShapeObject
+  | ArrowObject
+  | CodeSnippetObject
+  | ImageObject
+  | GroupObject;
+
+interface BaseObject {
+  id: string;
+  region: string;
+  zIndex: number;
+  style: BlackboardStyle;
+  source?: SourceReference;
+}
+```
+
+### 3.3 笔画层
+
+描述对象如何被写出来：
+
+```ts
+interface Stroke {
+  id: string;
+  objectId: string;
+  points: Array<{
+    x: number;
+    y: number;
+    pressure?: number;
+    t?: number;
+  }>;
+  color: string;
+  width: number;
+  cap: "round" | "square";
+  durationMs: number;
+}
+```
+
+### 3.4 动作层
+
+描述对象何时出现和如何变化：
+
+```ts
+type BlackboardAction =
+  | WriteAction
+  | DrawAction
+  | HighlightAction
+  | EraseAction
+  | MoveAction
+  | FadeAction
+  | CameraAction
+  | PauseAction;
+
+interface WriteAction {
+  id: string;
+  type: "write";
+  target: string;
+  start: number;
+  duration: number;
+  reveal: "stroke" | "character" | "word" | "symbol";
+}
+```
+
+四层分开后，可以只改文案而重新布局，也可以保留文案只调整书写速度。
+
+## 4. Blackboard Script 格式
+
+建议用 JSON 作为内部格式，并提供 Obsidian 友好的 YAML 或自定义代码块作为人工入口。
+
+### 4.1 JSON 示例
+
+```json
+{
+  "version": 1,
+  "sceneId": "narrowing-union-model",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "safeArea": [120, 80, 1800, 980],
+    "background": "#10231d",
+    "texture": "chalk-subtle"
+  },
+  "regions": [
+    { "id": "title", "x": 120, "y": 80, "w": 1680, "h": 100 },
+    { "id": "left", "x": 120, "y": 220, "w": 760, "h": 700 },
+    { "id": "right", "x": 960, "y": 220, "w": 840, "h": 700 }
+  ],
+  "objects": [
+    {
+      "id": "title-text",
+      "type": "text",
+      "region": "title",
+      "content": "联合类型为什么需要窄化？",
+      "style": "chalk-title"
+    },
+    {
+      "id": "string-set",
+      "type": "ellipse",
+      "region": "left",
+      "label": "string",
+      "style": "chalk-blue"
+    },
+    {
+      "id": "number-set",
+      "type": "ellipse",
+      "region": "left",
+      "label": "number",
+      "style": "chalk-yellow"
+    },
+    {
+      "id": "conclusion",
+      "type": "text",
+      "region": "right",
+      "content": "窄化前：只能使用共有能力",
+      "style": "chalk-white"
+    }
+  ],
+  "actions": [
+    { "type": "write", "target": "title-text", "cue": "union-question" },
+    { "type": "draw", "target": "string-set", "cue": "string-possible" },
+    { "type": "draw", "target": "number-set", "cue": "number-possible" },
+    { "type": "write", "target": "conclusion", "cue": "common-capabilities" },
+    { "type": "highlight", "target": "conclusion", "cue": "emphasize-common" }
+  ]
+}
+```
+
+### 4.2 Obsidian 中的简化写法
+
+````md
+```blackboard
+scene: narrowing-union-model
+layout: two-columns
+background: chalk-dark
+
+- write: 联合类型为什么需要窄化？
+  region: title
+  cue: union-question
+
+- draw: set
+  label: string
+  color: blue
+  region: left
+  cue: string-possible
+
+- draw: set
+  label: number
+  color: yellow
+  region: left
+  cue: number-possible
+
+- write: 窄化前只能使用共有能力
+  region: right
+  cue: common-capabilities
+
+- highlight: 窄化前只能使用共有能力
+  cue: emphasize-common
+```
+````
+
+解析器将其编译为完整 Blackboard Script。MVP 中更推荐模型直接输出 JSON，DSL 只用于人工微调。
+
+## 5. 板书动作设计
+
+### 5.1 基础动作
+
+| 动作 | 用途 | 关键参数 |
+|---|---|---|
+| `write` | 写文字和公式 | 目标、速度、显现单位 |
+| `draw` | 画箭头、集合、坐标轴 | 路径、方向、笔宽 |
+| `highlight` | 圈选、框选、下划线 | 颜色、形状、持续时间 |
+| `erase` | 擦除对象或局部 | 范围、擦除轨迹、残留程度 |
+| `fade` | 淡化非当前内容 | 透明度、持续时间 |
+| `move` | 重排对象 | 起终点、缩放、缓动 |
+| `transform` | 公式或图形变换 | 源对象、目标对象、映射关系 |
+| `pointer` | 教鞭或光标指示 | 路径、停留点 |
+| `camera` | 平移、缩放或回到全景 | viewport、缓动 |
+| `pause` | 给学习者思考时间 | 时长 |
+
+### 5.2 教学语义动作
+
+在基础动作之上定义复合动作：
+
+- `introduce-concept`：写概念名、下划线并短暂停顿。
+- `compare`：左右布局两个对象，再标注差异。
+- `derive`：逐步写公式，每一步保留来源。
+- `correct-error`：红色标错、擦除错误部分、写入正确内容。
+- `summarize`：缩小已有内容并生成右侧总结框。
+- `quiz`：显示问题、隐藏答案、倒计时后揭示。
+
+LLM 优先生成复合语义动作，由编译器展开为基础动作，这比让模型精确计算每条曲线更稳定。
+
+## 6. 文字板书实现
+
+### 6.1 MVP：字符级显现
+
+最简单的可用实现：
+
+1. 选择可商用的手写字体。
+2. 使用字体排版引擎计算字形位置。
+3. 按字符或词依次显示。
+4. 为每个字符增加轻微位移、旋转和透明度变化。
+5. 加入粉笔纹理和微弱粒子。
+
+这种方案不是真正的逐笔书写，但开发成本最低，适合先验证课程节奏。
+
+### 6.2 进阶：字形轮廓描边
+
+```text
+字体文件
+→ opentype.js 获取 glyph path
+→ SVG Path
+→ 计算 path length
+→ stroke-dasharray / stroke-dashoffset
+→ 按时间减小 dashoffset
+```
+
+SVG 示例：
+
+```tsx
+<path
+  d={glyphPath}
+  fill="none"
+  stroke="#f4f1df"
+  strokeWidth={5}
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeDasharray={pathLength}
+  strokeDashoffset={pathLength * (1 - progress)}
+/>
+```
+
+问题是字体轮廓往往是字的外边界，不等于真实书写中心线，可能出现"描边空心字"。解决路线：
+
+- 使用单线字体或 Hershey 字体。
+- 为常用汉字准备中心线笔画库。
+- 使用骨架提取算法从字形轮廓估计中心线。
+- 接入带笔顺数据的汉字笔画库。
+- MVP 只对标题和关键词做真实笔画，正文采用字符渐显。
+
+### 6.3 中文笔顺数据
+
+若要准确模拟中文书写，需要为字符保存：
+
+```ts
+interface HanCharacter {
+  character: string;
+  viewBox: [number, number, number, number];
+  strokes: Array<{
+    path: string;
+    order: number;
+    median?: Array<[number, number]>;
+  }>;
+}
+```
+
+必须确认字形和笔画数据许可证允许商用及再分发。没有授权时，不要把网上笔顺数据直接打包进产品。
+
+### 6.4 手写自然度
+
+为避免机械感，可在不影响可读性的前提下增加：
+
+- 字符基线轻微波动。
+- 字符间距小幅随机变化。
+- 笔宽随 pressure 变化。
+- 速度在转角处降低。
+- 起笔和收笔短暂停顿。
+- 粉笔颜色和透明度轻微噪声。
+- 极少量粉尘颗粒，不遮挡内容。
+
+随机数必须使用固定 seed，保证重渲染结果一致。
+
+## 7. 公式板书实现
+
+公式不建议通过手写字体拼字符串，应保留数学结构。
+
+### 7.1 基础流程
+
+```text
+LaTeX
+→ KaTeX / MathJax 解析
+→ MathML 或 SVG
+→ 按 token、子表达式或推导步骤分组
+→ 逐组显现、移动和变换
+```
+
+示例：
+
+```json
+{
+  "id": "quadratic-step-2",
+  "type": "formula",
+  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+  "reveal": [
+    { "part": "-b", "cue": "negative-b" },
+    { "part": "\\sqrt{b^2 - 4ac}", "cue": "discriminant" },
+    { "part": "2a", "cue": "denominator" }
+  ]
+}
+```
+
+### 7.2 推导动画
+
+每一步保存语义映射：
+
+```ts
+interface FormulaTransform {
+  from: string;
+  to: string;
+  mapping: Array<{
+    fromToken: string;
+    toToken: string;
+  }>;
+  explanation: string;
+}
+```
+
+不变部分平滑移动，新增部分写入，消失部分擦除。复杂数学推导可由 Manim 渲染透明背景片段，再交给主时间轴组合。
+
+### 7.3 公式验证
+
+- LaTeX 必须成功解析。
+- 使用符号计算工具检查等价变换，可选。
+- 对数值公式进行随机样本验证。
+- 模型生成的推导必须保留原始来源和审核状态。
+
+## 8. 图形和关系图板书
+
+图形不要让模型直接输出任意 SVG Path。模型输出参数化意图：
+
+```json
+{
+  "type": "venn",
+  "sets": [
+    { "id": "string", "label": "string", "color": "blue" },
+    { "id": "number", "label": "number", "color": "yellow" }
+  ],
+  "relation": "union"
+}
+```
+
+渲染器根据模板产生可控图形。优先提供：
+
+- 箭头
+- 矩形和圆角框
+- 集合圆和 Venn 图
+- 时间线
+- 树
+- 状态机
+- 坐标轴
+- 流程图
+- 表格
+- 因果链
+
+线条可使用 perfect-freehand 等算法将采样点转换为自然笔画轮廓。
+
+## 9. 布局系统
+
+### 9.1 使用区域而不是绝对坐标
+
+建议预定义模板：
+
+```text
+full-board
+title-and-body
+two-columns
+code-left-board-right
+board-left-demo-right
+derivation-center
+four-quadrants
+summary-map
+```
+
+LLM 选择模板和区域，不直接生成所有像素坐标。
+
+### 9.2 布局约束
+
+- 保留 5% 至 8% 视频安全边距。
+- 1080p 中文正文字号建议不低于约 42 至 52 px，需通过真实播放验证。
+- 单个板书区域不超过 6 至 9 行主要文字。
+- 一行不超过 16 至 24 个中文字符，具体取决于字号和画幅。
+- 当前重点占据最大视觉权重。
+- 不允许板书、字幕和讲师头像互相覆盖。
+- 竖屏必须重新布局，不能只裁切横屏。
+
+### 9.3 自动分页
+
+当空间不足时，布局引擎可选择：
+
+1. 淡化旧内容。
+2. 把旧内容缩成左上角摘要。
+3. 擦除已完成区域。
+4. 切到第二块板书。
+5. 平移镜头到新的虚拟画布区域。
+
+LLM 只标注内容优先级和保留关系，由布局引擎决定具体分页。
+
+## 10. 音频同步
+
+### 10.1 使用语义 cue
+
+讲稿先标注 cue：
+
+```json
+{
+  "spokenText": "联合类型表示这个值可能是字符串，也可能是数字。",
+  "cues": [
+    { "id": "union-start", "text": "联合类型" },
+    { "id": "string-possible", "text": "字符串" },
+    { "id": "number-possible", "text": "数字" }
+  ]
+}
+```
+
+TTS 返回字词时间戳后，把 cue 解析为绝对时间：
+
+```json
+{
+  "union-start": 12.34,
+  "string-possible": 14.10,
+  "number-possible": 15.72
+}
+```
+
+板书动作使用 cue，不直接依赖模型猜出的秒数。
+
+### 10.2 书写时序规则
+
+- 关键词通常在说出前 100 至 300 ms 开始写，结束时间不晚于对应短语结束太多。
+- 复杂公式可以先说目的，再在解释过程中逐步写入。
+- 不要让教师旁白已经进入下一概念，而上一段板书仍在书写。
+- 重要结论写完后保留 0.5 至 1.5 秒阅读时间。
+- 练习题显示后保留明确思考时间。
+
+### 10.3 动作时长估算
+
+MVP 可使用：
+
+```text
+中文字符：每字 90-180 ms
+英文字符：每字符 35-80 ms
+公式 token：每 token 100-220 ms
+短箭头：250-500 ms
+框选或圈选：300-700 ms
+整板擦除：500-1200 ms
+```
+
+最终参数应通过样板视频和用户观看测试校准，而不是当作固定标准。
+
+## 11. 镜头与虚拟黑板
+
+板书画布可以大于最终视频画面，例如使用 3840×2160 虚拟画布渲染 1920×1080 viewport。
+
+```ts
+interface BlackboardCamera {
+  x: number;
+  y: number;
+  zoom: number;
+  focusTarget?: string;
+}
+```
+
+镜头规则：
+
+- 写新内容前平移到目标区域，不在书写中途突然跳转。
+- 缩放不应太频繁，避免晕动。
+- 推导时保持当前公式和上一步同时可见。
+- 总结时拉回全景，展示完整知识结构。
+- 镜头移动使用平滑缓动，并限制最大速度。
+
+## 12. 指针、手和教师形象
+
+### 12.1 MVP 建议
+
+只显示笔尖、粉笔光标或小圆点，不显示 AI 手。理由：
+
+- AI 手容易产生形变和遮挡。
+- 手与笔画必须严格同步，制作复杂。
+- 技术课程中清晰度比拟真更重要。
+
+### 12.2 可选增强
+
+可以使用预制 2D 手部素材沿笔画切线移动：
+
+```text
+当前 stroke point
+→ 计算切线方向
+→ 旋转手部/粉笔素材
+→ 应用轻微跟随延迟
+→ 手部位于笔尖后方并避免遮挡已写内容
+```
+
+数字人讲师适合出现在开场、转场和总结，推导阶段让板书占据主画面。
+
+## 13. 渲染实现选择
+
+### 13.1 Motion Canvas 负责板书
+
+适合：
+
+- Path 绘制
+- 精确 cue 时间线
+- 公式变换
+- 指针和相机动画
+- 可组合 generator 场景
+
+板书场景可以渲染成透明背景视频或直接作为 React/Canvas 子场景集成。
+
+### 13.2 Remotion 负责主视频
+
+适合：
+
+- 音频和字幕轨道
+- 代码、幻灯片和图表
+- 章节转场
+- 横竖屏模板
+- 最终组合和批量渲染
+
+若团队希望只维护一个框架，也可以在 Remotion 中用 SVG 和 Canvas 实现板书。MVP 推荐先单框架，出现复杂数学或笔画需求后再引入 Motion Canvas。
+
+### 13.3 推荐落地顺序
+
+```text
+第一版：Remotion + SVG 字符/词级显现
+第二版：SVG Path 描边 + 手绘箭头
+第三版：中文笔顺 + 公式 token 动画
+第四版：Motion Canvas / Manim 复杂推导
+```
+
+## 14. React/Remotion 实现轮廓
+
+```tsx
+type BlackboardProps = {
+  script: BlackboardScript;
+  currentTime: number;
+};
+
+export function Blackboard({ script, currentTime }: BlackboardProps) {
+  return (
+    <div className="blackboard">
+      {script.objects.map((object) => (
+        <BlackboardObjectView
+          key={object.id}
+          object={object}
+          state={resolveObjectState(script.actions, object.id, currentTime)}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+Path 进度由帧计算：
+
+```tsx
+const frame = useCurrentFrame();
+const progress = interpolate(
+  frame,
+  [startFrame, endFrame],
+  [0, 1],
+  { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+);
+```
+
+不要在渲染阶段调用模型或依赖随机网络资源。所有模型产物和字体应在预处理阶段固定。
+
+## 15. AI 如何生成板书
+
+### 15.1 Agent 输入
+
+- 当前教学目标
+- 当前场景讲稿
+- 前后场景摘要
+- 可用板书模板
+- 可用对象和复合动作 schema
+- 画布安全区和最大对象数量
+- 来源内容
+
+### 15.2 Agent 输出限制
+
+模型只能输出符合 JSON Schema 的：
+
+- 布局模板
+- 对象内容
+- 对象间关系
+- 语义 cue
+- 复合动作
+- 保留和擦除策略
+
+模型不直接输出：
+
+- 不受约束的 JavaScript
+- 任意文件路径
+- 最终 SVG 代码
+- 每一帧的像素
+- 伪造的公式验证结果
+
+### 15.3 两阶段生成
+
+```text
+阶段 A：板书教学计划
+  决定写什么、为何写、保留什么
+
+阶段 B：板书编译
+  模板选择、排版、路径、时长和相机动作
+```
+
+教学计划由 LLM 完成，精确编译尽量由普通程序完成。
+
+## 16. 板书质检
+
+### 16.1 静态检查
+
+- 所有文本、公式和对象在安全区域内。
+- 字号和线宽达到最低标准。
+- 不同对象没有不可接受的重叠。
+- 所有 cue 都能在音频时间戳中解析。
+- 所有对象都有创建动作或初始状态。
+- 擦除对象必须已存在。
+- 公式和 Mermaid/SVG 必须解析成功。
+
+### 16.2 动态检查
+
+- 书写速度是否可读。
+- 当前重点是否在镜头内。
+- 是否出现笔画瞬移和倒序。
+- 旁白与板书是否错位。
+- 是否频繁擦除和移动造成认知负担。
+- 字幕是否遮挡板书。
+- 结论是否保留足够阅读时间。
+
+### 16.3 多模态检查
+
+在关键动作结束帧抽图，让视觉模型检查：
+
+```json
+{
+  "expected": "画面中应有 string 和 number 两个集合，并显示联合类型结论",
+  "checks": [
+    "text-readable",
+    "diagram-complete",
+    "no-overlap",
+    "matches-narration"
+  ]
+}
+```
+
+公式准确性仍由解析器、符号工具和人工审核保证，不能仅依赖视觉模型。
+
+## 17. 人工编辑器
+
+长期使用时应提供一个板书预览编辑器：
+
+- 左侧显示对象树和动作列表。
+- 中间显示板书画布。
+- 下方显示音频波形、字幕和 cue。
+- 右侧编辑文字、颜色、区域、速度和保留策略。
+- 支持拖拽对象，但保存为约束和相对位置。
+- 支持只重渲染当前场景。
+- 支持将人工修改锁定，防止下次 Agent 覆盖。
+
+锁定字段示例：
+
+```json
+{
+  "id": "conclusion",
+  "content": "窄化前只能使用共有能力",
+  "locked": ["content", "region", "style"]
+}
+```
+
+## 18. 缓存和增量重建
+
+板书缓存键包括：
+
+```text
+scene_script_hash
++ blackboard_plan_hash
++ font_version
++ style_version
++ layout_engine_version
++ render_version
+```
+
+修改范围与重建内容：
+
+| 修改 | 重建范围 |
+|---|---|
+| 修改文字 | 字形、布局和当前场景 |
+| 修改书写速度 | 动作时间和当前场景 |
+| 修改颜色 | 当前场景渲染 |
+| 修改 TTS | cue 对齐、动作时间和当前场景 |
+| 修改字体 | 所有使用该字体的板书场景 |
+| 修改布局模板 | 使用该模板的场景 |
+
+## 19. MVP 实现清单
+
+第一版板书只实现：
+
+- 深色粉笔板和浅色白板两种主题。
+- `title-and-body`、`two-columns`、`code-left-board-right` 三种布局。
+- 文字、公式、箭头、矩形、圆和下划线。
+- `write`、`draw`、`highlight`、`erase`、`fade` 五种动作。
+- 字符或词级渐显，不做完整中文笔顺。
+- cue 与 TTS 词级时间戳对齐。
+- Remotion 内单框架渲染。
+- JSON Schema 校验和画布越界检查。
+- 当前场景局部预览和重渲染。
+
+MVP 不实现：
+
+- AI 手部和粉笔实体。
+- 任意自由布局。
+- 自动生成全部汉字真实笔顺。
+- 复杂公式 morph。
+- 3D 黑板和物理粉尘。
+- 无人工审核的全自动发布。
+
+## 20. 样板场景
+
+以 TypeScript 类型窄化为例：
+
+### 场景一：提出问题
+
+```text
+板书：id: string | number
+动作：给 toUpperCase 画红色波浪线
+旁白：为什么这里不能直接调用字符串方法？
+```
+
+### 场景二：集合模型
+
+```text
+左侧：画 string 集合
+右侧：画 number 集合
+中间：写 string | number
+底部：写"当前值可能落在任一集合"
+```
+
+### 场景三：窄化
+
+```text
+写 typeof id === "string"
+将 number 集合淡化
+高亮 string 集合
+写"此分支中 id: string"
+```
+
+### 场景四：总结
+
+```text
+保留集合图缩略图
+右侧写三条结论：
+1. 联合表示多种可能
+2. 控制流排除不可能成员
+3. 窄化后使用专有能力
+```
+
+这个样板足以验证文字、图形、强调、淡化、cue 同步和自动布局，是板书 MVP 的合适起点。
+
+## 21. 最终建议
+
+首版采用：
+
+```text
+Blackboard JSON Schema
++ 固定布局模板
++ 手写字体字符级显现
++ KaTeX SVG
++ 参数化箭头和图形
++ TTS cue 对齐
++ Remotion SVG/Canvas 渲染
+```
+
+当样板证明教学效果后，再升级到真实笔画、中文笔顺、Motion Canvas 和复杂公式变换。这样可以先验证"板书是否帮助学习"，再投入成本追求"板书是否足够像真人"。

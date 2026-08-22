@@ -1,0 +1,419 @@
+/* ===== MATH-NOTE-READER ===== */
+/* ------- math note reader ------- */
+.theme-plume.math-note-page {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+.math-note-page .vp-doc-container .main {
+  position: relative;
+  padding: 34px clamp(22px, 4vw, 46px) 48px;
+  border: 1px solid rgba(150, 138, 118, 0.11);
+  border-top-color: rgba(224, 163, 72, 0.24);
+  border-radius: 5px;
+  background: linear-gradient(145deg, rgba(22, 19, 16, 0.82), rgba(18, 16, 13, 0.62) 58%, rgba(22, 19, 16, 0.74));
+  box-shadow: 0 28px 80px -56px rgba(224, 163, 72, 0.42), inset 0 1px rgba(255, 255, 255, 0.022);
+}
+.math-note-page .vp-doc-container {
+  padding-bottom: 92px;
+}
+.math-note-page .vp-doc-title {
+  display: block;
+}
+.math-note-page .vp-doc-title::before {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  color: var(--cyan);
+  content: 'MATH_FOUNDATION / COURSE NOTE';
+  font: 8px var(--font-code);
+  letter-spacing: 0.16em;
+}
+.math-note-page .vp-doc-title .page-title {
+  margin: 0;
+  color: transparent;
+  background: linear-gradient(112deg, rgba(238, 232, 220, 0.97), rgba(196, 184, 162, 0.92) 58%, #b89b7a 110%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  font: 650 clamp(30px, 3.7vw, 46px)/1.24 var(--font-disp);
+  letter-spacing: 0;
+  -webkit-text-fill-color: transparent;
+}
+.math-note-page .vp-doc-meta {
+  padding: 18px 0 20px;
+  margin-bottom: 32px;
+  border-bottom-color: rgba(150, 138, 118, 0.12);
+  color: var(--text-3);
+  font: 8px var(--font-code);
+}
+.math-note-page .vp-doc {
+  font-size: 15px;
+  line-height: 1.88;
+}
+.math-note-page .vp-doc h2 {
+  position: relative;
+  padding: 28px 0 12px;
+  margin-top: 58px;
+  border-bottom: 1px solid var(--space-line);
+  font-family: var(--font-disp);
+  letter-spacing: 0;
+}
+.math-note-page .vp-doc h2::before {
+  content: '§ ';
+  color: var(--cyan);
+  font: 500 0.56em var(--font-code);
+}
+.math-note-page .vp-doc h3 {
+  margin-top: 38px;
+  color: rgba(236, 228, 214, 0.93);
+}
+.math-note-page .vp-doc h3::before {
+  content: '# ';
+  color: var(--violet);
+  font-family: var(--font-code);
+}
+.math-note-page .vp-doc p,
+.math-note-page .vp-doc li {
+  color: rgba(200, 190, 172, 0.82);
+}
+.math-note-page .vp-doc li::marker {
+  color: rgba(224, 163, 72, 0.7);
+}
+.math-note-page .vp-doc .hint-container {
+  border: 1px solid rgba(150, 138, 118, 0.12);
+  border-left: 2px solid var(--cyan);
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(224, 163, 72, 0.065), rgba(154, 126, 96, 0.02));
+}
+.math-note-page .vp-doc .hint-container.warning,
+.math-note-page .vp-doc .hint-container.important {
+  border-left-color: var(--violet);
+}
+.math-note-page .vp-doc .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 0;
+}
+.math-note-page .vp-doc table {
+  border: 1px solid rgba(150, 138, 118, 0.14);
+  box-shadow: 0 18px 44px -38px rgba(224, 163, 72, 0.42);
+}
+.math-note-page .vp-doc div[class*='language-'] {
+  border: 1px solid var(--space-line);
+  border-radius: 3px;
+  background-color: rgba(15, 13, 10, 0.9);
+}
+.math-note-page .vp-doc-aside-outline .outline-title {
+  color: var(--cyan);
+  font: 9px/32px var(--font-code);
+  letter-spacing: 0.1em;
+}
+.math-note-page .vp-doc-footer .pager-link {
+  border-color: rgba(150, 138, 118, 0.13);
+  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(224, 163, 72, 0.035), transparent);
+}
+.math-note-dock {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 90;
+  display: grid;
+  grid-template-columns: 42px minmax(130px, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 350px;
+  padding: 8px;
+  border: 1px solid rgba(150, 138, 118, 0.18);
+  border-top-color: rgba(224, 163, 72, 0.4);
+  border-radius: 4px;
+  background: rgba(18, 16, 13, 0.92);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 56px -24px rgba(0, 0, 0, 0.85);
+}
+.math-note-dock a {
+  color: inherit;
+  text-decoration: none;
+}
+.math-note-dock-home,
+.math-note-dock nav > a,
+.math-note-dock nav > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(150, 138, 118, 0.12);
+  border-radius: 3px;
+  color: var(--text-3);
+  background: rgba(150, 138, 118, 0.035);
+}
+.math-note-dock-home:hover,
+.math-note-dock nav > a:hover {
+  border-color: rgba(224, 163, 72, 0.46);
+  color: var(--cyan);
+  background: rgba(224, 163, 72, 0.07);
+}
+.math-note-dock svg {
+  width: 15px;
+  height: 15px;
+}
+.math-note-dock-copy {
+  display: grid;
+  min-width: 0;
+}
+.math-note-dock-copy span {
+  color: var(--text-3);
+  font: 7px var(--font-code);
+  letter-spacing: 0.08em;
+}
+.math-note-dock-copy strong {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.math-note-dock nav {
+  display: flex;
+  gap: 5px;
+}
+.math-note-dock nav > span {
+  opacity: 0.35;
+}
+.math-note-directory {
+  position: relative;
+}
+.math-note-directory summary {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgba(150, 138, 118, 0.12);
+  border-radius: 3px;
+  color: var(--text-2);
+  background: rgba(150, 138, 118, 0.035);
+  font-size: 9px;
+  list-style: none;
+  cursor: pointer;
+}
+.math-note-directory summary::-webkit-details-marker {
+  display: none;
+}
+.math-note-directory[open] summary,
+.math-note-directory summary:hover {
+  border-color: rgba(154, 126, 96, 0.45);
+  color: #cbb194;
+}
+.math-note-directory-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 12px);
+  width: min(410px, calc(100vw - 30px));
+  max-height: min(640px, calc(100vh - 120px));
+  padding: 18px;
+  overflow: auto;
+  border: 1px solid rgba(150, 138, 118, 0.18);
+  border-top-color: rgba(224, 163, 72, 0.42);
+  border-radius: 4px;
+  background: rgba(18, 16, 13, 0.97);
+  box-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.92);
+}
+.math-note-directory-panel > header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--space-line);
+}
+.math-note-directory-panel > header > svg {
+  color: var(--cyan);
+}
+.math-note-directory-panel > header div {
+  display: grid;
+}
+.math-note-directory-panel > header span {
+  color: var(--text-3);
+  font: 7px var(--font-code);
+  letter-spacing: 0.1em;
+}
+.math-note-directory-panel > header strong {
+  font-size: 13px;
+}
+.math-note-directory-panel section {
+  margin-top: 18px;
+}
+.math-note-directory-panel h3 {
+  margin: 0 0 7px;
+  color: var(--violet);
+  font: 8px var(--font-code);
+  letter-spacing: 0.08em;
+}
+.math-note-directory-panel section a {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 7px;
+  border-bottom: 1px solid rgba(150, 138, 118, 0.07);
+  color: var(--text-2);
+  font-size: 9px;
+  line-height: 1.4;
+}
+.math-note-directory-panel section a:hover,
+.math-note-directory-panel section a.active {
+  color: var(--cyan);
+  background: rgba(224, 163, 72, 0.055);
+}
+.math-note-directory-panel section a span {
+  color: var(--text-3);
+  font: 7px var(--font-code);
+}
+@media (max-width: 1050px) {
+  .math-special-hero-inner {
+    padding-right: 350px;
+  }
+  .math-special-equation {
+    right: 24px;
+    width: 280px;
+  }
+  .math-track-switcher {
+    margin-inline: 24px;
+  }
+}
+@media (max-width: 899px) {
+  .math-special-hero-inner {
+    padding: 116px 220px 64px 24px;
+  }
+  .math-special-hero h1 {
+    font-size: 54px;
+  }
+  .math-special-equation {
+    right: -75px;
+    width: 240px;
+    opacity: 0.32;
+  }
+  .math-track-switcher {
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    overflow-x: auto;
+  }
+  .math-curriculum {
+    padding: 74px 24px 100px;
+  }
+  .math-curriculum-grid {
+    grid-template-columns: 1fr;
+  }
+  .math-track-console {
+    position: relative;
+    top: auto;
+  }
+  .math-track-console > strong {
+    font-size: 46px;
+  }
+}
+@media (max-width: 600px) {
+  .math-special-equation,
+  .math-special-fx > i:nth-child(2) {
+    display: none;
+  }
+  .math-special-hero {
+    min-height: 560px;
+  }
+  .math-special-hero-inner {
+    padding: 108px 18px 60px;
+  }
+  .math-special-hero h1 {
+    font-size: 46px;
+  }
+  .math-special-hero-inner > p:not(.math-special-kicker) {
+    font-size: 14px;
+  }
+  .math-special-hero dl {
+    gap: 18px;
+    justify-content: space-between;
+  }
+  .math-track-switcher {
+    margin: -24px 18px 0;
+  }
+  .math-curriculum {
+    padding: 58px 18px 80px;
+  }
+  .math-curriculum-head {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .math-chapter-group > header {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+  .math-chapter-group > header small {
+    display: none;
+  }
+  .math-chapter-row {
+    grid-template-columns: 58px minmax(0, 1fr) 16px;
+    gap: 9px;
+  }
+  .math-chapter-row > small {
+    display: none;
+  }
+  .math-note-page .vp-doc-container .main {
+    padding: 26px 18px 36px;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+  .math-note-page .vp-doc-title .page-title {
+    font-size: clamp(28px, 9vw, 37px);
+  }
+  .math-note-dock {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    grid-template-columns: 38px minmax(0, 1fr) auto auto;
+    min-width: 0;
+  }
+  .math-note-directory summary span {
+    display: none;
+  }
+  .math-note-directory summary {
+    width: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+  .math-note-directory-panel {
+    position: fixed;
+    right: 10px;
+    bottom: 66px;
+    left: 10px;
+    width: auto;
+  }
+}
+
+/* ===== 浅色主题覆盖 ===== */
+[data-theme='light'] .math-note-page .vp-doc p,
+[data-theme='light'] .math-note-page .vp-doc li {
+  color: var(--text-2);
+}
+[data-theme='light'] .math-note-page .vp-doc h3 {
+  color: var(--text-1);
+}
+[data-theme='light'] .math-note-page .vp-doc tr {
+  background: rgba(255, 255, 255, 0.5);
+}
+[data-theme='light'] .math-note-page .vp-doc tr:nth-child(2n) {
+  background: rgba(238, 233, 224, 0.7);
+}
+/* 浮动导航坞保持深色，内部文字使用浅色 */
+[data-theme='light'] .math-note-dock,
+[data-theme='light'] .math-note-directory-panel {
+  --space-line: rgba(150, 138, 118, 0.14);
+  --text-1: rgba(238, 232, 220, 0.92);
+  --text-2: rgba(168, 158, 140, 0.68);
+  --text-3: rgba(168, 158, 140, 0.4);
+  --cyan: #e0a348;
+  --violet: #9a7e60;
+  --magenta: #c4783e;
+  --lime: #968e58;
+  background-color: rgba(18, 16, 13, 0.97);
+}
+

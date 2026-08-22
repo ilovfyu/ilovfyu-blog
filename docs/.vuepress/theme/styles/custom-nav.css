@@ -1,0 +1,84 @@
+/* ===== NAV ===== */
+/* ------- nav ------- */
+.vp-navbar {
+  background: rgba(20, 18, 14, 0.72) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--space-line);
+}
+.vp-navbar .vp-navbar-title,
+.vp-navbar .navbar-menu-link {
+  color: var(--text-1);
+}
+.vp-navbar .navbar-menu-link:hover {
+  color: var(--cyan);
+}
+.vp-navbar .vp-navbar-search {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .vp-navbar .content-body {
+    justify-content: flex-start;
+  }
+  .vp-navbar .vp-navbar-menu {
+    flex: 1;
+  }
+  .vp-navbar .vp-navbar-menu > .vp-navbar-menu-group:first-of-type + * {
+    margin-left: auto;
+  }
+}
+.vp-navbar-menu-group .vp-menu {
+  min-width: 570px;
+  border-color: rgba(154, 126, 96, 0.24);
+  border-radius: 3px;
+  background: rgba(20, 18, 14, 0.96);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.9), inset 0 1px rgba(255, 255, 255, 0.025);
+}
+.vp-navbar-menu-group .vp-menu > .items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 0 22px;
+}
+.vp-navbar-menu-group .vp-menu .group {
+  margin: 0;
+  border-top: 0;
+  border-bottom: 1px solid rgba(150, 138, 118, 0.1);
+}
+.vp-navbar-menu-group .vp-menu .group .text {
+  color: var(--cyan);
+  font: 500 9px var(--font-code);
+  letter-spacing: 0.13em;
+}
+.vp-navbar-menu-group .vp-menu .item .label {
+  font-family: var(--font-code);
+  font-size: 11px;
+}
+.vp-navbar-menu-group:has(a[href*='/specials/']) .vp-menu {
+  min-width: 230px;
+}
+.vp-navbar-menu-group:has(a[href*='/specials/']) .vp-menu > .items {
+  display: block;
+}
+.vp-navbar-menu-group:has(a[href*='/specials/']) .vp-menu .item:first-child {
+  padding-bottom: 7px;
+  margin-bottom: 7px;
+  border-bottom: 1px solid rgba(150, 138, 118, 0.12);
+}
+.vp-navbar-menu > .vp-navbar-menu-group:first-of-type > .menu {
+  right: auto !important;
+  left: 0 !important;
+}
+
+/* ===== 浅色主题覆盖 ===== */
+[data-theme='light'] .vp-navbar {
+  background: rgba(250, 247, 242, 0.85) !important;
+}
+[data-theme='light'] .vp-navbar-menu-group .vp-menu {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 24px 60px -30px rgba(30, 40, 80, 0.28), inset 0 1px rgba(255, 255, 255, 0.6);
+}
+[data-theme='light'] .vp-navbar-menu-group .vp-menu .group {
+  border-bottom-color: var(--space-line);
+}
+

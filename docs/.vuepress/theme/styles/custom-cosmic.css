@@ -1,0 +1,17 @@
+/* ===== COSMIC-CANVAS ===== */
+/* ------- cosmic canvas ------- */
+.cosmic-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.96;
+}
+
+/* 浅色主题下隐藏星尘画布，改用 CSS 渐变网格背景 */
+[data-theme='light'] .cosmic-canvas {
+  display: none;
+}
+

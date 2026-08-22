@@ -1,0 +1,255 @@
+/* ===== RESPONSIVE ===== */
+/* responsive */
+@media (max-width: 1020px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 46px;
+    padding: 60px 0 30px;
+  }
+  .signal-card {
+    max-width: 520px;
+  }
+  .tech-hero .hero-content,
+  .featured-article {
+    grid-template-columns: 1fr;
+  }
+  .author-focus-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .author-focus-label,
+  .author-focus-strip > p {
+    grid-column: span 3;
+  }
+  .author-focus-label {
+    padding-block: 15px;
+  }
+  .author-focus-strip > div:first-of-type {
+    border-left: 0;
+  }
+  .author-focus-strip > p {
+    justify-content: flex-end;
+    padding-block: 13px;
+    border-top: 1px solid var(--space-line);
+    border-left: 0;
+  }
+  .library-index {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .home-topic-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-topic {
+    min-height: 0;
+  }
+  .home-topic p {
+    min-height: 0;
+  }
+  .library-group:nth-child(odd) {
+    border-left: 0;
+  }
+  .library-group:nth-child(n + 3) {
+    border-top: 1px solid var(--space-line);
+  }
+  .zodiac-carousel {
+    min-height: 390px;
+    border-left: 0;
+    border-top: 1px solid var(--space-line);
+  }
+  .stack-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .status-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .status-text {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 680px) {
+  .cosmic-home::after {
+    width: 110vw;
+    height: 110vw;
+    left: -54vw;
+    filter: blur(72px);
+    opacity: 0.3;
+  }
+  .hero-grid {
+    inset: -16% -65% -10%;
+    opacity: 0.58;
+  }
+  .section {
+    width: calc(100% - 36px);
+    padding: 90px 0;
+  }
+  .hero-content {
+    width: calc(100% - 36px);
+  }
+  .hero-status {
+    width: calc(100% - 36px);
+    flex-wrap: wrap;
+  }
+  .hero-status .hero-scroll {
+    display: none;
+  }
+  .hero-ghost-a {
+    font-size: 72px;
+  }
+  .hero-ghost-b {
+    display: none;
+  }
+  .hero-title {
+    font-size: clamp(44px, 14vw, 72px);
+  }
+  .tech-hero .hero-title {
+    font-size: clamp(42px, 13.5vw, 65px);
+  }
+  .pipeline-card {
+    width: 100%;
+  }
+  .pipeline-code p {
+    padding-inline: 14px;
+  }
+  .zodiac-carousel {
+    min-height: 350px;
+  }
+  .featured-copy {
+    padding: 28px 22px;
+  }
+  .article-grid {
+    grid-template-columns: 1fr;
+  }
+  .library-index {
+    grid-template-columns: 1fr;
+  }
+  .home-topic {
+    padding: 24px 20px 26px;
+  }
+  .home-topic h3 {
+    margin-top: 38px;
+    font-size: 22px;
+  }
+  .home-topic-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .library-group + .library-group,
+  .library-group:nth-child(n + 3) {
+    border-top: 1px solid var(--space-line);
+    border-left: 0;
+  }
+  .author-identity {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    min-height: 0;
+    padding: 38px 22px 44px;
+  }
+  .author-portrait img {
+    width: 118px;
+    height: 118px;
+    box-shadow: 9px 9px 0 #a8a06a, 0 0 35px rgba(224, 163, 72, 0.1);
+  }
+  .author-portrait > span {
+    margin-top: 20px;
+  }
+  .author-copy h3 {
+    font-size: clamp(31px, 9vw, 44px);
+  }
+  .author-links {
+    flex-wrap: wrap;
+  }
+  .author-monogram {
+    right: -10px;
+    bottom: -18px;
+    font-size: 130px;
+  }
+  .author-focus-strip {
+    grid-template-columns: 1fr;
+  }
+  .author-focus-label,
+  .author-focus-strip > p {
+    grid-column: auto;
+  }
+  .author-focus-strip > * {
+    padding: 18px 20px;
+  }
+  .author-focus-strip > div,
+  .author-focus-strip > div:first-of-type,
+  .author-focus-strip > p {
+    border-top: 1px solid var(--space-line);
+    border-left: 0;
+  }
+  .author-focus-strip > p {
+    justify-content: flex-start;
+  }
+  .zodiac-svg {
+    inset: 42px 4px 50px;
+    width: calc(100% - 8px);
+    height: calc(100% - 92px);
+  }
+  .zodiac-lines line {
+    stroke-width: 0.65;
+  }
+  .article-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .log-tabs {
+    width: 100%;
+  }
+  .log-tabs button {
+    flex: 1 0 calc(50% - 8px);
+  }
+  .stack-grid {
+    grid-template-columns: 1fr;
+  }
+  .stack-card p {
+    min-height: 0;
+  }
+  .log-card {
+    grid-template-columns: 1fr 22px;
+    gap: 12px;
+    padding: 22px 18px;
+  }
+  .log-idx {
+    display: none;
+  }
+  .status-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat strong {
+    font-size: 44px;
+  }
+  .cosmic-footer {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cosmic-footer span:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .vp-navbar-menu-group .vp-menu {
+    min-width: 420px;
+  }
+  .vp-navbar-menu-group .vp-menu > .items {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .cosmic-home::before,
+  .cosmic-home::after,
+  .hero-grid {
+    animation: none !important;
+  }
+}
+

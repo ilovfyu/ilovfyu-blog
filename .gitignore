@@ -1,0 +1,18 @@
+node_modules/
+docs/.vuepress/.cache/
+docs/.vuepress/.temp/
+docs/.vuepress/dist/
+**/.cache/
+**/.temp/
+**/dist/
+.DS_Store
+
+# environment & secrets
+.env
+.env.local
+.env.*
+!.env.example
+
+# logs & coverage
+*.log
+coverage/

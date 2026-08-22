@@ -1,0 +1,828 @@
+/* ===== ANNOTATION-DATA-PLATFORM-LANDING ===== */
+/* ------- annotation data platform landing ------- */
+.annotate-landing {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--text-1);
+  background: transparent;
+}
+.annotate-landing *,
+.annotate-landing *::before,
+.annotate-landing *::after {
+  box-sizing: border-box;
+}
+.annotate-landing a {
+  color: inherit;
+  text-decoration: none;
+}
+.annotate-landing code {
+  font-family: var(--font-code);
+}
+.annotate-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  z-index: 9990;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--magenta));
+  box-shadow: 0 0 12px rgba(224, 163, 72, 0.6);
+}
+
+.annotate-topbar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: min(1200px, calc(100% - 64px));
+  min-height: 74px;
+  margin: auto;
+}
+.annotate-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+}
+.annotate-brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(196, 120, 62, 0.4);
+  color: var(--magenta);
+  background: linear-gradient(145deg, rgba(196, 120, 62, 0.1), rgba(154, 126, 96, 0.08));
+  box-shadow: inset 0 0 22px rgba(196, 120, 62, 0.08), 0 0 26px rgba(196, 120, 62, 0.14);
+  font: 700 22px var(--font-disp);
+}
+.annotate-brand-name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.annotate-brand-name b {
+  font: 650 17px var(--font-disp);
+  letter-spacing: 0.02em;
+}
+.annotate-brand-name i {
+  margin-top: 4px;
+  color: var(--text-3);
+  font: 8px var(--font-code);
+  letter-spacing: 0.22em;
+}
+.annotate-nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-left: auto;
+}
+.annotate-nav a {
+  color: var(--text-2);
+  font: 500 12px var(--font-code);
+  letter-spacing: 0.08em;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.annotate-nav a:hover {
+  color: var(--magenta);
+  text-shadow: 0 0 14px rgba(196, 120, 62, 0.4);
+}
+.annotate-top-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid rgba(196, 120, 62, 0.45);
+  color: var(--magenta);
+  font: 500 12px var(--font-code);
+  letter-spacing: 0.08em;
+  transition: all 0.22s;
+}
+.annotate-top-cta:hover {
+  background: rgba(196, 120, 62, 0.1);
+  box-shadow: 0 0 24px rgba(196, 120, 62, 0.22);
+  transform: translateY(-1px);
+}
+
+.annotate-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 74px);
+  padding: 60px 0 0;
+  overflow: hidden;
+}
+.annotate-grid-bg {
+  position: absolute;
+  inset: -30% -14% -16%;
+  background-image: linear-gradient(rgba(154, 126, 96, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 126, 96, 0.06) 1px, transparent 1px);
+  background-size: 62px 62px;
+  transform: perspective(720px) rotateX(56deg) translateY(16%);
+  transform-origin: 50% 70%;
+  -webkit-mask-image: radial-gradient(ellipse 80% 66% at 50% 52%, #000 24%, transparent 80%);
+  mask-image: radial-gradient(ellipse 80% 66% at 50% 52%, #000 24%, transparent 80%);
+  animation: annotate-grid-travel 34s linear infinite;
+  pointer-events: none;
+}
+@keyframes annotate-grid-travel {
+  to { background-position: 0 62px, 62px 0; }
+}
+.annotate-orb {
+  position: absolute;
+  top: -18vh;
+  right: -14vw;
+  width: 54vw;
+  height: 54vw;
+  border-radius: 50%;
+  background: conic-gradient(from 30deg, transparent, rgba(154, 126, 96, 0.1), transparent 40%, rgba(224, 163, 72, 0.07), transparent 70%);
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: annotate-orb-drift 44s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes annotate-orb-drift {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  100% { transform: translate3d(-10vw, 8vh, 0) rotate(12deg) scale(1.06); }
+}
+.annotate-hero-inner {
+  position: relative;
+  width: min(1200px, calc(100% - 64px));
+  margin: auto;
+  padding: 40px 0;
+}
+.annotate-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--violet);
+  font: 500 11px var(--font-code);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.annotate-eyebrow i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--magenta);
+  box-shadow: 0 0 10px var(--magenta);
+  animation: annotate-pulse 1.6s ease-in-out infinite;
+}
+@keyframes annotate-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+.annotate-title {
+  margin: 22px 0 0;
+  font: 700 clamp(46px, 7.2vw, 104px) / 1.02 var(--font-disp);
+  letter-spacing: -0.045em;
+}
+.annotate-title span {
+  background: linear-gradient(120deg, var(--magenta) 8%, var(--violet) 62%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 28px rgba(196, 120, 62, 0.22));
+}
+.annotate-sub {
+  max-width: 580px;
+  margin: 24px 0 0;
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.9;
+}
+.annotate-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 38px;
+}
+.annotate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 2px;
+  font: 500 13px var(--font-code);
+  letter-spacing: 0.06em;
+  transition: all 0.22s;
+}
+.annotate-btn b {
+  font-weight: 500;
+}
+.annotate-btn-primary {
+  color: #181311;
+  background: linear-gradient(120deg, var(--magenta), var(--violet));
+  box-shadow: 0 0 26px rgba(196, 120, 62, 0.35);
+}
+.annotate-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 42px rgba(154, 126, 96, 0.55);
+}
+.annotate-btn-ghost {
+  color: var(--text-1);
+  border: 1px solid var(--space-line);
+  background: rgba(150, 138, 118, 0.05);
+}
+.annotate-btn-ghost:hover {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  box-shadow: 0 0 22px rgba(196, 120, 62, 0.2);
+}
+.annotate-hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  margin: 34px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.annotate-hero-points li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-3);
+  font: 8px var(--font-code);
+  letter-spacing: 0.12em;
+}
+.annotate-hero-points li::before {
+  content: '✓';
+  color: var(--lime);
+  font-size: 11px;
+}
+
+.annotate-console-wrap {
+  position: relative;
+  width: min(1200px, calc(100% - 64px));
+  margin: 0 auto 26px;
+}
+.annotate-console {
+  position: relative;
+  border: 1px solid var(--space-line);
+  background: linear-gradient(160deg, rgba(196, 120, 62, 0.05), rgba(154, 126, 96, 0.05) 45%, rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 0 0 1px rgba(154, 126, 96, 0.08), 0 30px 70px -30px rgba(0, 0, 0, 0.8);
+}
+.annotate-bbox {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.annotate-bbox::before {
+  position: absolute;
+  inset: -10px;
+  content: '';
+  border: 1px dashed rgba(196, 120, 62, 0.32);
+  animation: annotate-bbox-breathe 4s ease-in-out infinite;
+}
+@keyframes annotate-bbox-breathe {
+  0%, 100% { inset: -10px; opacity: 0.7; }
+  50% { inset: -6px; opacity: 1; }
+}
+.annotate-bbox i {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--magenta);
+  border-style: solid;
+  filter: drop-shadow(0 0 6px rgba(196, 120, 62, 0.7));
+}
+.annotate-bbox i:nth-child(1) { top: -14px; left: -14px; border-width: 2px 0 0 2px; }
+.annotate-bbox i:nth-child(2) { top: -14px; right: -14px; border-width: 2px 2px 0 0; }
+.annotate-bbox i:nth-child(3) { bottom: -14px; left: -14px; border-width: 0 0 2px 2px; }
+.annotate-bbox i:nth-child(4) { right: -14px; bottom: -14px; border-width: 0 2px 2px 0; }
+.annotate-chip {
+  position: absolute;
+  z-index: 2;
+  padding: 6px 10px;
+  border: 1px solid rgba(196, 120, 62, 0.36);
+  background: rgba(20, 17, 14, 0.92);
+  color: var(--magenta);
+  font: 8px var(--font-code);
+  letter-spacing: 0.12em;
+  box-shadow: 0 0 18px rgba(196, 120, 62, 0.14);
+}
+.annotate-chip.chip-a { top: -34px; right: 22px; }
+.annotate-chip.chip-b { bottom: 26px; left: -26px; transform: rotate(-90deg) translateX(100%); transform-origin: 0 0; }
+.annotate-chip.chip-c { top: 30%; left: -22px; }
+.annotate-console-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--space-line);
+  color: var(--text-3);
+  font: 500 10px var(--font-code);
+  letter-spacing: 0.16em;
+}
+.annotate-live {
+  color: var(--lime);
+  font-style: normal;
+  text-shadow: 0 0 10px rgba(150, 142, 88, 0.5);
+}
+.annotate-console-body {
+  padding: 6px 20px 18px;
+}
+.annotate-console-row {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(150, 138, 118, 0.07);
+  font: 500 12px var(--font-code);
+}
+.annotate-console-row:last-of-type {
+  border-bottom: 0;
+}
+.annotate-console-row span {
+  color: var(--text-3);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.annotate-console-row code {
+  color: var(--text-1);
+  font-size: 12px;
+}
+.annotate-console-row b {
+  color: var(--magenta);
+  font-size: 10px;
+  font-weight: 500;
+  text-shadow: 0 0 12px rgba(196, 120, 62, 0.4);
+}
+.annotate-console-progress {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.annotate-console-progress i {
+  flex: 1;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--magenta);
+  opacity: 0.12;
+  box-shadow: 0 0 8px var(--magenta);
+  animation: annotate-packet 3.2s ease-in-out infinite;
+}
+@keyframes annotate-packet {
+  0%, 24%, 100% { opacity: 0.09; transform: scale(0.6); }
+  48% { opacity: 0.95; transform: scale(1.8); }
+}
+
+.annotate-hero-status {
+  width: min(1200px, calc(100% - 64px));
+  margin: auto;
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  border-top: 1px solid var(--space-line);
+  color: var(--text-3);
+  font: 9px var(--font-code);
+  letter-spacing: 0.16em;
+}
+.annotate-hero-status em {
+  color: var(--text-2);
+  font-style: normal;
+}
+.annotate-hero-scroll {
+  color: var(--violet);
+}
+.annotate-hero-scroll i {
+  display: inline-block;
+  margin-left: 6px;
+  animation: annotate-bounce 1.6s ease-in-out infinite;
+}
+@keyframes annotate-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+.annotate-ticker {
+  border-block: 1px solid var(--space-line);
+  background: rgba(196, 120, 62, 0.045);
+  overflow: hidden;
+}
+.annotate-ticker-track {
+  display: flex;
+  width: max-content;
+  padding: 14px 0;
+  white-space: nowrap;
+  font: 500 11px var(--font-code);
+  letter-spacing: 0.2em;
+  color: var(--text-2);
+  animation: annotate-ticker-scroll 44s linear infinite;
+}
+.annotate-ticker-track i {
+  margin: 0 30px;
+  color: var(--magenta);
+  font-style: normal;
+}
+@keyframes annotate-ticker-scroll {
+  to { transform: translateX(-50%); }
+}
+
+.annotate-section {
+  position: relative;
+  width: min(1200px, calc(100% - 64px));
+  margin: auto;
+  padding: 120px 0;
+  border-bottom: 1px solid var(--space-line);
+}
+.annotate-section-head {
+  margin-bottom: 60px;
+}
+.annotate-section-head h2 {
+  margin: 16px 0 0;
+  font: 700 clamp(38px, 5.2vw, 64px) / 1 var(--font-disp);
+  letter-spacing: -0.04em;
+}
+.annotate-section-sub {
+  max-width: 560px;
+  margin: 14px 0 0;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.annotate-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--space-line);
+  border-left: 1px solid var(--space-line);
+  background: rgba(16, 14, 12, 0.42);
+}
+.annotate-stat {
+  min-width: 0;
+  padding: 34px 28px 38px;
+  border-right: 1px solid var(--space-line);
+  border-bottom: 1px solid var(--space-line);
+  background: linear-gradient(155deg, rgba(196, 120, 62, 0.035), transparent 48%);
+  transition: background 0.25s, transform 0.25s;
+}
+.annotate-stat:hover {
+  background: linear-gradient(155deg, rgba(196, 120, 62, 0.09), rgba(154, 126, 96, 0.025) 58%, transparent);
+  transform: translateY(-3px);
+}
+.annotate-stat b {
+  display: block;
+  color: var(--magenta);
+  font: 650 clamp(34px, 3.4vw, 52px) / 1 var(--font-disp);
+  text-shadow: 0 0 24px rgba(196, 120, 62, 0.4);
+}
+.annotate-stat span {
+  display: block;
+  margin-top: 18px;
+  font: 600 15px var(--font-disp);
+  letter-spacing: 0.02em;
+}
+.annotate-stat p {
+  margin: 8px 0 0;
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.annotate-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.annotate-feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 300px;
+  padding: 26px 24px 26px;
+  overflow: hidden;
+  border: 1px solid var(--space-line);
+  background: linear-gradient(155deg, rgba(150, 138, 118, 0.055), rgba(255, 255, 255, 0.012));
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.22s ease-out;
+}
+.annotate-feature:hover {
+  border-color: rgba(196, 120, 62, 0.42);
+  box-shadow: 0 28px 75px -52px rgba(196, 120, 62, 0.75);
+  transform: translateY(-4px);
+}
+.annotate-feature-tag {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: var(--text-3);
+  font: 8px var(--font-code);
+  letter-spacing: 0.14em;
+}
+.annotate-feature-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid rgba(154, 126, 96, 0.3);
+  color: var(--violet);
+  background: rgba(154, 126, 96, 0.07);
+  font: 500 22px var(--font-disp);
+  box-shadow: inset 0 0 22px rgba(154, 126, 96, 0.06);
+}
+.annotate-feature h3 {
+  margin: 24px 0 12px;
+  font: 600 21px/1.3 var(--font-disp);
+  letter-spacing: -0.02em;
+  transition: color 0.25s;
+}
+.annotate-feature:hover h3 {
+  color: var(--magenta);
+}
+.annotate-feature p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.75;
+}
+.annotate-feature-link {
+  margin-top: auto;
+  padding-top: 24px;
+  color: var(--magenta);
+  font: 10px var(--font-code);
+  letter-spacing: 0.13em;
+}
+.annotate-feature-link b {
+  margin-left: 8px;
+}
+
+.annotate-workflow {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--space-line);
+  border-left: 1px solid var(--space-line);
+  background: rgba(16, 14, 12, 0.42);
+}
+.annotate-workflow li {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 26px 28px;
+  border-right: 1px solid var(--space-line);
+  border-bottom: 1px solid var(--space-line);
+  background: linear-gradient(90deg, rgba(196, 120, 62, 0.03), transparent 62%);
+  transition: background 0.25s, padding 0.25s;
+}
+.annotate-workflow li:hover {
+  padding-inline: 36px;
+  background: linear-gradient(90deg, rgba(196, 120, 62, 0.09), rgba(154, 126, 96, 0.02) 62%, transparent);
+}
+.annotate-workflow-num {
+  color: var(--magenta);
+  font: 700 15px var(--font-code);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 12px rgba(196, 120, 62, 0.4);
+}
+.annotate-workflow h3 {
+  margin: 0;
+  font: 600 20px/1.3 var(--font-disp);
+}
+.annotate-workflow p {
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.annotate-workflow li > i {
+  color: var(--text-3);
+  font: 22px var(--font-code);
+  font-style: normal;
+  transition: color 0.25s, transform 0.25s;
+}
+.annotate-workflow li:hover > i {
+  color: var(--magenta);
+  transform: translateX(4px);
+}
+
+.annotate-delivery-section {
+  position: relative;
+  width: min(1200px, calc(100% - 64px));
+  margin: auto;
+  padding: 120px 0 0;
+}
+.annotate-delivery {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid rgba(154, 126, 96, 0.3);
+  background: linear-gradient(110deg, rgba(196, 120, 62, 0.05), rgba(154, 126, 96, 0.045) 48%, transparent);
+}
+.annotate-delivery::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 42%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--magenta), var(--violet), transparent);
+}
+.annotate-delivery-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
+  gap: 34px 64px;
+  padding: clamp(44px, 6vw, 72px) clamp(26px, 4.5vw, 54px);
+  align-items: end;
+}
+.annotate-delivery-head .annotate-eyebrow {
+  grid-column: 1 / -1;
+}
+.annotate-delivery-head h2 {
+  margin: 18px 0 0;
+  font: 700 clamp(32px, 4.2vw, 54px) / 1.08 var(--font-disp);
+  letter-spacing: -0.04em;
+}
+.annotate-delivery-head > p:not(.annotate-eyebrow) {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.85;
+}
+.annotate-delivery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--space-line);
+}
+.annotate-delivery-grid > div {
+  min-width: 0;
+  padding: 30px clamp(22px, 3vw, 36px) 34px;
+}
+.annotate-delivery-grid > div + div {
+  border-left: 1px solid var(--space-line);
+}
+.annotate-delivery-grid dt {
+  color: var(--magenta);
+  font: 9px var(--font-code);
+  letter-spacing: 0.12em;
+}
+.annotate-delivery-grid dd {
+  margin: 22px 0 0;
+}
+.annotate-delivery-grid strong,
+.annotate-delivery-grid span {
+  display: block;
+}
+.annotate-delivery-grid strong {
+  color: var(--text-1);
+  font: 600 19px var(--font-disp);
+}
+.annotate-delivery-grid span {
+  margin-top: 9px;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.75;
+}
+.annotate-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 0 36px;
+  color: var(--text-3);
+  font: 9px var(--font-code);
+  letter-spacing: 0.16em;
+}
+.annotate-footer a {
+  color: var(--magenta);
+  transition: text-shadow 0.2s;
+}
+.annotate-footer a:hover {
+  text-shadow: 0 0 14px rgba(196, 120, 62, 0.4);
+}
+
+.annotate-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.annotate-reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1020px) {
+  .annotate-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .annotate-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .annotate-topbar {
+    gap: 16px;
+  }
+  .annotate-nav {
+    gap: 18px;
+  }
+}
+@media (max-width: 680px) {
+  .annotate-topbar {
+    width: calc(100% - 36px);
+    min-height: 66px;
+  }
+  .annotate-brand-name i {
+    display: none;
+  }
+  .annotate-nav {
+    display: none;
+  }
+  .annotate-top-cta {
+    margin-left: auto;
+  }
+  .annotate-hero {
+    min-height: calc(100svh - 66px);
+    padding-top: 40px;
+  }
+  .annotate-hero-inner,
+  .annotate-hero-status,
+  .annotate-console-wrap,
+  .annotate-section,
+  .annotate-delivery-section {
+    width: calc(100% - 36px);
+  }
+  .annotate-bbox {
+    display: none;
+  }
+  .annotate-chip.chip-b {
+    display: none;
+  }
+  .annotate-title {
+    font-size: clamp(40px, 13vw, 62px);
+  }
+  .annotate-sub {
+    font-size: 14px;
+  }
+  .annotate-hero-status {
+    flex-wrap: wrap;
+  }
+  .annotate-hero-scroll {
+    display: none;
+  }
+  .annotate-section {
+    padding: 80px 0;
+  }
+  .annotate-stats {
+    grid-template-columns: 1fr;
+  }
+  .annotate-features {
+    grid-template-columns: 1fr;
+  }
+  .annotate-workflow li {
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    padding: 22px 18px;
+  }
+  .annotate-workflow li:hover {
+    padding-inline: 22px;
+  }
+  .annotate-workflow li > i {
+    display: none;
+  }
+  .annotate-delivery-section {
+    padding-top: 80px;
+  }
+  .annotate-delivery-head {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 44px 22px;
+  }
+  .annotate-delivery-head h2 {
+    margin-top: 12px;
+  }
+  .annotate-delivery-grid {
+    grid-template-columns: 1fr;
+  }
+  .annotate-delivery-grid > div + div {
+    border-top: 1px solid var(--space-line);
+    border-left: 0;
+  }
+  .annotate-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .annotate-reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .annotate-orb,
+  .annotate-grid-bg,
+  .annotate-console-progress i {
+    animation: none !important;
+  }
+}
+
