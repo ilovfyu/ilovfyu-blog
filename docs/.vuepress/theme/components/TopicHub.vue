@@ -5,13 +5,15 @@ import { withBase } from 'vuepress/client'
 
 type TopicKey = 'math' | 'algorithm' | 'os' | 'network'
 
+type TopicLesson = string | { title: string; path: string }
+
 type TopicModule = {
   code: string
   title: string
   summary: string
   count: number
   status: string
-  lessons: string[]
+  lessons: TopicLesson[]
 }
 
 type Topic = {
@@ -70,16 +72,16 @@ const topics: Topic[] = [
     status: 'ACTIVE / 113 NOTES',
     total: 113,
     modules: [
-      { code: 'O.01', title: '进程与线程', summary: '理解执行单元、调度和上下文切换，建立并发程序的运行模型。', count: 7, status: 'READY', lessons: ['进程概念与状态模型', '进程控制块与系统调用', '进程切换与调度行为', '线程概念与多线程模型', 'CPU调度算法详解', '多处理器调度与实时调度'] },
-      { code: 'O.02', title: '同步与死锁', summary: '从共享状态出发，解释锁、等待和系统为什么会停在原地。', count: 11, status: 'READY', lessons: ['临界区问题与互斥实现', '信号量与同步原语', '管程与条件变量', '经典同步问题详解', '现代同步原语与无锁编程', '死锁特征与必要条件', '资源分配图与死锁建模', '死锁预防', '死锁避免与银行家算法', '死锁实战与内核实现'] },
-      { code: 'O.03', title: '内存', summary: '从虚拟地址到页面置换，串起隔离、映射和性能之间的关系。', count: 7, status: 'READY', lessons: ['内存管理基础与连续分配', '分页与页表结构', '分段与段页式', '虚拟内存与按需分页', '页面置换算法', '内存性能与系统调优'] },
-      { code: 'O.04', title: '存储与文件系统', summary: '追踪数据穿过磁盘、文件系统与日志的持久化路径。', count: 7, status: 'READY', lessons: ['磁盘结构与大容量存储', '磁盘调度算法与RAID', '文件系统接口与目录结构', '文件系统实现', '文件系统性能与空间管理', '文件系统可靠性与日志'] },
-      { code: 'O.05', title: 'IO 子系统', summary: '理解设备控制、中断 DMA 与内核缓冲如何把数据送进内存。', count: 6, status: 'READY', lessons: ['IO硬件与设备控制', 'IO控制方式与中断DMA', '内核IO子系统与缓冲', '设备驱动与设备管理', 'IO路径与性能优化'] },
-      { code: 'O.06', title: '安全与保护', summary: '从访问控制、身份认证到防御审计，建立系统的安全边界。', count: 6, status: 'READY', lessons: ['保护机制与访问控制', '身份认证与密码学基础', '系统安全威胁与攻击', '恶意软件与网络攻击', '安全防御与审计'] },
-      { code: 'O.07', title: 'Linux 实操与内核', summary: '把系统知识落到命令、指标与内核实现，能观察也能定位。', count: 16, status: 'READY', lessons: ['Linux进程与调度实操', 'Linux内存管理实操', 'Linux文件系统与磁盘实操', 'LinuxIO与性能监控实操', 'Linux网络与系统调用实操', 'Linux安全权限与审计', 'Linux内核架构与启动原理', 'Linux进程与线程内核原理', 'Linux调度器原理', 'Linux内存管理内核原理', 'Linux文件系统内核原理', 'LinuxIO栈内核原理', 'Linux网络栈内核原理', 'Linux安全机制内核原理', '文件描述符详解'] },
-      { code: 'O.08', title: 'Bash 命令', summary: '以命令为入口系统掌握文件、文本、进程、网络与脚本。', count: 22, status: 'READY', lessons: ['核心命令与文件操作', '文本处理三剑客', '进程与作业控制', '权限与用户管理', '磁盘与文件系统命令', '网络命令', '系统监控与性能命令', 'Shell脚本编程进阶', '高级命令与文本处理', '实用命令组合与技巧', '远程操作与文件同步', '服务管理与定时任务', '调试与追踪工具', '包管理与软件安装', '防火墙与网络安全命令', '二进制与安全审计命令', '内核模块硬件与系统参数命令', '结构化数据处理命令', '时间终端与环境管理命令', '现代高效命令行工具', 'Linux命令场景与字母索引'] },
-      { code: 'O.09', title: 'GPU 计算', summary: '从硬件架构、CUDA 编程到显存、容器与故障排查，掌握 GPU 系统全栈。', count: 16, status: 'READY', lessons: ['GPU硬件架构与工作原理', 'GPU内存体系与访存原理', 'GPU执行模型与线程调度', 'CUDA编程模型与开发入门', 'CUDA优化技术与性能调优', 'GPU驱动与CUDA运行时栈', 'GPU内存管理与显存分配', 'GPU上下文与多进程调度', 'GPU虚拟化与MIG技术', 'GPU容器化与Kubernetes调度', 'GPU监控与运维实践', 'GPU性能分析与Profiling工具', '大模型训练推理GPU实践', 'GPU故障排查与问题定位', '国产GPU与异构计算生态'] },
-      { code: 'O.10', title: '问题排查', summary: '用方法论和真实案例，把系统故障按流程定位到根因。', count: 13, status: 'READY', lessons: ['性能分析方法论', 'CPU性能问题排查', '内存与内存泄漏排查', '磁盘与IO瓶颈排查', '并发与异常排查', '系统启动与内核崩溃', '进程与调度异常疑难', '虚拟内存与交换疑难', '文件系统与磁盘故障', '系统调用与错误码疑难', '内核同步与锁疑难', '疑难案例集锦'] },
+      { code: 'O.01', title: '进程与线程', summary: '理解执行单元、调度和上下文切换，建立并发程序的运行模型。', count: 6, status: 'READY', lessons: [{"title":"进程概念与状态模型","path":"/kb/os/进程线程/01-进程概念与状态模型/"}, {"title":"进程控制块与系统调用","path":"/kb/os/进程线程/02-进程控制块与系统调用/"}, {"title":"进程切换与调度行为","path":"/kb/os/进程线程/03-进程切换与调度行为/"}, {"title":"线程概念与多线程模型","path":"/kb/os/进程线程/04-线程概念与多线程模型/"}, {"title":"CPU调度算法详解","path":"/kb/os/进程线程/05-CPU调度算法详解/"}, {"title":"多处理器调度与实时调度","path":"/kb/os/进程线程/06-多处理器调度与实时调度/"}] },
+      { code: 'O.02', title: '同步与死锁', summary: '从共享状态出发，解释锁、等待和系统为什么会停在原地。', count: 10, status: 'READY', lessons: [{"title":"临界区问题与互斥实现","path":"/kb/os/同步异步/01-临界区问题与互斥实现/"}, {"title":"信号量与同步原语","path":"/kb/os/同步异步/02-信号量与同步原语/"}, {"title":"管程与条件变量","path":"/kb/os/同步异步/03-管程与条件变量/"}, {"title":"经典同步问题详解","path":"/kb/os/同步异步/04-经典同步问题详解/"}, {"title":"现代同步原语与无锁编程","path":"/kb/os/同步异步/05-现代同步原语与无锁编程/"}, {"title":"死锁特征与必要条件","path":"/kb/os/死锁/01-死锁特征与必要条件/"}, {"title":"资源分配图与死锁建模","path":"/kb/os/死锁/02-资源分配图与死锁建模/"}, {"title":"死锁预防","path":"/kb/os/死锁/03-死锁预防/"}, {"title":"死锁避免与银行家算法","path":"/kb/os/死锁/04-死锁避免与银行家算法/"}, {"title":"死锁实战与内核实现","path":"/kb/os/死锁/05-死锁实战与内核实现/"}] },
+      { code: 'O.03', title: '内存', summary: '从虚拟地址到页面置换，串起隔离、映射和性能之间的关系。', count: 6, status: 'READY', lessons: [{"title":"内存管理基础与连续分配","path":"/kb/os/内存/01-内存管理基础与连续分配/"}, {"title":"分页与页表结构","path":"/kb/os/内存/02-分页与页表结构/"}, {"title":"分段与段页式","path":"/kb/os/内存/03-分段与段页式/"}, {"title":"虚拟内存与按需分页","path":"/kb/os/内存/04-虚拟内存与按需分页/"}, {"title":"页面置换算法","path":"/kb/os/内存/05-页面置换算法/"}, {"title":"内存性能与系统调优","path":"/kb/os/内存/06-内存性能与系统调优/"}] },
+      { code: 'O.04', title: '存储与文件系统', summary: '追踪数据穿过磁盘、文件系统与日志的持久化路径。', count: 6, status: 'READY', lessons: [{"title":"磁盘结构与大容量存储","path":"/kb/os/存储/01-磁盘结构与大容量存储/"}, {"title":"磁盘调度算法与RAID","path":"/kb/os/存储/02-磁盘调度算法与RAID/"}, {"title":"文件系统接口与目录结构","path":"/kb/os/存储/03-文件系统接口与目录结构/"}, {"title":"文件系统实现","path":"/kb/os/存储/04-文件系统实现/"}, {"title":"文件系统性能与空间管理","path":"/kb/os/存储/05-文件系统性能与空间管理/"}, {"title":"文件系统可靠性与日志","path":"/kb/os/存储/06-文件系统可靠性与日志/"}] },
+      { code: 'O.05', title: 'IO 子系统', summary: '理解设备控制、中断 DMA 与内核缓冲如何把数据送进内存。', count: 5, status: 'READY', lessons: [{"title":"IO 硬件与设备控制","path":"/kb/os/IO/01-IO硬件与设备控制/"}, {"title":"IO 控制方式与中断 DMA","path":"/kb/os/IO/02-IO控制方式与中断DMA/"}, {"title":"内核 IO 子系统与缓冲","path":"/kb/os/IO/03-内核IO子系统与缓冲/"}, {"title":"设备驱动与设备管理","path":"/kb/os/IO/04-设备驱动与设备管理/"}, {"title":"IO 路径与性能优化","path":"/kb/os/IO/05-IO路径与性能优化/"}] },
+      { code: 'O.06', title: '安全与保护', summary: '从访问控制、身份认证到防御审计，建立系统的安全边界。', count: 5, status: 'READY', lessons: [{"title":"保护机制与访问控制","path":"/kb/os/安全/01-保护机制与访问控制/"}, {"title":"身份认证与密码学基础","path":"/kb/os/安全/02-身份认证与密码学基础/"}, {"title":"系统安全威胁与攻击","path":"/kb/os/安全/03-系统安全威胁与攻击/"}, {"title":"恶意软件与网络攻击","path":"/kb/os/安全/04-恶意软件与网络攻击/"}, {"title":"安全防御与审计","path":"/kb/os/安全/05-安全防御与审计/"}] },
+      { code: 'O.07', title: 'Linux 实操与内核', summary: '把系统知识落到命令、指标与内核实现，能观察也能定位。', count: 15, status: 'READY', lessons: [{"title":"Linux 进程与调度实操","path":"/kb/os/Linux/01-Linux进程与调度实操/"}, {"title":"Linux 内存管理实操","path":"/kb/os/Linux/02-Linux内存管理实操/"}, {"title":"Linux 文件系统与磁盘实操","path":"/kb/os/Linux/03-Linux文件系统与磁盘实操/"}, {"title":"Linux IO 与性能监控实操","path":"/kb/os/Linux/04-LinuxIO与性能监控实操/"}, {"title":"Linux 网络与系统调用实操","path":"/kb/os/Linux/05-Linux网络与系统调用实操/"}, {"title":"Linux 安全权限与审计","path":"/kb/os/Linux/06-Linux安全权限与审计/"}, {"title":"Linux 内核架构与启动原理","path":"/kb/os/Linux/07-Linux内核架构与启动原理/"}, {"title":"进程与线程内核原理","path":"/kb/os/Linux/08-Linux进程与线程内核原理/"}, {"title":"Linux 调度器原理","path":"/kb/os/Linux/09-Linux调度器原理/"}, {"title":"Linux 内存管理内核原理","path":"/kb/os/Linux/10-Linux内存管理内核原理/"}, {"title":"文件系统内核原理","path":"/kb/os/Linux/11-Linux文件系统内核原理/"}, {"title":"IO 栈内核原理","path":"/kb/os/Linux/12-LinuxIO栈内核原理/"}, {"title":"网络栈内核原理","path":"/kb/os/Linux/13-Linux网络栈内核原理/"}, {"title":"Linux 安全机制内核原理","path":"/kb/os/Linux/14-Linux安全机制内核原理/"}, {"title":"文件描述符详解","path":"/kb/os/Linux/15-文件描述符详解/"}] },
+      { code: 'O.08', title: 'Bash 命令', summary: '以命令为入口系统掌握文件、文本、进程、网络与脚本。', count: 21, status: 'READY', lessons: [{"title":"核心命令与文件操作","path":"/kb/os/Bash/01-核心命令与文件操作/"}, {"title":"文本处理三剑客 grep / awk / sed","path":"/kb/os/Bash/02-文本处理三剑客/"}, {"title":"进程与作业控制","path":"/kb/os/Bash/03-进程与作业控制/"}, {"title":"权限与用户管理","path":"/kb/os/Bash/04-权限与用户管理/"}, {"title":"磁盘与文件系统命令","path":"/kb/os/Bash/05-磁盘与文件系统命令/"}, {"title":"网络命令","path":"/kb/os/Bash/06-网络命令/"}, {"title":"系统监控与性能命令","path":"/kb/os/Bash/07-系统监控与性能命令/"}, {"title":"Shell 脚本编程进阶","path":"/kb/os/Bash/08-Shell脚本编程进阶/"}, {"title":"高级命令与文本处理","path":"/kb/os/Bash/09-高级命令与文本处理/"}, {"title":"实用命令组合与技巧","path":"/kb/os/Bash/10-实用命令组合与技巧/"}, {"title":"远程操作与文件同步","path":"/kb/os/Bash/11-远程操作与文件同步/"}, {"title":"服务管理与定时任务","path":"/kb/os/Bash/12-服务管理与定时任务/"}, {"title":"调试与追踪工具","path":"/kb/os/Bash/13-调试与追踪工具/"}, {"title":"包管理与软件安装","path":"/kb/os/Bash/14-包管理与软件安装/"}, {"title":"防火墙与网络安全命令","path":"/kb/os/Bash/15-防火墙与网络安全命令/"}, {"title":"二进制与安全审计命令","path":"/kb/os/Bash/16-二进制与安全审计命令/"}, {"title":"内核模块硬件与系统参数命令","path":"/kb/os/Bash/17-内核模块硬件与系统参数命令/"}, {"title":"结构化数据处理命令：JSON / YAML / XML / CSV","path":"/kb/os/Bash/18-结构化数据处理命令/"}, {"title":"时间、终端与环境管理命令","path":"/kb/os/Bash/19-时间终端与环境管理命令/"}, {"title":"现代高效命令行工具","path":"/kb/os/Bash/20-现代高效命令行工具/"}, {"title":"Linux 命令场景与字母索引","path":"/kb/os/Bash/21-Linux命令场景与字母索引/"}] },
+      { code: 'O.09', title: 'GPU 计算', summary: '从硬件架构、CUDA 编程到显存、容器与故障排查，掌握 GPU 系统全栈。', count: 15, status: 'READY', lessons: [{"title":"GPU硬件架构与工作原理","path":"/kb/os/GPU/01-GPU硬件架构与工作原理/"}, {"title":"GPU内存体系与访存原理","path":"/kb/os/GPU/02-GPU内存体系与访存原理/"}, {"title":"GPU执行模型与线程调度","path":"/kb/os/GPU/03-GPU执行模型与线程调度/"}, {"title":"CUDA编程模型与开发入门","path":"/kb/os/GPU/04-CUDA编程模型与开发入门/"}, {"title":"CUDA优化技术与性能调优","path":"/kb/os/GPU/05-CUDA优化技术与性能调优/"}, {"title":"GPU驱动与CUDA运行时栈","path":"/kb/os/GPU/06-GPU驱动与CUDA运行时栈/"}, {"title":"GPU内存管理与显存分配","path":"/kb/os/GPU/07-GPU内存管理与显存分配/"}, {"title":"GPU上下文与多进程调度","path":"/kb/os/GPU/08-GPU上下文与多进程调度/"}, {"title":"GPU虚拟化与MIG技术","path":"/kb/os/GPU/09-GPU虚拟化与MIG技术/"}, {"title":"GPU容器化与Kubernetes调度","path":"/kb/os/GPU/10-GPU容器化与Kubernetes调度/"}, {"title":"GPU监控与运维实践","path":"/kb/os/GPU/11-GPU监控与运维实践/"}, {"title":"GPU性能分析与Profiling工具","path":"/kb/os/GPU/12-GPU性能分析与Profiling工具/"}, {"title":"大模型训练推理GPU实践","path":"/kb/os/GPU/13-大模型训练推理GPU实践/"}, {"title":"GPU故障排查与问题定位","path":"/kb/os/GPU/14-GPU故障排查与问题定位/"}, {"title":"国产GPU与异构计算生态","path":"/kb/os/GPU/15-国产GPU与异构计算生态/"}] },
+      { code: 'O.10', title: '问题排查', summary: '用方法论和真实案例，把系统故障按流程定位到根因。', count: 13, status: 'READY', lessons: [{"title":"系统问题排查方法论","path":"/kb/os/问题排查/00-系统问题排查方法论/"}, {"title":"性能分析方法论","path":"/kb/os/问题排查/01-性能分析方法论/"}, {"title":"CPU 性能问题排查","path":"/kb/os/问题排查/02-CPU性能问题排查/"}, {"title":"内存与内存泄漏排查","path":"/kb/os/问题排查/03-内存与内存泄漏排查/"}, {"title":"磁盘与 IO 瓶颈排查","path":"/kb/os/问题排查/04-磁盘与IO瓶颈排查/"}, {"title":"并发与异常排查","path":"/kb/os/问题排查/05-并发与异常排查/"}, {"title":"系统启动与内核崩溃排查","path":"/kb/os/问题排查/06-系统启动与内核崩溃/"}, {"title":"进程与调度异常疑难排查","path":"/kb/os/问题排查/07-进程与调度异常疑难/"}, {"title":"虚拟内存与交换疑难排查","path":"/kb/os/问题排查/08-虚拟内存与交换疑难/"}, {"title":"文件系统与磁盘故障排查","path":"/kb/os/问题排查/09-文件系统与磁盘故障/"}, {"title":"系统调用与错误码疑难排查","path":"/kb/os/问题排查/10-系统调用与错误码疑难/"}, {"title":"内核同步与锁疑难排查","path":"/kb/os/问题排查/11-内核同步与锁疑难/"}, {"title":"疑难案例集锦","path":"/kb/os/问题排查/12-疑难案例集锦/"}] },
     ],
   },
   {
@@ -108,7 +110,10 @@ const currentTopic = computed(() => topics.find((item) => item.key === props.top
 const activeModuleIndex = ref(0)
 const activeLessonIndex = ref(0)
 const activeModule = computed(() => currentTopic.value.modules[activeModuleIndex.value] ?? currentTopic.value.modules[0])
-const activeLesson = computed(() => activeModule.value?.lessons[activeLessonIndex.value] ?? '')
+const activeLesson = computed(() => {
+  const lesson = activeModule.value?.lessons[activeLessonIndex.value]
+  return typeof lesson === 'string' ? lesson : (lesson?.title ?? '')
+})
 
 function selectModule(index: number) {
   activeModuleIndex.value = index
@@ -117,6 +122,29 @@ function selectModule(index: number) {
 
 function selectLesson(index: number) {
   activeLessonIndex.value = index
+}
+
+function lessonLink(lesson: TopicLesson) {
+  return typeof lesson !== 'string' && Boolean(lesson.path)
+}
+
+function lessonKey(lesson: TopicLesson) {
+  return typeof lesson === 'string' ? lesson : lesson.path
+}
+
+function lessonTitle(lesson: TopicLesson) {
+  return typeof lesson === 'string' ? lesson : lesson.title
+}
+
+function lessonPath(lesson: TopicLesson) {
+  return lessonLink(lesson) ? withBase((lesson as { path: string }).path) : undefined
+}
+
+function lessonClass(index: number, lesson: TopicLesson) {
+  return {
+    active: activeLessonIndex.value === index,
+    'is-link': lessonLink(lesson),
+  }
 }
 
 function topicPath(key: TopicKey) {
@@ -196,11 +224,19 @@ function topicPath(key: TopicKey) {
           <p>{{ activeModule.summary }}</p>
           <div class="topic-inspector-line"><span>内容状态</span><strong>{{ activeModule.count ? '已整理' : '待同步' }}</strong></div>
           <div class="topic-lesson-list">
-            <button v-for="(lesson, index) in activeModule.lessons" :key="lesson" type="button" :class="{ active: activeLessonIndex === index }" @click="selectLesson(index)">
-              <span>{{ String(index + 1).padStart(2, '0') }}</span><strong>{{ lesson }}</strong><i>{{ activeLessonIndex === index ? 'SELECTED' : 'OPEN' }}</i>
-            </button>
+            <a
+              v-for="(lesson, index) in activeModule.lessons"
+              :key="lessonKey(lesson)"
+              :href="lessonPath(lesson)"
+              :class="lessonClass(index, lesson)"
+              :aria-pressed="activeLessonIndex === index"
+            >
+              <span>{{ String(index + 1).padStart(2, '0') }}</span>
+              <strong>{{ lessonTitle(lesson) }}</strong>
+              <i>{{ lessonLink(lesson) ? 'READ' : (activeLessonIndex === index ? 'SELECTED' : 'OPEN') }}</i>
+            </a>
           </div>
-          <div class="topic-lesson-preview"><span>NOW INSPECTING</span><strong>{{ activeLesson }}</strong><small>{{ activeModule.count ? '原始笔记已进入整理队列，网站正文将按模块逐步开放。' : '该模块已经建立目录，正文发布后会沿当前轨道接入。' }}</small></div>
+          <div class="topic-lesson-preview"><span>NOW INSPECTING</span><strong>{{ activeLesson }}</strong><small>{{ activeModule.count ? '点击课程可直达已发布的正文笔记。' : '该模块已经建立目录，正文发布后会沿当前轨道接入。' }}</small></div>
         </aside>
       </div>
     </section>

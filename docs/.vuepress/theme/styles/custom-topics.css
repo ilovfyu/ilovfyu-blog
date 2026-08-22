@@ -578,7 +578,8 @@
   overflow: auto;
   scrollbar-color: rgba(var(--topic-accent-rgb), 0.36) transparent;
 }
-.topic-lesson-list button {
+.topic-lesson-list button,
+.topic-lesson-list a {
   display: grid;
   grid-template-columns: 24px minmax(0, 1fr) auto;
   gap: 9px;
@@ -589,18 +590,28 @@
   border-bottom: 1px solid rgba(150, 138, 118, 0.08);
   text-align: left;
   background: transparent;
+  text-decoration: none;
+  cursor: pointer;
 }
 .topic-lesson-list button:hover,
-.topic-lesson-list button.active {
+.topic-lesson-list button.active,
+.topic-lesson-list a:hover,
+.topic-lesson-list a.active {
   background: rgba(var(--topic-accent-rgb), 0.06);
 }
+.topic-lesson-list a.is-link > i {
+  color: var(--topic-accent);
+}
 .topic-lesson-list button > span,
-.topic-lesson-list button > i {
+.topic-lesson-list button > i,
+.topic-lesson-list a > span,
+.topic-lesson-list a > i {
   color: var(--text-3);
   font: 7px var(--font-code);
   font-style: normal;
 }
-.topic-lesson-list button > strong {
+.topic-lesson-list button > strong,
+.topic-lesson-list a > strong {
   min-width: 0;
   color: var(--text-2);
   font-size: 10px;
@@ -609,7 +620,10 @@
 }
 .topic-lesson-list button.active > span,
 .topic-lesson-list button.active > strong,
-.topic-lesson-list button.active > i {
+.topic-lesson-list button.active > i,
+.topic-lesson-list a.active > span,
+.topic-lesson-list a.active > strong,
+.topic-lesson-list a.active > i {
   color: var(--topic-accent);
 }
 .topic-lesson-preview {
@@ -768,10 +782,12 @@
   .topic-inspector {
     padding: 20px 16px;
   }
-  .topic-lesson-list button {
+  .topic-lesson-list button,
+  .topic-lesson-list a {
     grid-template-columns: 22px minmax(0, 1fr);
   }
-  .topic-lesson-list button > i {
+  .topic-lesson-list button > i,
+  .topic-lesson-list a > i {
     display: none;
   }
 }
