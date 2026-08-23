@@ -69,7 +69,7 @@ const sections = [
 const stats = [
   { value: 9, suffix: '', label: '随笔文章', hint: 'posts' },
   { value: 20, suffix: '', label: '独立项目', hint: 'projects' },
-  { value: 343, suffix: '', label: '知识库笔记', hint: 'notes' },
+  { value: 340, suffix: '', label: '知识库笔记', hint: 'notes' },
   { value: 4, suffix: '', label: '知识专题', hint: 'tracks' },
 ]
 

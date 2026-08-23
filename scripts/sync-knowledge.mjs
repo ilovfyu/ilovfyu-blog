@@ -6,13 +6,13 @@ const docsRoot = resolve('docs')
 const outputRoot = join(docsRoot, 'kb')
 const dataFile = resolve('docs/.vuepress/theme/data/knowledgeArticles.ts')
 
-// 需要同步的顶层系列：top = vault 目录名, key = 博客路径段, topicsTag = 知识库标签分组中的归属
+// 需要同步的顶层系列：top = vault 目录名, key = 博客路径段
+// 注意：项目整理不在知识库同步范围（项目内容由博客「项目」tab 专门承载）
 const series = [
   { top: 'OS', key: 'os', name: 'OS' },
   { top: 'Language', key: 'language', name: 'Language' },
   { top: 'AI', key: 'ai', name: 'AI' },
   { top: '容器', key: 'container', name: '容器' },
-  { top: '项目整理', key: 'projects', name: '项目整理' },
 ]
 
 function stripExtension(file) {

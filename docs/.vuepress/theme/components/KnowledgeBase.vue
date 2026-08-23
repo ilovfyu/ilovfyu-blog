@@ -24,7 +24,6 @@ const topicGroups = [
   { id: 'architecture', code: '08', name: '架构', tags: ['Serverless', '云原生', '分布式', '微服务', '高可用', '高并发'] },
   { id: 'deployment', code: '09', name: '部署', tags: ['FastAPI-Cloud', 'Railway', 'Render', 'Vercel', 'Zeabur'] },
   { id: 'aliyun', code: '10', name: '阿里云', tags: ['ACK', '中间件', '函数计算', '大数据', '存储', '数据库', '服务器', '网络'] },
-  { id: 'projects', code: '11', name: '项目整理', tags: ['项目整理', 'AIRec', 'AI游戏互动', 'AI设备状态检修系统', 'Agent合集', 'Go容器服务系统', 'K8S监控系统', 'RAG知识库', 'SRE智能运维平台', '中转站', '具身智能', '墨影', '多Agent管理平台', '应用管理平台', '弈机', '微服务商城', '愈语', '提示词构建生成平台', '数字人', '数据治理平台', '数据资产平台', '标注工具平台', '模型客流量去重', '模型微调训练', '独立站', '短链平台', '秒杀系统', '积分系统', '自动驾驶', '虾壳', '量化交易系统'] },
 ]
 
 const articles: Article[] = [
@@ -77,186 +76,6 @@ const articles: Article[] = [
     topics: ['大模型', '提示词工程', '评估指标'],
   },
   {
-    title: '墨影',
-    date: '2026.08',
-    status: '架构设计中',
-    path: '/projects/moyin/',
-    summary: '网页端课程生成工作流平台，把书籍、辅导资料、习题册与网上资料生成声色俱全、带板书与互动的教学课程。',
-    tags: ['AI', 'Education', 'Multimodal'],
-    topics: ['墨影', '多模态', '大模型', '工作流'],
-  },
-  {
-    title: '中转站',
-    date: '2026.08',
-    status: '架构设计中',
-    path: '/projects/relay-service/',
-    summary: '面向模型调用的 Token 中转网关，统一 API、模型路由、流式响应、额度控制与审计边界。',
-    tags: ['AI', 'Gateway', 'API'],
-    topics: ['中转站', '网关', '负载均衡', '微服务'],
-  },
-  {
-    title: '虾壳',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/xiake/',
-    summary: '多 Agent 漫剧影视工作流平台，把编剧、分镜、美术、生成与合规 Agent 编排进同一条生产流水线。',
-    tags: ['AI', 'Agent', 'Media'],
-    topics: ['虾壳', '多Agent协作', '智能体框架', '工作流', '多模态'],
-  },
-  {
-    title: '弈机',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/yiji/',
-    summary: 'AI 肉鸽游戏：地图、敌人、事件与词缀由 AI 实时生成，围绕策略构筑与多线结局展开。',
-    tags: ['AI', 'Game'],
-    topics: ['弈机', 'AI游戏互动', '大模型', '工作流'],
-  },
-  {
-    title: '愈语',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/yuliao/',
-    summary: '数字人实时视频聊天应用：看得见表情、听得懂语气、愿意陪你慢慢聊。',
-    tags: ['AI', 'Digital Human'],
-    topics: ['愈语', '数字人', '多模态', '大模型'],
-  },
-  {
-    title: 'SRE 智能运维平台',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/sre-platform/',
-    summary: '把告警、诊断与应急编排成可被智能体接管的工作流，让故障响应更快更稳。',
-    tags: ['AI', 'SRE', 'Ops'],
-    topics: ['SRE智能运维平台', '监控日志链路', '微服务', '云原生'],
-  },
-  {
-    title: '多 Agent 管理平台',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/multi-agent-platform/',
-    summary: '面向多 Agent 协同的编排、调度与治理平台，管理 Agent 生命周期与任务协作。',
-    tags: ['AI', 'Agent', 'Platform'],
-    topics: ['多Agent管理平台', '多Agent协作', '智能体框架', '工作流'],
-  },
-  {
-    title: 'RAG 知识库',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/rag-knowledge-base/',
-    summary: '企业级 RAG 知识库：文档解析、向量检索、权限隔离与回答溯源。',
-    tags: ['AI', 'RAG', 'Knowledge Base'],
-    topics: ['RAG知识库', 'RAG', '大模型', '向量', '搜索'],
-  },
-  {
-    title: '模型微调训练',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/model-fine-tuning/',
-    summary: '面向垂直场景的模型微调与训练平台，覆盖数据准备、训练与评测闭环。',
-    tags: ['AI', 'Fine-tuning', 'Training'],
-    topics: ['模型微调训练', '微调', '大模型', '深度学习', '模型训练'],
-  },
-  {
-    title: '知识问答工作流',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/qa-workflow/',
-    summary: '把检索、生成与校验编排成可靠的知识问答工作流。',
-    tags: ['AI', 'RAG', 'Workflow'],
-    topics: ['工作流', 'RAG', '大模型', '向量', '搜索'],
-  },
-  {
-    title: 'AIRec',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/airec/',
-    summary: 'AI 驱动的推荐系统：特征、召回、排序与评估的工程化落地。',
-    tags: ['AI', 'Recommendation'],
-    topics: ['AIRec', '推荐系统', '特征工程', '算法模型', '评估指标'],
-  },
-  {
-    title: '数字人',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/digital-human/',
-    summary: '数字人形象与对话系统：形象驱动、语音交互与多模态表达。',
-    tags: ['AI', 'Digital Human'],
-    topics: ['数字人', '多模态', '大模型', '深度学习'],
-  },
-  {
-    title: 'AI 影视漫剧',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/ai-media/',
-    summary: 'AI 影视漫剧生成：从剧本、分镜到成片的全流程自动化生产。',
-    tags: ['AI', 'Media', 'Generative'],
-    topics: ['多模态', '工作流', '大模型', '深度学习'],
-  },
-  {
-    title: 'AI 游戏互动',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/ai-game/',
-    summary: 'AI 游戏互动：让 NPC、剧情与关卡具备实时生成与自适应能力。',
-    tags: ['AI', 'Game'],
-    topics: ['AI游戏互动', '大模型', '深度学习', '多模态'],
-  },
-  {
-    title: '具身智能',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/embodied-ai/',
-    summary: '具身智能：让智能体在真实物理环境中感知、决策与执行。',
-    tags: ['AI', 'Robotics'],
-    topics: ['具身智能', '深度学习', '多模态', '强化学习'],
-  },
-  {
-    title: '自动驾驶',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/autonomous-driving/',
-    summary: '自动驾驶系统：感知、决策、规划与控制的工程闭环。',
-    tags: ['AI', 'Autonomous Driving'],
-    topics: ['自动驾驶', '深度学习', '多模态', '强化学习'],
-  },
-  {
-    title: '模型客流量去重',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/traffic-deduplication/',
-    summary: '基于视觉特征的客流量去重：跨摄像头身份匹配与计数。',
-    tags: ['AI', 'Computer Vision'],
-    topics: ['模型客流量去重', '深度学习', '多模态', '大数据'],
-  },
-  {
-    title: '标注工具平台',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/annotation-tool-platform/',
-    summary: '面向 AI 训练数据的标注平台：任务分发、智能辅助标注与质量审核。',
-    tags: ['AI', 'Annotation', 'Data'],
-    topics: ['标注工具平台', '工作流', '大模型', '数据建模'],
-  },
-  {
-    title: '应用管理平台',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/app-platform/',
-    summary: '应用全生命周期管理平台：发布、配置、监控与运维一体化。',
-    tags: ['Platform', 'Engineering'],
-    topics: ['应用管理平台', '云原生', '微服务', '监控日志链路'],
-  },
-  {
-    title: '量化交易系统',
-    date: '2026.08',
-    status: '计划中',
-    path: '/projects/quant-trading/',
-    summary: '量化交易系统：策略研究、回测、执行与风控的工程化平台。',
-    tags: ['AI', 'FinTech', 'Trading'],
-    topics: ['量化交易系统', '大数据', '实时数仓', '数据建模'],
-  },
-  {
     title: '当屏幕消失之后，我们还剩下什么？',
     date: '2024.07.18',
     path: '/posts/screenless-era/',
@@ -297,21 +116,18 @@ const knowledgeNotes: Article[] = knowledgeArticles.map((article) => ({
 // 手工精选文章在前，同步的知识库笔记在后
 const allArticles: Article[] = [...articles, ...knowledgeNotes]
 
-// 系列筛选：手工文章归入「随笔/项目」，知识笔记按 series 分组
+// 系列筛选：手工文章归入「随笔」，知识笔记按 series 分组（项目内容由「项目」tab 专门承载）
 const seriesOptions = [
   { key: 'all', label: '全部' },
   { key: 'posts', label: '随笔' },
-  { key: 'projects', label: '项目' },
   { key: 'OS', label: 'OS' },
   { key: 'Language', label: 'Language' },
   { key: 'AI', label: 'AI' },
   { key: '容器', label: '容器' },
-  { key: '项目整理', label: '项目整理' },
 ]
 
 function articleSeries(article: Article) {
   if (article.path.startsWith('/posts/')) return 'posts'
-  if (article.path.startsWith('/projects/')) return 'projects'
   return article.series ?? ''
 }
 
@@ -423,7 +239,7 @@ onMounted(() => {
       <div class="knowledge-hero-inner">
         <p class="knowledge-kicker"><FolderTree /> KNOWLEDGE SYSTEM / INDEX</p>
         <h1>知识库</h1>
-        <p>按 ilovfyu-final 知识库目录组织标签，浏览概念整理、工程实践、随笔与项目文档。</p>
+        <p>按 ilovfyu-final 知识库目录组织标签，浏览概念整理、工程实践与已发布随笔。</p>
         <div class="knowledge-search">
           <SearchBox />
         </div>
