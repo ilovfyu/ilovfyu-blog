@@ -37,7 +37,7 @@
 | custom-blog-description | 目录卡片摘要 |
 | custom-blog-project-code | 模板代码：moyin、xiake、yuliao、yiji、sre-platform、relay-service、annotation-tool-platform；普通项目使用自己的代码 |
 | custom-blog-project-view | record 为项目记录，showcase 为产品展示 |
-| custom-blog-project-group | 持续构建进入首页及项目页主展示；计划与构建记录进入项目目录下方 |
+| custom-blog-project-group | 持续构建进入首页及项目页主展示；已完成作品进入完成作品展区；其他项目进入计划与构建记录 |
 | custom-blog-project-order | 项目顺序 |
 | custom-blog-project-tone | cyan、violet、rose、amber |
 | custom-blog-project-label | 卡片分类 |
@@ -50,11 +50,13 @@
 | custom-blog-index | false 表示不进入目录列表；页面仍发布 |
 | custom-blog-series / custom-blog-group | 知识库系列 / 分组 |
 
-项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 16 个项目，其中 PromptLSM 与 RoostAI 属于「持续构建」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
+项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 16 个项目，其中 PromptLSM 与 RoostAI 属于「持续构建」，标注工具平台属于「已完成作品」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
 
 「持续构建」文档放在思源「项目 / 持续构建」下，并设置 `custom-blog-project-group` 为 `持续构建`。该属性决定博客中的独立分组；`custom-blog-project-status` 描述项目当前阶段，二者可以分别编辑。
 
-首页和项目页优先展示 PromptLSM 与 RoostAI。动态封面是项目概念示意，不代表性能数据或已上线的产品能力；动效可暂停，离开可见区域或开启系统减少动态效果后停止。
+标注工具平台设置 `custom-blog-project-group` 为 `已完成作品`，`custom-blog-project-status` 为 `已完成`；保留产品展示关联。完成作品使用与持续构建统一的动态卡片，并提供产品展示与项目记录入口。
+
+首页和项目页优先展示 PromptLSM 与 RoostAI。动态封面是项目概念示意，不代表性能数据；动效默认播放，离开可见区域或开启系统减少动态效果后停止，无暂停按钮。
 
 ## 同步与发布
 

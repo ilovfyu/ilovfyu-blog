@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vuepress/client'
 import SignalScene from './SignalScene.vue'
-import BuildingProjects from './BuildingProjects.vue'
+import AnimatedProjectSection from './AnimatedProjectSection.vue'
 
 import { notes, knowledge, projects } from '../data/content'
 
@@ -139,7 +139,7 @@ onBeforeUnmount(() => {
     </section>
 
     <section v-if="featuredProjects.length" class="home-project-section section">
-      <BuildingProjects :entries="featuredProjects" />
+      <AnimatedProjectSection :entries="featuredProjects" />
       <a class="home-project-all" :href="withBase('/projects/')">查看全部项目 <b aria-hidden="true">↗</b></a>
     </section>
 

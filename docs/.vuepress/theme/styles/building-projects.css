@@ -1,17 +1,15 @@
-/* Active work uses theme surfaces; diagrams illustrate intent, not runtime metrics. */
+/* Project exhibits use theme surfaces; diagrams illustrate workflows, not runtime metrics. */
 .project-focus-hero { display: block; padding-block: 36px 28px; }
 .project-focus-hero .catalog-description { max-width: 740px; }
 .project-focus-hero .project-lab-stats { gap: 44px; margin-top: 24px; }
 .project-focus-hero .project-lab-intro h1 { margin-block: 20px; }
 .project-focus-hero .project-lab-intro h1 span { display: inline; margin-left: 24px; font-size: .54em; }
 .building-section-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
-#project-building-title { scroll-margin-top: 140px; }
-.project-building-section .building-section-head .catalog-kicker { color: var(--fx-cyan); letter-spacing: .17em; margin: 0 0 12px; }
-.project-building-section .building-section-head h2 { color: var(--text-1); font: 600 30px var(--font-disp); margin: 0; padding: 0; border: 0; }
+.project-motion-section { scroll-margin-top: 140px; }
+.project-completed-section { margin-top: 60px; }
+.project-motion-section .building-section-head .catalog-kicker { color: var(--fx-cyan); letter-spacing: .17em; margin: 0 0 12px; }
+.project-motion-section .building-section-head h2 { color: var(--text-1); font: 600 30px var(--font-disp); margin: 0; padding: 0; border: 0; }
 .building-section-head h2 span { margin-left: 20px; font: 12px var(--font-sans); color: var(--text-2); }
-.building-motion-toggle { display: inline-flex; flex-shrink: 0; align-items: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--space-line); background: var(--space-1); color: var(--text-2); font: 11px var(--font-sans); cursor: pointer; border-radius: 4px; }
-.building-motion-toggle svg { width: 14px; height: 14px; }
-.building-motion-toggle:hover { color: var(--fx-cyan); border-color: var(--fx-cyan); }
 .building-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .building-card { --build-accent: #08778a; --build-secondary: #987039; position: relative; isolation: isolate; min-width: 0; overflow: hidden; border: 1px solid color-mix(in srgb, var(--build-accent) 30%, var(--space-line)); border-radius: 10px; background: var(--space-1); color: var(--text-1); transition: transform .35s ease, box-shadow .35s, border-color .35s; }
 .building-card[data-tone="violet"] { --build-accent: #7755a0; --build-secondary: #08778a; }
@@ -53,8 +51,8 @@
 .building-card .building-copy .building-record-link { display: flex; justify-content: space-between; align-items: center; min-height: 44px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--space-line); font: 12px var(--font-sans); color: var(--build-accent); text-decoration: none; }
 .building-record-link svg { width: 18px; height: 18px; transition: transform .25s; }
 .building-record-link:hover svg { transform: translate(3px, -3px); }
-.building-record-link:focus-visible, .building-motion-toggle:focus-visible { outline: 2px solid var(--build-accent, var(--fx-cyan)); outline-offset: 4px; }
-.project-building-section .building-cover-light, .project-building-section .building-diagram * { animation-play-state: paused; }
+.building-record-link:focus-visible { outline: 2px solid var(--build-accent, var(--fx-cyan)); outline-offset: 4px; }
+.project-motion-section .building-cover-light, .project-motion-section .building-diagram * { animation-play-state: paused; }
 .build-motion-active .building-cover-light, .build-motion-active .building-diagram * { animation-play-state: running; }
 .building-card:focus-within .building-cover-light, .building-card:focus-within .building-diagram * { animation-play-state: paused; }
 @keyframes build-light-pass { 0%, 20% { transform: translateX(0) skewX(-18deg); } 70%, 100% { transform: translateX(450%) skewX(-18deg); } }
@@ -64,4 +62,18 @@
 @keyframes build-token-breathe { 50% { opacity: .35; } }
 @media (max-width: 760px) { .building-grid { grid-template-columns: 1fr; }.building-cover { height: 285px; }.building-section-head h2 span { display: block; margin: 8px 0 0; }.project-focus-hero .project-lab-intro h1 span { display: block; margin: 14px 0 0; }.building-copy { padding: 24px; }.building-card .building-copy .building-summary { min-height: 0; } }
 @media (max-width: 400px) { .building-cover-top, .building-cover-bottom { left: 14px; right: 14px; }.building-cover-top { font-size: 8px; }.building-cover-badge { display: none; }.building-section-head h2 { font-size: 26px; }.project-focus-hero .project-lab-stats { gap: 28px; } }
-@media (prefers-reduced-motion: reduce) { .building-card, .building-card *, .building-card::before { animation: none !important; transition: none !important; transform: none !important; }.building-cover-light { display: none; }.building-motion-toggle { display: none; } }
+@media (prefers-reduced-motion: reduce) { .building-card, .building-card *, .building-card::before { animation: none !important; transition: none !important; transform: none !important; }.building-cover-light { display: none; } }
+
+/* A wide finished-work card retains the same animated cover and pointer depth. */
+.project-completed-section .building-grid { grid-template-columns: 1fr; }
+.project-completed-section .building-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.project-completed-section .building-cover { height: 100%; min-height: 330px; border-bottom: 0; border-right: 1px solid var(--space-line); }
+.project-completed-section .building-diagram { top: calc(50% - 117.5px); }
+.project-completed-section .building-copy { display: flex; flex-direction: column; justify-content: center; padding: 32px; }
+.project-completed-section .building-copy h3 { font-size: clamp(28px, 3vw, 38px); }
+.building-actions { display: flex; gap: 24px; }
+.building-actions .building-record-link { flex: 1; gap: 16px; }
+.build-annotation-box { stroke: var(--build-accent); stroke-width: 2; }
+.build-annotation-scan { stroke: var(--build-secondary); stroke-width: 1.5; animation: build-annotation-sweep 5s ease-in-out infinite; }
+@keyframes build-annotation-sweep { 0%, 100% { transform: translateY(-26px); opacity: .5; } 50% { transform: translateY(26px); opacity: 1; } }
+@media (max-width: 760px) { .project-completed-section .building-card { grid-template-columns: 1fr; }.project-completed-section .building-cover { height: 285px; min-height: 0; border-right: 0; border-bottom: 1px solid var(--space-line); }.project-completed-section .building-copy { padding: 24px; } }

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { projects } from '../data/content'
-import BuildingProjects from './BuildingProjects.vue'
+import AnimatedProjectSection from './AnimatedProjectSection.vue'
 import ProjectLogCard from './ProjectLogCard.vue'
 const building = computed(() => projects.filter(project => project.project?.group === '持续构建'))
-const planned = computed(() => projects.filter(project => project.project?.group !== '持续构建'))
+const completed = computed(() => projects.filter(project => project.project?.group === '已完成作品'))
+const planned = computed(() => projects.filter(project => !['持续构建', '已完成作品'].includes(project.project?.group || '')))
+const plannedSequence = computed(() => String(1 + Number(!!building.value.length) + Number(!!completed.value.length)).padStart(2, '0'))
 const showcases = computed(() => projects.filter(project => project.project?.showcase).length)
 </script>
 
@@ -19,8 +21,9 @@ const showcases = computed(() => projects.filter(project => project.project?.sho
       </div>
     </header>
     <section class="catalog-body" aria-label="项目目录">
-      <BuildingProjects v-if="building.length" :entries="building" />
-      <div v-if="planned.length" class="project-section-heading project-planned-heading"><p>02 / EXPLORATION LOG</p><h2>计划与构建记录</h2></div>
+      <AnimatedProjectSection v-if="building.length" :entries="building" />
+      <AnimatedProjectSection v-if="completed.length" :entries="completed" variant="completed" :sequence="building.length ? 2 : 1" />
+      <div v-if="planned.length" class="project-section-heading project-planned-heading"><p>{{ plannedSequence }} / EXPLORATION LOG</p><h2>计划与构建记录</h2></div>
       <div v-if="planned.length" class="project-catalog-grid">
         <ProjectLogCard v-for="project in planned" :key="project.path" :entry="project" />
       </div>
