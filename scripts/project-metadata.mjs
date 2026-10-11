@@ -33,6 +33,7 @@ export function projectMetadata(attrs, body, resolveDocument) {
   if (!['cyan', 'violet', 'rose', 'amber'].includes(tone)) throw new Error('项目颜色只能是 cyan、violet、rose、amber。')
   return {
     code, view, order, tone,
+    ...(attrs['custom-blog-project-group'] ? { group: attrs['custom-blog-project-group'] } : {}),
     label: attrs['custom-blog-project-label'] || code.toUpperCase(),
     status: attrs['custom-blog-project-status'] || '计划中',
     category: attrs['custom-blog-project-category'] || 'AI / 产品',

@@ -37,6 +37,7 @@
 | custom-blog-description | 目录卡片摘要 |
 | custom-blog-project-code | 模板代码：moyin、xiake、yuliao、yiji、sre-platform、relay-service、annotation-tool-platform；普通项目使用自己的代码 |
 | custom-blog-project-view | record 为项目记录，showcase 为产品展示 |
+| custom-blog-project-group | 设为持续构建，进入独立的持续构建分组 |
 | custom-blog-project-order | 项目顺序 |
 | custom-blog-project-tone | cyan、violet、rose、amber |
 | custom-blog-project-label | 卡片分类 |
@@ -49,7 +50,9 @@
 | custom-blog-index | false 表示不进入目录列表；页面仍发布 |
 | custom-blog-series / custom-blog-group | 知识库系列 / 分组 |
 
-项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片，因此目录保持 14 个项目。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
+项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 16 个项目，其中 PromptLSM 与 RoostAI 属于「持续构建」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
+
+「持续构建」文档放在思源「项目 / 持续构建」下，并设置 `custom-blog-project-group` 为 `持续构建`。该属性决定博客中的独立分组；`custom-blog-project-status` 描述项目当前阶段，二者可以分别编辑。
 
 ## 同步与发布
 
@@ -88,6 +91,11 @@ npm run blog:publish
 | /项目/SRE 智能运维平台/产品展示 | [20261012020110-swalusw](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012020110-swalusw/) |
 | /项目/中转站/产品展示 | [20261012020110-bpeor4a](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012020110-bpeor4a/) |
 | /项目/标注工具平台/产品展示 | [20261012020110-1qune8h](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012020110-1qune8h/) |
+
+## 持续构建项目
+
+- [PromptLSM](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035206-0mcg3um/)
+- [RoostAI](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035207-l8xx3ew/)
 
 ## 知识库演示
 

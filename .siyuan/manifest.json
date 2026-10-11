@@ -169,6 +169,18 @@
       "path": "docs/notes/siyuan/20261012020836-sjietk8.md",
       "title": "01 · 写作与内容组织",
       "route": "/notes/20261012020836-sjietk8/"
+    },
+    {
+      "id": "20261012035206-0mcg3um",
+      "path": "docs/projects/siyuan/20261012035206-0mcg3um.md",
+      "title": "PromptLSM",
+      "route": "/projects/20261012035206-0mcg3um/"
+    },
+    {
+      "id": "20261012035207-l8xx3ew",
+      "path": "docs/projects/siyuan/20261012035207-l8xx3ew.md",
+      "title": "RoostAI",
+      "route": "/projects/20261012035207-l8xx3ew/"
     }
   ],
   "files": {
@@ -199,6 +211,8 @@
     "docs/projects/siyuan/20261012015826-z7tunv2.md": "c2d5312715e71a38764c6edddcce9110a1a5ae0d452e33af7fda20ba3e69063a",
     "docs/projects/siyuan/20261012020110-1qune8h.md": "e30b984df1dd05de39a77e90757ceafc569a5dcce702ff0a9187b93e44f89526",
     "docs/projects/siyuan/20261012020110-bpeor4a.md": "50103b10eef8cd42025c4227b308082487ddf3200cd553292bc2a658cb84db85",
-    "docs/projects/siyuan/20261012020110-swalusw.md": "823e8f2ab17bb4d4998b2263562e26f1dfb21253614ad87064cb172c8b444fec"
+    "docs/projects/siyuan/20261012020110-swalusw.md": "823e8f2ab17bb4d4998b2263562e26f1dfb21253614ad87064cb172c8b444fec",
+    "docs/projects/siyuan/20261012035206-0mcg3um.md": "99cc9f0fa56a5a77f58645e8f9e56c163d23ff20d62f4b531b3eaaa5c9905ec6",
+    "docs/projects/siyuan/20261012035207-l8xx3ew.md": "7e6c72b67dc5062df66830fdedabd40afaca030be627179c13bb2cafcd49ed6f"
   }
 }
