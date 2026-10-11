@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, watch } from 'vue'
 import { useRoute } from 'vuepress/client'
 
 const route = useRoute()
-const cards = '.featured-article, .article-card, .home-project-card'
+const cards = '.featured-article, .article-card, .home-project-card, .project-display-card'
 const rows = '.post-index-row, .knowledge-note-row'
 const magnets = '.hero-actions .btn-primary, .profile-actions > a'
 const controls = '.catalog-button, .catalog-filters button'
