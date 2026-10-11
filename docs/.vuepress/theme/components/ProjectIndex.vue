@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ArrowUpRight } from '@lucide/vue'
+import { computed } from 'vue'
 import { withBase } from 'vuepress/client'
 import { projects } from '../data/content'
+import ProjectCard from './ProjectCard.vue'
+const featured = computed(() => projects.filter(project => project.project?.showcase && project.project.order <= 4))
+const planned = computed(() => projects.filter(project => !project.project?.showcase || project.project.order > 4))
 </script>
 
 <template>
@@ -13,14 +17,18 @@ import { projects } from '../data/content'
       <span class="catalog-count">{{ projects.length }} 个项目</span>
     </header>
     <section class="catalog-body" aria-label="项目目录">
-      <div v-if="projects.length" class="project-catalog-grid">
-        <a v-for="project in projects" :key="project.path" class="article-card" :href="withBase(project.path)">
-          <p class="catalog-kicker">{{ project.label }}</p>
-          <h2>{{ project.title }}</h2><p>{{ project.summary }}</p>
-          <ArrowUpRight aria-hidden="true" />
-        </a>
+      <div v-if="featured.length" class="project-display-grid">
+        <ProjectCard v-for="project in featured" :key="project.path" :entry="project" />
       </div>
-      <div v-else class="catalog-empty"><h2>还没有发布项目记录</h2><p>真实的作品与构建过程，将在这里陆续记录。</p></div>
+      <h2 v-if="planned.length && featured.length" class="project-planned-heading">计划中的项目</h2>
+      <div v-if="planned.length" class="project-catalog-grid">
+        <article v-for="project in planned" :key="project.path" class="article-card">
+          <p class="catalog-kicker">{{ project.label }}</p>
+          <h2><a :href="withBase(project.path)">{{ project.title }}</a></h2><p>{{ project.summary }}</p>
+          <div class="project-display-links"><a v-if="project.project?.showcase" :href="withBase(project.project.showcase)">产品展示 <ArrowUpRight aria-hidden="true" /></a><a :href="withBase(project.path)">项目记录</a></div>
+        </article>
+      </div>
+      <div v-if="!projects.length" class="catalog-empty"><h2>还没有发布项目记录</h2><p>真实的作品与构建过程，将在这里陆续记录。</p></div>
     </section>
   </main>
 </template>

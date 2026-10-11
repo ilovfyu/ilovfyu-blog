@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { fromMarkdown } from 'mdast-util-from-markdown'
 import { gfm } from 'micromark-extension-gfm'
 import { gfmFromMarkdown } from 'mdast-util-gfm'
+import { projectMetadata } from './project-metadata.mjs'
 
 export const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const managedPath = path => /^(?:docs\/(?:posts|notes|projects)\/siyuan\/\d{14}-[a-z0-9]{7}\.md|docs\/\.vuepress\/public\/siyuan\/[a-f0-9]{64}(?:\.[a-z0-9]+)?|\.siyuan\/manifest\.json)$/.test(path)
@@ -63,7 +64,7 @@ function decodeAttributes(attrs) {
   return Object.fromEntries(Object.entries(attrs || {}).map(([key, value]) => [key, String(value).replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')]))
 }
 
-function frontmatter(doc, attrs, section, body, permalink) {
+function frontmatter(doc, attrs, section, body, permalink, project) {
   const title = attrs['custom-blog-title'] || doc.content || doc.hpath.split('/').pop()
   const date = attrs['custom-blog-date'] || `${doc.id.slice(0, 4)}-${doc.id.slice(4, 6)}-${doc.id.slice(6, 8)}`
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) throw new Error(`${doc.id} 的 custom-blog-date 须为有效的 YYYY-MM-DD。`)
@@ -76,8 +77,11 @@ function frontmatter(doc, attrs, section, body, permalink) {
     category: attrs['custom-blog-category'] || section.category || 'engineering',
     tags: (attrs['custom-blog-tags'] || '').split(/[,，]/).map(tag => tag.trim()).filter(Boolean),
     ...(section.collection === 'notes' ? { series: attrs['custom-blog-series'] || section.series || '知识笔记', group: attrs['custom-blog-group'] || '' } : {}),
+    ...(attrs['custom-blog-index'] === 'false' ? { index: false } : {}),
+    ...(project ? { project, ...(project.view === 'showcase' ? { pageLayout: 'home', config: [{ type: 'custom' }], comments: false, index: false } : { pageClass: 'project-record-page' }) } : {}),
   }
-  return `---\n${Object.entries(data).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n\n${body.trim()}\n`
+  const rendered = project?.view === 'showcase' ? '<project-showcase />' : project ? `<project-record-hero />\n\n${body.trim()}` : body.trim()
+  return `---\n${Object.entries(data).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n\n${rendered}\n`
 }
 
 function exportedBody(content, doc) {
@@ -172,7 +176,9 @@ async function performSync({ root, config, client, dryRun }) {
   }
   const selected = []
   for (const candidate of candidates.filter(({ doc }) => !draftPaths.some(path => under(doc.hpath, path)))) {
-    const exported = await client.request('/api/export/exportMdContent', { id: candidate.doc.id })
+    // Export block references as links, regardless of the user's desktop export settings.
+    // Footnote mode otherwise embeds entire referenced documents in every article.
+    const exported = await client.request('/api/export/exportMdContent', { id: candidate.doc.id, refMode: 2, yfm: false })
     if (typeof exported?.content !== 'string') throw new Error(`文档 ${candidate.doc.id} 导出失败。`)
     const body = exportedBody(exported.content, candidate.doc)
     if (body) selected.push({ ...candidate, body })
@@ -213,7 +219,8 @@ async function performSync({ root, config, client, dryRun }) {
       return url
     })
     const path = `docs/${section.collection}/siyuan/${doc.id}.md`
-    files.set(path, Buffer.from(frontmatter(doc, attrs, section, content, routes.get(doc.id))))
+    const project = section.collection === 'projects' ? projectMetadata(attrs, content, id => routes.get(id)) : null
+    files.set(path, Buffer.from(frontmatter(doc, attrs, section, content, routes.get(doc.id), project)))
     documents.push({ id: doc.id, path, title: attrs['custom-blog-title'] || doc.content, route: routes.get(doc.id) })
   }
   const manifestPath = '.siyuan/manifest.json'

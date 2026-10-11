@@ -20,15 +20,16 @@ async function writeCatalog(app: App) {
       summary: typeof fm.description === 'string' ? fm.description : typeof fm.summary === 'string' ? fm.summary : '',
       date,
       category,
-      label: typeof fm.label === 'string' ? fm.label : categoryLabels[category],
+      label: typeof fm.label === 'string' ? fm.label : (fm.project as { label?: string })?.label || categoryLabels[category],
       tags: Array.isArray(fm.tags) ? fm.tags.filter((tag): tag is string => typeof tag === 'string') : [],
       series: typeof fm.series === 'string' ? fm.series : '未分类',
       group: typeof fm.group === 'string' ? fm.group : '',
+      project: fm.project || null,
     }
     catalogs[collection === 'posts' ? 'notes' : collection === 'notes' ? 'knowledge' : 'projects'].push(entry)
   }
   for (const entries of Object.values(catalogs)) {
-    (entries as { date: string; title: string }[]).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title, 'zh-CN'))
+    (entries as { date: string; title: string; project?: { order: number } }[]).sort((a, b) => (a.project?.order ?? 99) - (b.project?.order ?? 99) || b.date.localeCompare(a.date) || a.title.localeCompare(b.title, 'zh-CN'))
   }
   await app.writeTemp('blog-content.js', Object.entries(catalogs).map(([key, entries]) => `export const ${key} = ${JSON.stringify(entries)};`).join('\n'))
 }

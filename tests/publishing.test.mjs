@@ -36,7 +36,10 @@ async function fixture(t, docs = []) {
     }
     const doc = state.docs.find(item => item.id === data.id)
     if (request.url === '/api/attr/getBlockAttrs') return send(doc.attrs)
-    if (request.url === '/api/export/exportMdContent') return send(state.brokenExport ? null : { content: doc.body, hPath: doc.hpath })
+    if (request.url === '/api/export/exportMdContent') {
+      state.exportOptions = data
+      return send(state.brokenExport ? null : { content: doc.body, hPath: doc.hpath })
+    }
     response.statusCode = 404; response.end('{}')
   })
   await new Promise(resolveListen => server.listen(0, '127.0.0.1', resolveListen))
@@ -68,6 +71,8 @@ test('HTTP export produces stable article routes, metadata, shared images and pu
   ])
   const result = await sync(options)
   assert.equal(result.documents.length, 2)
+  assert.equal(state.exportOptions.refMode, 2)
+  assert.equal(state.exportOptions.yfm, false)
   const firstFile = `docs/posts/siyuan/${first}.md`
   const content = await readFile(resolve(root, firstFile), 'utf8')
   assert.match(content, /title: "A & B"/)
@@ -103,6 +108,27 @@ test('real desktop export metadata and duplicate title are removed; empty new do
   assert.equal((content.match(/^---$/gm) || []).length, 2)
   assert.equal(content.includes('# 文章'), false)
   assert.match(content, /description: "正文内容"/)
+})
+
+test('SiYuan project tables select a real showcase template and resolve record links, without duplicating catalog entries', async t => {
+  const { root, options, state } = await fixture(t, [
+    document(first, '/项目/墨影', '项目定位与系统流水线。', { 'custom-blog-project-code': 'moyin', 'custom-blog-project-showcase': second }),
+    document(second, '/项目/墨影/产品展示', '## 展示标题\n\n把一本书，\n\n讲成一门课\n\n## 简介\n\n课程生成工作流。\n\n## 核心能力\n\n| 图标 | 能力 | 说明 | 标识 |\n| --- | --- | --- | --- |\n| ✦ | 教学设计 | 讲稿与分镜 | LLM |', { 'custom-blog-project-code': 'moyin', 'custom-blog-project-view': 'showcase', 'custom-blog-project-record': first }),
+  ])
+  await sync(options)
+  const showcase = await readFile(resolve(root, `docs/projects/siyuan/${second}.md`), 'utf8')
+  assert.match(showcase, /pageLayout: "home"/)
+  assert.match(showcase, /config: \[{"type":"custom"}\]/)
+  assert.match(showcase, /index: false/)
+  assert.match(showcase, /<project-showcase \/>/)
+  assert.match(showcase, /"headline":\["把一本书，","讲成一门课"\]/)
+  assert.match(showcase, /"title":"教学设计"/)
+  assert.match(showcase, new RegExp(`"record":"/projects/${first}/"`))
+  const record = await readFile(resolve(root, `docs/projects/siyuan/${first}.md`), 'utf8')
+  assert.match(record, /<project-record-hero \/>/)
+  state.docs[1].attrs['custom-blog-project-record'] = '20261012000000-xxxxxxx'
+  await assert.rejects(sync(options), /引用未发布文档/)
+  assert.equal(await readFile(resolve(root, `docs/projects/siyuan/${second}.md`), 'utf8'), showcase)
 })
 
 test('a concurrent publication prevents synchronization from changing the built content', async t => {
@@ -243,4 +269,12 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   assert.ok(html.includes(`href="/ilovfyu-blog/notes/${second}/"`))
   assert.ok(html.includes(`https://ilovfyu.github.io/ilovfyu-blog/posts/${first}/`))
   assert.equal(html.includes('siyuan://'), false)
+  const manifest = JSON.parse(await readFile(resolve(projectRoot, '.siyuan/manifest.json'), 'utf8'))
+  for (const doc of manifest.documents.filter(doc => doc.path.includes('/projects/'))) {
+    const source = await readFile(resolve(projectRoot, doc.path), 'utf8')
+    if (!source.includes('<project-showcase />')) continue
+    const productHtml = await readFile(resolve(root, `docs/.vuepress/dist${doc.route}index.html`), 'utf8')
+    assert.match(productHtml, /class="project-showcase"/, doc.title)
+    assert.doesNotMatch(productHtml, /<h1[^>]*>Theme Plume<\/h1>/, doc.title)
+  }
 })

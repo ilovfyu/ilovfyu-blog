@@ -22,7 +22,7 @@ npm run docs:dev -- --port 8092 --clean-temp --clean-cache
 
 ## 内容目录
 
-旧文章与 mock 内容已清理。目前仅有从思源同步的「博客发布流程演示」，方便体验实际发布流程。可以继续在思源里写作后同步，也可以直接使用 Markdown：
+旧文章与 mock 内容已清理。已按需从思源恢复 14 个项目、7 个产品展示、2 篇设计文档，并加入知识库使用手册演示。可以继续在思源里写作后同步，也可以直接使用 Markdown：
 
 | 类型 | 文件位置 | 展示入口 |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ tags: [工程实践]
 
 ## 思源写作与发布
 
-已通过思源本机 API 绑定现有笔记本，标题、日期和摘要自动生成，图片与附件一起同步。完整配置和发布步骤见 [SIYUAN-PUBLISHING.md](./SIYUAN-PUBLISHING.md)。
+已通过思源本机 API 绑定现有笔记本，标题、日期和摘要自动生成，图片与附件一起同步。完整配置和发布步骤见 [SIYUAN-PUBLISHING.md](./SIYUAN-PUBLISHING.md)，项目恢复清单与知识库编辑说明见 [SIYUAN-PROJECTS.md](./SIYUAN-PROJECTS.md)。
 
 ```bash
 npm run blog:doctor                 # 检查本机思源与笔记本

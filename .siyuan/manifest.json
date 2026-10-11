@@ -7,9 +7,198 @@
       "path": "docs/posts/siyuan/20261012014354-eo3fzz7.md",
       "title": "博客发布流程演示",
       "route": "/posts/20261012014354-eo3fzz7/"
+    },
+    {
+      "id": "20261012015817-1v5swr7",
+      "path": "docs/projects/siyuan/20261012015817-1v5swr7.md",
+      "title": "项目总览",
+      "route": "/projects/20261012015817-1v5swr7/"
+    },
+    {
+      "id": "20261012015818-c0wqxhs",
+      "path": "docs/projects/siyuan/20261012015818-c0wqxhs.md",
+      "title": "AIRec",
+      "route": "/projects/20261012015818-c0wqxhs/"
+    },
+    {
+      "id": "20261012015819-3osv6ek",
+      "path": "docs/projects/siyuan/20261012015819-3osv6ek.md",
+      "title": "标注工具平台",
+      "route": "/projects/20261012015819-3osv6ek/"
+    },
+    {
+      "id": "20261012015820-0gg27yz",
+      "path": "docs/projects/siyuan/20261012015820-0gg27yz.md",
+      "title": "模型微调训练",
+      "route": "/projects/20261012015820-0gg27yz/"
+    },
+    {
+      "id": "20261012015820-reo2emp",
+      "path": "docs/projects/siyuan/20261012015820-reo2emp.md",
+      "title": "具身智能",
+      "route": "/projects/20261012015820-reo2emp/"
+    },
+    {
+      "id": "20261012015821-9p3tnvg",
+      "path": "docs/projects/siyuan/20261012015821-9p3tnvg.md",
+      "title": "墨影",
+      "route": "/projects/20261012015821-9p3tnvg/"
+    },
+    {
+      "id": "20261012015821-jzncqz7",
+      "path": "docs/projects/siyuan/20261012015821-jzncqz7.md",
+      "title": "知识问答工作流",
+      "route": "/projects/20261012015821-jzncqz7/"
+    },
+    {
+      "id": "20261012015821-wbtapd5",
+      "path": "docs/projects/siyuan/20261012015821-wbtapd5.md",
+      "title": "多 Agent 管理平台",
+      "route": "/projects/20261012015821-wbtapd5/"
+    },
+    {
+      "id": "20261012015822-5qrrote",
+      "path": "docs/projects/siyuan/20261012015822-5qrrote.md",
+      "title": "中转站",
+      "route": "/projects/20261012015822-5qrrote/"
+    },
+    {
+      "id": "20261012015822-yy8ulzm",
+      "path": "docs/projects/siyuan/20261012015822-yy8ulzm.md",
+      "title": "RAG 知识库",
+      "route": "/projects/20261012015822-yy8ulzm/"
+    },
+    {
+      "id": "20261012015823-ayjnw2i",
+      "path": "docs/projects/siyuan/20261012015823-ayjnw2i.md",
+      "title": "虾壳",
+      "route": "/projects/20261012015823-ayjnw2i/"
+    },
+    {
+      "id": "20261012015823-jg6kbfq",
+      "path": "docs/projects/siyuan/20261012015823-jg6kbfq.md",
+      "title": "SRE 智能运维平台",
+      "route": "/projects/20261012015823-jg6kbfq/"
+    },
+    {
+      "id": "20261012015823-x5kyp11",
+      "path": "docs/projects/siyuan/20261012015823-x5kyp11.md",
+      "title": "模型客流量去重",
+      "route": "/projects/20261012015823-x5kyp11/"
+    },
+    {
+      "id": "20261012015824-0jxktu6",
+      "path": "docs/projects/siyuan/20261012015824-0jxktu6.md",
+      "title": "教学视频板书实现方案",
+      "route": "/projects/20261012015824-0jxktu6/"
+    },
+    {
+      "id": "20261012015824-5gfhvr3",
+      "path": "docs/projects/siyuan/20261012015824-5gfhvr3.md",
+      "title": "弈机",
+      "route": "/projects/20261012015824-5gfhvr3/"
+    },
+    {
+      "id": "20261012015824-e453njb",
+      "path": "docs/projects/siyuan/20261012015824-e453njb.md",
+      "title": "愈语",
+      "route": "/projects/20261012015824-e453njb/"
+    },
+    {
+      "id": "20261012015825-1svwixq",
+      "path": "docs/projects/siyuan/20261012015825-1svwixq.md",
+      "title": "墨影 · 产品展示",
+      "route": "/projects/20261012015825-1svwixq/"
+    },
+    {
+      "id": "20261012015825-nt5xkwm",
+      "path": "docs/projects/siyuan/20261012015825-nt5xkwm.md",
+      "title": "基于 Obsidian 的多模态教学视频生成方案",
+      "route": "/projects/20261012015825-nt5xkwm/"
+    },
+    {
+      "id": "20261012015825-v1dk33g",
+      "path": "docs/projects/siyuan/20261012015825-v1dk33g.md",
+      "title": "虾壳 · 产品展示",
+      "route": "/projects/20261012015825-v1dk33g/"
+    },
+    {
+      "id": "20261012015826-o15oo2o",
+      "path": "docs/projects/siyuan/20261012015826-o15oo2o.md",
+      "title": "弈机 · 产品展示",
+      "route": "/projects/20261012015826-o15oo2o/"
+    },
+    {
+      "id": "20261012015826-z7tunv2",
+      "path": "docs/projects/siyuan/20261012015826-z7tunv2.md",
+      "title": "愈语 · 产品展示",
+      "route": "/projects/20261012015826-z7tunv2/"
+    },
+    {
+      "id": "20261012020110-1qune8h",
+      "path": "docs/projects/siyuan/20261012020110-1qune8h.md",
+      "title": "标注工具平台 · 产品展示",
+      "route": "/projects/20261012020110-1qune8h/"
+    },
+    {
+      "id": "20261012020110-bpeor4a",
+      "path": "docs/projects/siyuan/20261012020110-bpeor4a.md",
+      "title": "中转站 · 产品展示",
+      "route": "/projects/20261012020110-bpeor4a/"
+    },
+    {
+      "id": "20261012020110-swalusw",
+      "path": "docs/projects/siyuan/20261012020110-swalusw.md",
+      "title": "SRE 智能运维平台 · 产品展示",
+      "route": "/projects/20261012020110-swalusw/"
+    },
+    {
+      "id": "20261012020836-7jlsg0x",
+      "path": "docs/notes/siyuan/20261012020836-7jlsg0x.md",
+      "title": "03 · 一键发布与部署",
+      "route": "/notes/20261012020836-7jlsg0x/"
+    },
+    {
+      "id": "20261012020836-7my80n4",
+      "path": "docs/notes/siyuan/20261012020836-7my80n4.md",
+      "title": "02 · 项目展示配置",
+      "route": "/notes/20261012020836-7my80n4/"
+    },
+    {
+      "id": "20261012020836-sjietk8",
+      "path": "docs/notes/siyuan/20261012020836-sjietk8.md",
+      "title": "01 · 写作与内容组织",
+      "route": "/notes/20261012020836-sjietk8/"
     }
   ],
   "files": {
-    "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a"
+    "docs/notes/siyuan/20261012020836-7jlsg0x.md": "1c0b5f03fef75ebfa952c864ef97b28ca863e917ef5aea7f644c7dfe496eaa1b",
+    "docs/notes/siyuan/20261012020836-7my80n4.md": "4f106acdd9710a4bff968f749797703b0fcc3e4c1b253503331fbfdd98c743fd",
+    "docs/notes/siyuan/20261012020836-sjietk8.md": "f259f0ae82031515457a9a8a1d8edf6291a2dc073e78661a3a593e88f3f7d7e2",
+    "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
+    "docs/projects/siyuan/20261012015817-1v5swr7.md": "ecf909844cfa30519a9966aa4925a57000a45cb7c66be629d32dec7c1eb35156",
+    "docs/projects/siyuan/20261012015818-c0wqxhs.md": "96346ce9c8b0039bc0983baf6b1868b5720100e68d0e2300d72984521d6ce725",
+    "docs/projects/siyuan/20261012015819-3osv6ek.md": "3deddcee91ea050f660f5e376c387ba42582ee335bc35a63788e1308618ee6a2",
+    "docs/projects/siyuan/20261012015820-0gg27yz.md": "8a2ed5298b5a7d7400634f184e4f94926fb28903cb2673ee2f5e2bacc574186c",
+    "docs/projects/siyuan/20261012015820-reo2emp.md": "2bb499bd027c2346afe06c22c5b1d4df1cc56fad189c14a3bfea7cc7c49dc12a",
+    "docs/projects/siyuan/20261012015821-9p3tnvg.md": "d36b8d68e260b2f81cebea82633c418c2d995808e1bd3b204fae414f46d5f7c7",
+    "docs/projects/siyuan/20261012015821-jzncqz7.md": "7257c88efb87c60bbe08865c45b143c91b8326ea8e6618f99934f727431c87ed",
+    "docs/projects/siyuan/20261012015821-wbtapd5.md": "dbf530247e200bfcc161dc5ac0ff690652a2b05114730eeade70b67d32d4e524",
+    "docs/projects/siyuan/20261012015822-5qrrote.md": "f219cb8b45a1dcee5da4d770778f2a9c5a9141e17cf936923c11e4d673e5893a",
+    "docs/projects/siyuan/20261012015822-yy8ulzm.md": "e5e51721e96873752b77629592cea71e3f6240ef9cd6d3ebab52a0fcf97189d5",
+    "docs/projects/siyuan/20261012015823-ayjnw2i.md": "4dd842800829bb4b7b549486e1b15281759d6f608d2400bb40d514b971501933",
+    "docs/projects/siyuan/20261012015823-jg6kbfq.md": "7805c4ef208b76ec2c55db396f79e75cce6607f404bf10a13c65eca3a8745c35",
+    "docs/projects/siyuan/20261012015823-x5kyp11.md": "2da19427af770dba34c2326c7fe2cea16bfeecf4f459581276630865ece63b0d",
+    "docs/projects/siyuan/20261012015824-0jxktu6.md": "2d2a10dfaf99f81eb62dde07b35518d7bc3efc019cff1d931010546fac3c7534",
+    "docs/projects/siyuan/20261012015824-5gfhvr3.md": "964304cfb5a526b18bd21427579de2846be0e805fc79912eb4b14934c7d51419",
+    "docs/projects/siyuan/20261012015824-e453njb.md": "75d3748d211f29fe01910ee043b5bfd3290b65063c8fa4f08eba9a40e30e0232",
+    "docs/projects/siyuan/20261012015825-1svwixq.md": "abd9a534e301db9ae6ab38f7c10188dfa91b6f44ea75379a489dfccbbb1f1b59",
+    "docs/projects/siyuan/20261012015825-nt5xkwm.md": "d0a25286623330c6fbb854e789d9596d741fb54a844760a49ee2c3d174fbacec",
+    "docs/projects/siyuan/20261012015825-v1dk33g.md": "0f215fbd61a6ba52f2e646bb281823f98bd27c05d58ae3c9d71808c39b0ae0f1",
+    "docs/projects/siyuan/20261012015826-o15oo2o.md": "97abbf76693e9f63e642fd02665b65e7b0d2392a9bbbddd5c64b78846d5e1433",
+    "docs/projects/siyuan/20261012015826-z7tunv2.md": "c2d5312715e71a38764c6edddcce9110a1a5ae0d452e33af7fda20ba3e69063a",
+    "docs/projects/siyuan/20261012020110-1qune8h.md": "e30b984df1dd05de39a77e90757ceafc569a5dcce702ff0a9187b93e44f89526",
+    "docs/projects/siyuan/20261012020110-bpeor4a.md": "50103b10eef8cd42025c4227b308082487ddf3200cd553292bc2a658cb84db85",
+    "docs/projects/siyuan/20261012020110-swalusw.md": "823e8f2ab17bb4d4998b2263562e26f1dfb21253614ad87064cb172c8b444fec"
   }
 }

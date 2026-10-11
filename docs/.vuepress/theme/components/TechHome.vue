@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vuepress/client'
 import SignalScene from './SignalScene.vue'
+import ProjectCard from './ProjectCard.vue'
 
 import { notes, knowledge, projects } from '../data/content'
 
@@ -140,10 +141,7 @@ onBeforeUnmount(() => {
     <section v-if="featuredProjects.length" class="home-project-section section">
       <header class="section-head reveal"><h2>正在构建</h2><p class="sub">记录真实的作品与构建过程。</p></header>
       <div class="home-project-grid">
-        <a v-for="project in featuredProjects" :key="project.path" class="home-project-card reveal" :href="withBase(project.path)">
-          <div class="home-project-card-top"><span>{{ project.label }}</span></div>
-          <div class="home-project-card-copy"><h3>{{ project.title }}</h3><p>{{ project.summary }}</p><b aria-hidden="true">↗</b></div>
-        </a>
+        <div v-for="project in featuredProjects" :key="project.path" class="reveal"><ProjectCard :entry="project" /></div>
       </div>
       <a class="home-project-all" :href="withBase('/projects/')">查看全部项目 <b aria-hidden="true">↗</b></a>
     </section>
