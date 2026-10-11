@@ -9,6 +9,7 @@ let raf = 0
 let removeGuard: (() => void) | null = null
 
 function play() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   active.value = false
   window.clearTimeout(timer)
   window.cancelAnimationFrame(raf)

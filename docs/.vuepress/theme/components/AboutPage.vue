@@ -6,7 +6,6 @@ import {
   Braces,
   Check,
   CircleDot,
-  Clock,
   CodeXml,
   Copy,
   GitFork,
@@ -16,6 +15,7 @@ import {
   Wrench,
 } from '@lucide/vue'
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { notes } from '../data/content'
 import { withBase } from 'vuepress/client'
 
 const workingNotes = [
@@ -32,56 +32,19 @@ const hobbies = [
 ]
 
 const collections = [
-  { title: '日常工作台', items: ['Obsidian', 'VS Code', 'Raycast', 'GitHub'] },
+  { title: '日常工作台', items: ['VS Code', 'Raycast', 'GitHub'] },
   { title: '长期阅读', items: ['Hacker News', '少数派', 'The Pragmatic Engineer', 'GitHub Trending'] },
   { title: '偏爱的内容', items: ['工程复盘', '独立产品日志', '长篇访谈', '城市观察'] },
 ]
 
-const recentNotes = [
-  {
-    code: 'BUILDING',
-    title: '把想法变成现实的 7 个夜晚',
-    summary: '一次从原型、取舍到发布的独立构建记录。',
-    path: '/posts/seven-nights/',
-  },
-  {
-    code: 'THINKING',
-    title: '当屏幕消失之后，我们还剩下什么？',
-    summary: '关于界面、注意力，以及技术退到环境之后人的主动选择。',
-    path: '/posts/screenless-era/',
-  },
-  {
-    code: 'LIFE',
-    title: '在城市边缘，寻找一点留白',
-    summary: '暂时离开通知和信息流，让注意力重新恢复完整。',
-    path: '/posts/edge-of-city/',
-  },
-]
+const recentNotes = notes.slice(0, 3)
 
 const sections = [
   { id: 'story', index: '01', label: '简介' },
   { id: 'hobbies', index: '02', label: '兴趣' },
   { id: 'collections', index: '03', label: '收藏' },
-  { id: 'reading', index: '04', label: '文章' },
-  { id: 'contact', index: '05', label: '联系' },
-]
-
-const stats = [
-  { value: 9, suffix: '', label: '随笔文章', hint: 'posts' },
-  { value: 20, suffix: '', label: '独立项目', hint: 'projects' },
-  { value: 340, suffix: '', label: '知识库笔记', hint: 'notes' },
-  { value: 4, suffix: '', label: '知识专题', hint: 'tracks' },
-]
-
-const marqueeItems = [
-  'AI 系统',
-  '前端体验',
-  '工程架构',
-  '技术写作',
-  '独立构建',
-  '产品思考',
-  '阅读摘录',
-  '城市观察',
+  ...(recentNotes.length ? [{ id: 'reading', index: '04', label: '文章' }] : []),
+  { id: 'contact', index: recentNotes.length ? '05' : '04', label: '联系' },
 ]
 
 const roles = [
@@ -93,32 +56,27 @@ const roles = [
 
 const scrollPct = ref(0)
 const activeSection = ref('story')
-const navVisible = ref(false)
-const roleText = ref(roles[0] ?? '')
-const localTime = ref('')
-const statsValues = ref(stats.map(() => 0))
 const copied = ref(false)
+const roleText = ref(roles[0])
 
 let scrollRaf = 0
 let navStickyOffset = 120
-let revealObserver: IntersectionObserver | null = null
-let statsObserver: IntersectionObserver | null = null
-let clockTimer: number | undefined
-let roleTimer: number | undefined
 let copyTimer: number | undefined
+let roleTimer: number | undefined
+let revealObserver: IntersectionObserver | null = null
+let roleIndex = 0
+let rolePhase: 'typing' | 'pausing' | 'deleting' = 'pausing'
 
 const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function computeStickyOffset() {
   const themeNavHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vp-nav-height')) || 64
   const isDesktop = window.matchMedia('(min-width: 960px)').matches
-  navStickyOffset = (isDesktop ? themeNavHeight : 0) + 60
+  const localNavHeight = document.querySelector('.profile-local-nav')?.getBoundingClientRect().height || 52
+  navStickyOffset = (isDesktop ? themeNavHeight : 0) + localNavHeight + 84
 }
 
 function computeActiveSection() {
-  const firstBand = document.getElementById('story')
-  navVisible.value = firstBand ? firstBand.getBoundingClientRect().top <= navStickyOffset + 4 : false
-
   let current = sections[0].id
   for (const section of sections) {
     const el = document.getElementById(section.id)
@@ -148,62 +106,31 @@ function scrollToSection(id: string) {
   el.scrollIntoView({ behavior, block: 'start' })
 }
 
-/* 打字机角色标题 */
-const roleIndex = ref(0)
-const rolePhase = ref<'typing' | 'pausing' | 'deleting'>('typing')
-
 function typeRole() {
-  const full = roles[roleIndex.value] ?? roles[0]
-  const current = roleText.value
-  if (rolePhase.value === 'typing') {
-    if (current.length < full.length) {
-      roleText.value = full.slice(0, current.length + 1)
-      roleTimer = window.setTimeout(typeRole, 58)
-    }
-    else {
-      rolePhase.value = 'pausing'
-      roleTimer = window.setTimeout(typeRole, 2100)
-    }
-  }
-  else if (rolePhase.value === 'pausing') {
-    rolePhase.value = 'deleting'
+  const full = roles[roleIndex]
+  if (rolePhase === 'pausing') {
+    rolePhase = 'deleting'
     roleTimer = window.setTimeout(typeRole, 60)
   }
-  else {
-    if (current.length > 0) {
-      roleText.value = current.slice(0, -1)
+  else if (rolePhase === 'deleting') {
+    if (roleText.value.length > 0) {
+      roleText.value = roleText.value.slice(0, -1)
       roleTimer = window.setTimeout(typeRole, 26)
     }
     else {
-      rolePhase.value = 'typing'
-      roleIndex.value = (roleIndex.value + 1) % roles.length
+      roleIndex = (roleIndex + 1) % roles.length
+      rolePhase = 'typing'
       roleTimer = window.setTimeout(typeRole, 380)
     }
   }
-}
-
-/* 实时时钟 */
-function updateClock() {
-  localTime.value = new Intl.DateTimeFormat('zh-CN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Shanghai',
-  }).format(new Date())
-}
-
-/* 数据统计数字滚动 */
-function animateStats() {
-  const duration = 1400
-  const start = performance.now()
-  function tick(now: number) {
-    const t = Math.min(1, (now - start) / duration)
-    const eased = 1 - (1 - t) ** 3
-    statsValues.value = stats.map(s => Math.round(s.value * eased))
-    if (t < 1) requestAnimationFrame(tick)
+  else if (roleText.value.length < full.length) {
+    roleText.value = full.slice(0, roleText.value.length + 1)
+    roleTimer = window.setTimeout(typeRole, 58)
   }
-  requestAnimationFrame(tick)
+  else {
+    rolePhase = 'pausing'
+    roleTimer = window.setTimeout(typeRole, 2100)
+  }
 }
 
 /* 卡片鼠标聚光灯 */
@@ -214,7 +141,6 @@ function onCardMove(e: MouseEvent) {
   el.style.setProperty('--my', `${e.clientY - rect.top}px`)
 }
 
-/* 头像 3D 倾斜 */
 function onPortraitMove(e: MouseEvent) {
   if (reducedMotion) return
   const el = e.currentTarget as HTMLElement
@@ -250,44 +176,26 @@ onMounted(() => {
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', computeStickyOffset, { passive: true })
-
-  if (reducedMotion) {
-    roleText.value = roles[0]
-  }
-  else {
-    roleText.value = ''
-    roleTimer = window.setTimeout(typeRole, 350)
-  }
-
-  updateClock()
-  clockTimer = window.setInterval(updateClock, 1000)
-
-  nextTick(() => {
-    revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return
-        entry.target.classList.add('in')
-        revealObserver?.unobserve(entry.target)
-      })
-    }, { threshold: 0.1 })
-    document.querySelectorAll('.profile-reveal').forEach((element) => {
-      const rect = element.getBoundingClientRect()
-      if (rect.top < innerHeight * 1.15) element.classList.add('in')
-      else revealObserver?.observe(element)
-    })
-
-    const statsEl = document.getElementById('stats')
-    if (statsEl) {
-      statsObserver = new IntersectionObserver((entries) => {
+  if (!reducedMotion) {
+    roleTimer = window.setTimeout(typeRole, 2100)
+    nextTick(() => {
+      const page = document.querySelector('.profile-page')
+      if (!page || typeof IntersectionObserver === 'undefined') return
+      revealObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return
-          animateStats()
-          statsObserver?.disconnect()
+          entry.target.classList.add('in')
+          revealObserver?.unobserve(entry.target)
         })
-      }, { threshold: 0.3 })
-      statsObserver.observe(statsEl)
-    }
-  })
+      }, { threshold: 0.08 })
+      page.querySelectorAll('.profile-reveal').forEach((element) => {
+        const rect = element.getBoundingClientRect()
+        if (rect.top < innerHeight * 0.95) element.classList.add('in')
+        else revealObserver?.observe(element)
+      })
+      page.classList.add('motion-ready')
+    })
+  }
 })
 
 onBeforeUnmount(() => {
@@ -295,11 +203,9 @@ onBeforeUnmount(() => {
   cancelAnimationFrame(scrollRaf)
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('resize', computeStickyOffset)
-  revealObserver?.disconnect()
-  statsObserver?.disconnect()
-  if (clockTimer) window.clearInterval(clockTimer)
-  if (roleTimer) window.clearTimeout(roleTimer)
   if (copyTimer) window.clearTimeout(copyTimer)
+  if (roleTimer) window.clearTimeout(roleTimer)
+  revealObserver?.disconnect()
 })
 </script>
 
@@ -313,17 +219,9 @@ onBeforeUnmount(() => {
         <div class="profile-intro profile-reveal">
           <p class="profile-kicker"><CircleDot /> 关于博主</p>
           <h1>ILOVFYU</h1>
-          <p class="profile-role">
-            <span class="profile-role-text">{{ roleText }}</span><span class="profile-role-caret" aria-hidden="true" />
-          </p>
+          <p class="profile-role"><span class="profile-role-text">{{ roleText }}</span><span class="profile-role-caret" aria-hidden="true" /></p>
           <p class="profile-lead">我在深圳做软件，关注 AI 系统、前端体验与工程架构。这里记录工作中真正遇到的问题，也收留阅读、产品和日常生活带来的想法。</p>
-          <div class="profile-actions">
-            <a :href="withBase('/posts/')"><BookOpen /> 阅读文章 <ArrowUpRight /></a>
-            <a href="mailto:hello@ilovfyu.dev"><Mail /> 和我联系</a>
-            <button type="button" :class="{ copied }" @click="copyEmail">
-              <component :is="copied ? Check : Copy" /> {{ copied ? '已复制邮箱' : '复制邮箱' }}
-            </button>
-          </div>
+          <div class="profile-actions"><a href="#contact"><Mail /> 联系我 <ArrowUpRight /></a></div>
           <div class="profile-identity-line">
             <span><MapPin /> 深圳</span>
             <span><TerminalSquare /> 软件工程</span>
@@ -341,41 +239,17 @@ onBeforeUnmount(() => {
         </figure>
       </div>
 
-      <div class="profile-statusbar" aria-label="当前状态">
-        <div class="profile-statusbar-left">
-          <span class="profile-status-pill"><i /> 开放交流</span>
-          <span class="profile-status-clock"><Clock /> {{ localTime }} · UTC+8</span>
-        </div>
-        <span class="profile-statusbar-note">CODE · SYSTEMS · AI · NOTES</span>
-      </div>
-
-      <button class="profile-scroll" type="button" aria-label="继续了解博主" @click="scrollToSection('story')"><ArrowDown /></button>
+      <button class="profile-scroll" type="button" @click="scrollToSection('story')">继续了解 <ArrowDown /></button>
     </section>
 
-    <section id="stats" class="profile-stats">
-      <div class="profile-stats-inner">
-        <header class="profile-stats-head profile-reveal">
-          <p>数字一览</p>
-          <span>这里的一切，都在持续累积。</span>
-        </header>
-        <div class="profile-stats-grid">
-          <div v-for="(stat, i) in stats" :key="stat.label" class="profile-stat profile-reveal">
-            <strong><span>{{ statsValues[i] }}</span>{{ stat.suffix }}</strong>
-            <p>{{ stat.label }}</p>
-            <small>{{ stat.hint }}</small>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <nav class="profile-local-nav" :class="{ visible: navVisible }" aria-label="页面章节导航">
+    <nav class="profile-local-nav" aria-label="页面章节导航">
       <div>
         <button
           v-for="section in sections"
           :key="section.id"
           type="button"
           :class="{ active: activeSection === section.id }"
-          :aria-current="activeSection === section.id ? 'true' : undefined"
+          :aria-current="activeSection === section.id ? 'location' : undefined"
           @click="scrollToSection(section.id)"
         >
           <span>{{ section.index }}</span>
@@ -442,15 +316,15 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section id="reading" class="profile-reading profile-band">
+    <section v-if="recentNotes.length" id="reading" class="profile-reading profile-band">
       <header class="profile-section-head profile-reveal">
         <p>肆 · 文章</p>
-        <h2>最近写下的<br />几篇记录。</h2>
+        <h2>从这里开始，<br />读几篇文章。</h2>
       </header>
       <div class="profile-reading-list">
         <a v-for="(item, index) in recentNotes" :key="item.path" :href="withBase(item.path)" class="profile-reading-row profile-reveal">
           <span>{{ String(index + 1).padStart(2, '0') }}</span>
-          <div><small>{{ item.code }}</small><h3>{{ item.title }}</h3><p>{{ item.summary }}</p></div>
+          <div><small>{{ item.label }}</small><h3>{{ item.title }}</h3><p>{{ item.summary }}</p></div>
           <ArrowUpRight />
         </a>
       </div>
@@ -458,7 +332,7 @@ onBeforeUnmount(() => {
 
     <section id="contact" class="profile-contact profile-band">
       <div class="profile-contact-intro profile-reveal">
-        <p>伍 · 联系</p>
+        <p>{{ recentNotes.length ? '伍' : '肆' }} · 联系</p>
         <h2>欢迎来打个<br />招呼。</h2>
         <span>无论是技术讨论、项目反馈、文章勘误，还是恰好在思考相似的问题，都可以通过邮件或 GitHub 找到我。</span>
       </div>
@@ -466,6 +340,7 @@ onBeforeUnmount(() => {
         <a href="mailto:hello@ilovfyu.dev"><span><Mail /> EMAIL</span><strong>hello@ilovfyu.dev</strong><ArrowUpRight /></a>
         <a href="https://github.com/ilovfyu" target="_blank" rel="noopener noreferrer"><span><GitFork /> GITHUB</span><strong>github.com/ilovfyu</strong><ArrowUpRight /></a>
       </div>
+      <div class="profile-contact-copy profile-reveal"><button type="button" @click="copyEmail"><component :is="copied ? Check : Copy" /> {{ copied ? '已复制邮箱' : '复制邮箱地址' }}</button></div>
       <footer class="profile-footer">
         <span>ILOVFYU / DEVELOPER & WRITER</span>
         <span>CODE · SYSTEMS · BUILDING · NOTES</span>

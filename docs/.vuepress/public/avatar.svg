@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><rect width="240" height="240" fill="#191b1b"/><circle cx="120" cy="120" r="75" fill="#b8ef32"/><circle cx="120" cy="120" r="62" fill="none" stroke="#111314"/><text x="120" y="132" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#111314">FYU</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="ILOVFYU 字母头像">
+  <rect width="240" height="240" fill="#211b16"/>
+  <path d="M0 60h240M0 120h240M0 180h240M60 0v240M120 0v240M180 0v240" stroke="#af8b5f" stroke-opacity=".08"/>
+  <circle cx="120" cy="120" r="85" fill="#2b221a" stroke="#bd8b4e" stroke-width="1.5"/>
+  <circle cx="120" cy="120" r="74" fill="none" stroke="#bd8b4e" stroke-opacity=".35"/>
+  <path d="M120 42l5.5 18.5L144 66l-18.5 5.5L120 90l-5.5-18.5L96 66l18.5-5.5z" fill="#dba85c"/>
+  <text x="120" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="47" font-weight="700" letter-spacing="-2" fill="#f1e6d2">FYU</text>
+  <path d="M88 163h64" stroke="#bd8b4e" stroke-width="1.5"/>
+</svg>

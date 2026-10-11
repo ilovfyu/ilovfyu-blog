@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vuepress/client'
+import { usePageData, useRoute } from 'vuepress/client'
 
 const route = useRoute()
+const page = usePageData()
 const progressBar = ref<HTMLElement | null>(null)
-const isArticle = computed(() => /^\/posts\/[^/]+\/?$/.test(route.path) || /^\/specials\/math\/notes\//.test(route.path))
+const isArticle = computed(() => String(page.value.frontmatter.pageClass || '').split(/\s+/).includes('article-page'))
 
 let frame = 0
 

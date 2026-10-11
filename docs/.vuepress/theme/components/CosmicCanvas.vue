@@ -72,6 +72,7 @@ const paletteLight = {
 let palette = paletteDark
 let lightMode = false
 let themeObserver: MutationObserver | null = null
+let motionQuery: MediaQueryList | null = null
 
 function syncTheme() {
   lightMode = document.documentElement.dataset.theme === 'light'
@@ -143,7 +144,7 @@ function resize() {
     y: Math.random() * innerHeight,
     ch: CHARS[Math.floor(Math.random() * CHARS.length)],
     size: Math.random() * 15 + 9,
-    alpha: Math.random() * 0.1 + 0.025,
+    alpha: Math.random() * 0.14 + 0.045,
     vy: Math.random() * 0.16 + 0.035,
     depth: Math.random() * 0.75 + 0.25,
   }))
@@ -295,7 +296,7 @@ function drawPointerField() {
 
   for (let n = -4; n <= 4; n++) {
     const offset = n * 42
-    const alpha = 0.13 * (1 - Math.abs(n) / 6)
+    const alpha = 0.1 * (1 - Math.abs(n) / 6)
     ctx.strokeStyle = `rgba(${palette.packet},${alpha})`
     ctx.beginPath()
     ctx.moveTo(offset, -radius)
@@ -310,19 +311,19 @@ function drawPointerField() {
   }
   ctx.restore()
 
-  const glow = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 245)
-  glow.addColorStop(0, `rgba(${palette.packet},${lightMode ? 0.05 : 0.105})`)
-  glow.addColorStop(0.38, `rgba(${palette.violet},${lightMode ? 0.02 : 0.045})`)
+  const glow = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 230)
+  glow.addColorStop(0, `rgba(${palette.packet},${lightMode ? 0.04 : 0.085})`)
+  glow.addColorStop(0.38, `rgba(${palette.violet},${lightMode ? 0.015 : 0.04})`)
   glow.addColorStop(1, 'rgba(0,0,0,0)')
   ctx.fillStyle = glow
-  ctx.fillRect(pointer.x - 245, pointer.y - 245, 490, 490)
+  ctx.fillRect(pointer.x - 230, pointer.y - 230, 460, 460)
 
   const nearby: Star[] = []
   for (const star of stars) {
     const distance = Math.hypot(star.sx - pointer.x, star.sy - pointer.y)
-    if (distance < 165 && star.depth > 0.42 && nearby.length < 8) {
+    if (distance < 165 && star.depth > 0.42 && nearby.length < 9) {
       nearby.push(star)
-      ctx.strokeStyle = `rgba(${palette.packet},${(1 - distance / 165) * 0.22})`
+      ctx.strokeStyle = `rgba(${palette.packet},${(1 - distance / 165) * 0.24})`
       ctx.beginPath()
       ctx.moveTo(pointer.x, pointer.y)
       ctx.lineTo(star.sx, star.sy)
@@ -330,10 +331,20 @@ function drawPointerField() {
     }
   }
 
-  ctx.strokeStyle = `rgba(${palette.magenta},0.32)`
+  ctx.strokeStyle = `rgba(${palette.magenta},0.38)`
+  ctx.lineWidth = 1
+  ctx.shadowBlur = 8
+  ctx.shadowColor = `rgba(${palette.packet},0.45)`
+  ctx.beginPath()
+  ctx.arc(pointer.x, pointer.y, 16 + pointer.speed * 8, 0, Math.PI * 1.72)
+  ctx.stroke()
+  ctx.shadowBlur = 0
+
+  const pulse = 34 + (Math.sin(performance.now() / 330) + 1) * 9
+  ctx.strokeStyle = `rgba(${palette.packet},0.13)`
   ctx.lineWidth = 0.8
   ctx.beginPath()
-  ctx.arc(pointer.x, pointer.y, 10 + pointer.speed * 7, 0, Math.PI * 1.45)
+  ctx.arc(pointer.x, pointer.y, pulse, 0, Math.PI * 2)
   ctx.stroke()
 }
 
@@ -438,14 +449,25 @@ function render(timeMs: number, animate = true) {
     scroll += (scrollTarget - scroll) * 0.035
   }
 
+  if (animate && !lightMode && timeMs >= nextComet) {
+    spawnComet(w, h)
+    nextComet = timeMs + 4200 + Math.random() * 5200
+  }
+
   drawNebula(time, w, h)
   positionStars(animate ? delta : 0, w, h)
+  drawConstellations()
   drawStars(time)
+  drawGlyphs(animate ? delta : 0, w, h)
+  drawDataPackets(animate ? delta : 0)
+  drawComets(animate ? delta : 0)
+  drawPointerField()
+  drawTrail(animate ? delta : 0)
 }
 
 function draw(time: number) {
   if (!running) return
-  const readingPage = route.path.startsWith('/posts/') || route.path.startsWith('/topics/') || route.path.startsWith('/specials/math/notes/')
+  const readingPage = route.path.startsWith('/posts/') || route.path.startsWith('/topics/') || route.path.startsWith('/notes/')
   const frameInterval = mobile || readingPage ? 1000 / 30 : 1000 / 60
   if (!lastPaint || time - lastPaint >= frameInterval) {
     render(time)
@@ -459,6 +481,7 @@ function start() {
   running = true
   lastFrame = 0
   lastPaint = 0
+  nextComet = performance.now() + 2800
   raf = requestAnimationFrame(draw)
 }
 
@@ -468,6 +491,7 @@ function stop() {
 }
 
 function onPointer(e: PointerEvent) {
+  if (reduced || lightMode || e.pointerType === 'touch') return
   if (!pointer.active) {
     pointer.x = e.clientX
     pointer.y = e.clientY
@@ -497,7 +521,18 @@ function onScroll() {
 
 function onResize() {
   resize()
-  if (reduced) render(0, false)
+  if (reduced && !lightMode) render(0, false)
+}
+
+function onMotionPreferenceChange() {
+  reduced = !!motionQuery?.matches
+  stop()
+  trail = []
+  pointer.active = false
+  if (!lightMode) {
+    if (reduced) render(0, false)
+    else start()
+  }
 }
 
 function onVisibility() {
@@ -506,7 +541,9 @@ function onVisibility() {
 }
 
 onMounted(() => {
-  reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  motionQuery = matchMedia('(prefers-reduced-motion: reduce)')
+  reduced = motionQuery.matches
+  motionQuery.addEventListener('change', onMotionPreferenceChange)
   scroll = scrollTarget = window.scrollY
   syncTheme()
   resize()
@@ -519,7 +556,7 @@ onMounted(() => {
   themeObserver = new MutationObserver(syncTheme)
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 
-  if (reduced) render(0, false)
+  if (reduced && !lightMode) render(0, false)
   else start()
 })
 
@@ -531,6 +568,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
   document.removeEventListener('visibilitychange', onVisibility)
   themeObserver?.disconnect()
+  motionQuery?.removeEventListener('change', onMotionPreferenceChange)
 })
 </script>
 

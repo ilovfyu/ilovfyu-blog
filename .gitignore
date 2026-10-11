@@ -16,3 +16,4 @@ docs/.vuepress/dist/
 # logs & coverage
 *.log
 coverage/
+.siyuan/*.lock

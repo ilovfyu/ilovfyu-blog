@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" rx="18" fill="#b8ef32"/><path d="M40 12l6 21 22 7-22 7-6 21-6-21-22-7 22-7z" fill="#111314"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="ILOVFYU 标志">
+  <rect width="80" height="80" rx="18" fill="#c58b3b"/>
+  <path d="M40 11 46.5 33.5 69 40l-22.5 6.5L40 69l-6.5-22.5L11 40l22.5-6.5z" fill="#241b14"/>
+  <circle cx="40" cy="40" r="5.5" fill="#f7efdf"/>
+</svg>

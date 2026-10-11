@@ -27,16 +27,18 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
       - name: Build VuePress
         run: npm run docs:build
         env:
           DEPLOY_ENV: gh-pages
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SITE_HOSTNAME: ${{ steps.pages.outputs.origin }}
           GISCUS_REPO_ID: ${{ secrets.GISCUS_REPO_ID }}
           GISCUS_CATEGORY_ID: ${{ secrets.GISCUS_CATEGORY_ID }}
           GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
-          VITE_XIAKE_AUTH_BASE_URL: ${{ vars.XIAKE_AUTH_BASE_URL }}
-          VITE_XIAKE_POST_LOGIN_URL: ${{ vars.XIAKE_POST_LOGIN_URL }}
-          VITE_TAGFINDER_URL: ${{ vars.TAGFINDER_URL }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
