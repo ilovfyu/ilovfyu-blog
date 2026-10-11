@@ -4,7 +4,7 @@
 
 从清理前提交 `d21a07f` 的资料恢复到当前思源笔记本「项目」下：14 个项目记录、7 个产品展示、2 篇墨影设计文档、1 篇项目总览，共 24 份文档。旧正文中的 Obsidian、认证接口等描述作为历史设计资料保留；当前发布来源是思源。
 
-项目记录保留原有正文、章节、表格与代码示例。链接已转换为当前思源文档，再由同步脚本生成博客链接。四个主项目使用原截图的封面卡片；七个产品页使用历史模板与 CSS。虾壳认证区域、游戏下载区域为静态展示；入口指向对应项目记录。
+项目记录保留原有正文、章节、表格与代码示例。链接已转换为当前思源文档，再由同步脚本生成博客链接。墨影、虾壳、愈语、弈机已归入「计划与构建记录」，保留产品展示入口；七个产品页继续使用历史模板与 CSS。虾壳认证区域、游戏下载区域为静态展示；入口指向对应项目记录。
 
 ## 在思源里编辑
 
@@ -37,7 +37,7 @@
 | custom-blog-description | 目录卡片摘要 |
 | custom-blog-project-code | 模板代码：moyin、xiake、yuliao、yiji、sre-platform、relay-service、annotation-tool-platform；普通项目使用自己的代码 |
 | custom-blog-project-view | record 为项目记录，showcase 为产品展示 |
-| custom-blog-project-group | 设为持续构建，进入独立的持续构建分组 |
+| custom-blog-project-group | 持续构建进入首页及项目页主展示；计划与构建记录进入项目目录下方 |
 | custom-blog-project-order | 项目顺序 |
 | custom-blog-project-tone | cyan、violet、rose、amber |
 | custom-blog-project-label | 卡片分类 |
@@ -53,6 +53,8 @@
 项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 16 个项目，其中 PromptLSM 与 RoostAI 属于「持续构建」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
 
 「持续构建」文档放在思源「项目 / 持续构建」下，并设置 `custom-blog-project-group` 为 `持续构建`。该属性决定博客中的独立分组；`custom-blog-project-status` 描述项目当前阶段，二者可以分别编辑。
+
+首页和项目页优先展示 PromptLSM 与 RoostAI。动态封面是项目概念示意，不代表性能数据或已上线的产品能力；动效可暂停，离开可见区域或开启系统减少动态效果后停止。
 
 ## 同步与发布
 

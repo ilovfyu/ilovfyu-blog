@@ -2,11 +2,11 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vuepress/client'
 import SignalScene from './SignalScene.vue'
-import ProjectCard from './ProjectCard.vue'
+import BuildingProjects from './BuildingProjects.vue'
 
 import { notes, knowledge, projects } from '../data/content'
 
-const featuredProjects = projects.slice(0, 3)
+const featuredProjects = projects.filter(project => project.project?.group === '持续构建')
 
 const recentNotes = notes.slice(1, 4)
 const scrollPct = ref(0)
@@ -139,10 +139,7 @@ onBeforeUnmount(() => {
     </section>
 
     <section v-if="featuredProjects.length" class="home-project-section section">
-      <header class="section-head reveal"><h2>正在构建</h2><p class="sub">记录真实的作品与构建过程。</p></header>
-      <div class="home-project-grid">
-        <div v-for="project in featuredProjects" :key="project.path" class="reveal"><ProjectCard :entry="project" /></div>
-      </div>
+      <BuildingProjects :entries="featuredProjects" />
       <a class="home-project-all" :href="withBase('/projects/')">查看全部项目 <b aria-hidden="true">↗</b></a>
     </section>
 

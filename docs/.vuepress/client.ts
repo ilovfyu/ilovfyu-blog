@@ -19,6 +19,7 @@ import './theme/styles/xiake-showcase.css'
 import './theme/styles/platform-landings.css'
 import './theme/styles/annotation-landing.css'
 import './theme/styles/project-showcase.css'
+import './theme/styles/building-projects.css'
 
 export default defineClientConfig({
   enhance({ app }) {
