@@ -181,12 +181,40 @@
       "path": "docs/projects/siyuan/20261012035207-l8xx3ew.md",
       "title": "RoostAI",
       "route": "/projects/20261012035207-l8xx3ew/"
+    },
+    {
+      "id": "20261012215906-8cmd9qf",
+      "path": "docs/notes/siyuan/20261012215906-8cmd9qf.md",
+      "title": "02 · 参数与数据校验",
+      "route": "/notes/20261012215906-8cmd9qf/"
+    },
+    {
+      "id": "20261012215906-krsmfiv",
+      "path": "docs/notes/siyuan/20261012215906-krsmfiv.md",
+      "title": "01 · FastAPI 快速入门",
+      "route": "/notes/20261012215906-krsmfiv/"
+    },
+    {
+      "id": "20261012215906-uzuv92d",
+      "path": "docs/notes/siyuan/20261012215906-uzuv92d.md",
+      "title": "03 · 依赖注入与项目组织",
+      "route": "/notes/20261012215906-uzuv92d/"
+    },
+    {
+      "id": "20261012215907-4axxt36",
+      "path": "docs/notes/siyuan/20261012215907-4axxt36.md",
+      "title": "04 · 测试与部署",
+      "route": "/notes/20261012215907-4axxt36/"
     }
   ],
   "files": {
     "docs/notes/siyuan/20261012020836-7jlsg0x.md": "1c0b5f03fef75ebfa952c864ef97b28ca863e917ef5aea7f644c7dfe496eaa1b",
     "docs/notes/siyuan/20261012020836-7my80n4.md": "4f106acdd9710a4bff968f749797703b0fcc3e4c1b253503331fbfdd98c743fd",
     "docs/notes/siyuan/20261012020836-sjietk8.md": "f259f0ae82031515457a9a8a1d8edf6291a2dc073e78661a3a593e88f3f7d7e2",
+    "docs/notes/siyuan/20261012215906-8cmd9qf.md": "9d122e4c7d42798468da3dcaf356379260fd29dd7214317a1e00f9af4221623b",
+    "docs/notes/siyuan/20261012215906-krsmfiv.md": "0fa74b340fa702d376c8a80ddb77b74d8555f4c8682cacc17c049c98e6dec090",
+    "docs/notes/siyuan/20261012215906-uzuv92d.md": "934ecc3a1301778d097023b00cfdbbfe1f384c9dd24efc768e21e9fbb3177bb9",
+    "docs/notes/siyuan/20261012215907-4axxt36.md": "694fa01336815c10fc562677f124997e651962dc4439d490f7393a51c502c38f",
     "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
     "docs/projects/siyuan/20261012015817-1v5swr7.md": "ecf909844cfa30519a9966aa4925a57000a45cb7c66be629d32dec7c1eb35156",
     "docs/projects/siyuan/20261012015818-c0wqxhs.md": "96346ce9c8b0039bc0983baf6b1868b5720100e68d0e2300d72984521d6ce725",
