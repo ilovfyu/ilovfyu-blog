@@ -5,6 +5,7 @@ import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
 import { knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
 import CatalogScene from './CatalogScene.vue'
+import TopicCardVisual from './TopicCardVisual.vue'
 
 const articles = normalizeKnowledgeNotes(knowledge)
 const topics = knowledgeTopics(articles)
@@ -78,7 +79,18 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
     <section v-else class="catalog-body topic-catalog" aria-labelledby="topic-catalog-heading">
       <header class="topic-section-heading"><div><p class="catalog-kicker">EXPLORE / LEARNING SERIES</p><h2 id="topic-catalog-heading">专题目录</h2></div><span role="status" aria-live="polite">{{ results.length }} 个专题</span></header>
       <label v-if="topics.length" class="catalog-search topic-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索专题" placeholder="搜索专题名称或章节" /></label>
-      <div v-if="results.length" class="topic-card-grid"><a v-for="(item, index) in results" :key="item.name" class="topic-card" :data-tone="index % 2 ? 'cyan' : 'violet'" :href="topicPath(item.name)"><div class="topic-card-copy"><span class="topic-card-code"><BookOpen aria-hidden="true" />{{ digits(index + 1) }} / SERIES</span><h3>{{ item.name }}</h3><p>{{ item.count }} 篇笔记<span v-if="item.groups.length"> · {{ item.groups.length }} 个章节分组</span></p></div><div class="topic-card-route" aria-hidden="true"><div v-for="(group, step) in (item.groups.length ? item.groups : ['阅读笔记']).slice(0, 5)" :key="group"><span>{{ digits(step + 1) }}</span><i /><strong>{{ group }}</strong></div><small v-if="item.groups.length > 5">+{{ item.groups.length - 5 }} 章节</small></div><span class="topic-card-action">进入专题 <ArrowUpRight aria-hidden="true" /></span></a></div>
+      <div v-if="results.length" class="topic-card-grid">
+        <a v-for="(item, index) in results" :key="item.name" class="topic-card" :data-tone="/博客/.test(item.name) ? 'cyan' : 'violet'" :href="topicPath(item.name)">
+          <div class="topic-card-copy">
+            <span class="topic-card-code"><BookOpen aria-hidden="true" />{{ digits(index + 1) }} / SERIES</span>
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.count }} 篇笔记<span v-if="item.groups.length"> · {{ item.groups.length }} 个章节分组</span></p>
+          </div>
+          <TopicCardVisual :name="item.name" />
+          <div class="topic-card-chapters"><span v-for="(group, step) in item.groups.slice(0, 5)" :key="group"><small>{{ digits(step + 1) }}</small>{{ group }}</span><span v-if="item.groups.length > 5">+{{ item.groups.length - 5 }} 章节</span></div>
+          <span class="topic-card-action">进入专题 <ArrowUpRight aria-hidden="true" /></span>
+        </a>
+      </div>
       <div v-else class="catalog-empty"><h3>{{ topics.length ? '暂时没有匹配的专题' : '还没有发布学习专题' }}</h3><p>{{ topics.length ? '试试其他关键词，或查看全部专题。' : '连续的学习笔记发布后，会汇聚成专题阅读路径。' }}</p><button v-if="topics.length" type="button" class="catalog-button" @click="query = ''">查看全部专题</button></div>
     </section>
   </main>
