@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, knowledgeTopics, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
+import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
   { path: '/a/', title: '缓存稳定前缀', summary: 'Skills 动态变化的工程实践', series: 'Agent 工程', group: '缓存', tags: [' Python ', 'KV Cache', 'PYTHON'] },
@@ -45,4 +45,30 @@ test('pagination clamps stale pages after filtering and retains all entries acro
   assert.deepEqual(knowledgePage(entries, 3).entries, [{ id: 30 }])
   assert.equal(knowledgePage(entries.slice(0, 2), 3).currentPage, 1)
   assert.deepEqual(knowledgePage([], 9), { totalPages: 1, currentPage: 1, entries: [] })
+})
+
+
+test('standalone topic links encode names without leaking reserved URL characters', () => {
+  const name = '缓存 / Skills & KV? #1'
+  const url = new URL(knowledgeTopicPath(name), 'https://example.com')
+  assert.equal(url.pathname, '/topics/')
+  assert.equal(url.searchParams.get('series'), name)
+  assert.equal(url.hash, '')
+  assert.equal([...url.searchParams].length, 1)
+})
+test('topic chapters use natural reading order, preserve distinct articles and handle ungrouped notes', () => {
+  const entries = normalizeKnowledgeNotes([
+    { ...source[0], title: '10 · 复用', group: '进阶' },
+    { ...source[1], title: '02 · 技能', group: '基础' },
+    { ...source[0], path: '/a2/', title: '01 · 前缀', group: '基础' },
+    { ...source[1], path: '/b2/', title: '03 · 补充', group: '' },
+    source[2],
+  ])
+  const chapters = knowledgeTopicChapters(entries, 'Agent 工程')
+  assert.deepEqual(chapters.map(chapter => [chapter.id, chapter.name, chapter.entries.map(note => note.path)]), [
+    ['topic-chapter-1', '基础', ['/a2/', '/b/']],
+    ['topic-chapter-2', '学习笔记', ['/b2/']],
+    ['topic-chapter-3', '进阶', ['/a/']],
+  ])
+  assert.deepEqual(knowledgeTopicChapters(entries, '尚未发布'), [])
 })

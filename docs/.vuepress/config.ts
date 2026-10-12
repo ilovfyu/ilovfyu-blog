@@ -59,7 +59,8 @@ export default defineUserConfig({
     navbar: [
       { text: '首页', link: '/' },
       { text: '随笔', link: '/posts/' },
-      { text: '知识库', link: '/topics/', activeMatch: '^/(topics|notes)/' },
+      { text: '知识库', link: '/knowledge/', activeMatch: '^/(knowledge|notes)/' },
+      { text: '专题', link: '/topics/', activeMatch: '^/topics/' },
       { text: '项目', link: '/projects/', activeMatch: '^/projects/' },
       { text: '关于', link: '/about/' },
     ],

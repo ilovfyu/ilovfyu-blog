@@ -3,6 +3,7 @@ import TechHome from './theme/components/TechHome.vue'
 import PostIndex from './theme/components/PostIndex.vue'
 import AboutPage from './theme/components/AboutPage.vue'
 import KnowledgeBase from './theme/components/KnowledgeBase.vue'
+import TopicIndex from './theme/components/TopicIndex.vue'
 import ProjectIndex from './theme/components/ProjectIndex.vue'
 import ProjectShowcase from './theme/components/ProjectShowcase.vue'
 import ProjectRecordHero from './theme/components/ProjectRecordHero.vue'
@@ -21,6 +22,7 @@ import './theme/styles/annotation-landing.css'
 import './theme/styles/project-showcase.css'
 import './theme/styles/building-projects.css'
 import './theme/styles/knowledge.css'
+import './theme/styles/topics.css'
 
 export default defineClientConfig({
   enhance({ app }) {
@@ -28,6 +30,7 @@ export default defineClientConfig({
     app.component('post-index', PostIndex)
     app.component('about-page', AboutPage)
     app.component('knowledge-base', KnowledgeBase)
+    app.component('topic-index', TopicIndex)
     app.component('project-index', ProjectIndex)
     app.component('project-showcase', ProjectShowcase)
     app.component('project-record-hero', ProjectRecordHero)

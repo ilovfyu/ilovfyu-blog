@@ -467,7 +467,7 @@ function render(timeMs: number, animate = true) {
 
 function draw(time: number) {
   if (!running) return
-  const readingPage = route.path.startsWith('/posts/') || route.path.startsWith('/topics/') || route.path.startsWith('/notes/')
+  const readingPage = route.path.startsWith('/posts/') || route.path.startsWith('/topics/') || route.path.startsWith('/knowledge/') || route.path.startsWith('/notes/')
   const frameInterval = mobile || readingPage ? 1000 / 30 : 1000 / 60
   if (!lastPaint || time - lastPaint >= frameInterval) {
     render(time)

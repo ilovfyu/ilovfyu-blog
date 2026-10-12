@@ -58,3 +58,18 @@ export function knowledgePage<T>(notes: T[], page: number, pageSize = 15) {
   const currentPage = Math.min(Math.max(1, Math.floor(page)), totalPages)
   return { totalPages, currentPage, entries: notes.slice((currentPage - 1) * pageSize, currentPage * pageSize) }
 }
+
+export function knowledgeTopicPath(name: string): string {
+  return `/topics/?series=${encodeURIComponent(name)}`
+}
+/** Numbered titles define reading order; chapter groups retain their first appearance. */
+export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topic: string) {
+  const ordered = notes.filter(note => note.series === topic).sort((a, b) => a.title.localeCompare(b.title, 'zh-CN', { numeric: true }) || a.path.localeCompare(b.path))
+  const chapters = new Map<string, T[]>()
+  for (const note of ordered) {
+    const group = note.group || '学习笔记'
+    const entries = chapters.get(group) || []
+    entries.push(note); chapters.set(group, entries)
+  }
+  return [...chapters].map(([name, entries], index) => ({ id: `topic-chapter-${index + 1}`, name, entries }))
+}

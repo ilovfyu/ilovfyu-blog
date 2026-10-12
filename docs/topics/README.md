@@ -1,10 +1,10 @@
 ---
-title: 知识库
-description: 沿专题学习，用标签与关键词筛选知识笔记
+title: 专题
+description: 按章节探索学习系列与专题阅读路径
 pageLayout: home
 config:
   - type: custom
 comments: false
 ---
 
-<knowledge-base />
+<topic-index />

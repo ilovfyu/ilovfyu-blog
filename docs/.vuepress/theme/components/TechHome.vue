@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
     </section>
 
     <section class="home-study section">
-      <div class="home-study-copy reveal"><p class="catalog-kicker">KNOWLEDGE / CONTINUOUS STUDY</p><h2>沿着一条线，学深一点。</h2><p>{{ knowledge.length ? `${knowledge.length} 篇笔记，串起持续学习与实践的路径。` : '整理值得反复查阅的知识，让零散的想法逐渐连成线。' }}</p><a class="home-project-all" :href="withBase('/topics/')">进入知识库 <b aria-hidden="true">↗</b></a></div>
+      <div class="home-study-copy reveal"><p class="catalog-kicker">KNOWLEDGE / CONTINUOUS STUDY</p><h2>让知识，随时可查。</h2><p>{{ knowledge.length ? `${knowledge.length} 篇笔记，通过标签与关键词快速查阅。` : '整理值得反复查阅的知识，让零散的想法逐渐连成线。' }}</p><a class="home-project-all" :href="withBase('/knowledge/')">进入知识库 <b aria-hidden="true">↗</b></a></div>
       <div class="knowledge-constellation reveal" aria-hidden="true">
         <svg viewBox="0 0 440 230" fill="none">
           <path class="knowledge-grid" d="M20 55H420M20 115H420M20 175H420M80 25V205M160 25V205M240 25V205M320 25V205M400 25V205" />
