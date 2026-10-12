@@ -68,8 +68,8 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
     <div v-if="topic" class="catalog-body topic-reading-layout">
       <aside class="topic-chapter-nav" aria-label="专题章节导航"><p class="catalog-kicker">READING / CHAPTERS</p><div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div><a v-for="(chapter, index) in chapters" :key="chapter.id" :href="`#${chapter.id}`" :aria-current="activeChapter === chapter.id ? 'location' : undefined"><span>{{ digits(index + 1) }}</span><strong>{{ chapter.name }}</strong><small>{{ chapter.entries.length }}</small></a></aside>
       <div class="topic-reading-content">
-        <section v-for="(chapter, index) in chapters" :id="chapter.id" :key="chapter.id" class="topic-chapter" :class="{ 'chapter-active': activeChapter === chapter.id }" :aria-labelledby="`${chapter.id}-title`">
-          <header class="topic-section-heading"><div><p class="catalog-kicker">{{ digits(index + 1) }} / CHAPTER</p><h2 :id="`${chapter.id}-title`">{{ chapter.name }}</h2></div><span>{{ chapter.entries.length }} 篇笔记</span></header>
+        <section v-for="(chapter, index) in chapters" :id="chapter.id" :key="chapter.id" class="topic-chapter" :class="{ 'chapter-active': activeChapter === chapter.id }" :aria-label="chapter.name">
+          <header class="topic-section-heading"><p class="catalog-kicker">{{ digits(index + 1) }} / CHAPTER</p><span>{{ chapter.entries.length }} 篇笔记</span></header>
           <div class="topic-chapter-list"><a v-for="note in chapter.entries" :key="note.path" :href="withBase(note.path)" class="topic-reading-link"><div><h3>{{ note.title }}</h3><p v-if="note.summary">{{ note.summary }}</p></div><ArrowUpRight aria-hidden="true" /></a></div>
         </section>
       </div>

@@ -31,7 +31,7 @@
 .topic-chapter-nav strong { font: 500 12px/1.6 var(--font-sans); }.topic-chapter-nav :is(span, small) { font: 10px var(--font-code); }
 .topic-page .topic-chapter-nav > a[aria-current], .topic-page .topic-chapter-nav > a:hover { border-color: var(--fx-violet); color: var(--fx-violet); background: linear-gradient(90deg, color-mix(in srgb, var(--fx-violet) 7%, transparent), transparent); }
 .topic-reading-content { min-width: 0; }.topic-chapter { scroll-margin-top: 108px; margin-bottom: 44px; }.topic-chapter .topic-section-heading { padding-bottom: 14px; border-bottom: 1px solid var(--space-line); }
-.topic-chapter .topic-section-heading .catalog-kicker { transition: color .25s; }.topic-chapter.chapter-active .topic-section-heading .catalog-kicker { color: var(--fx-cyan); }
+.topic-chapter .topic-section-heading .catalog-kicker { margin: 0; transition: color .25s; }.topic-chapter.chapter-active .topic-section-heading .catalog-kicker { color: var(--fx-cyan); }
 .topic-chapter-list { position: relative; padding-left: 20px; }.topic-chapter-list::before { content: ''; position: absolute; top: 28px; bottom: 28px; left: 2px; width: 1px; background: color-mix(in srgb, var(--fx-violet) 40%, var(--space-line)); }
 .topic-reading-link { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 18px; gap: 18px; padding: 24px; margin-bottom: 12px; border: 1px solid var(--space-line); border-radius: 8px; background: var(--space-1); transition: border-color .25s; }
 .topic-reading-link::before { content: ''; position: absolute; left: -23px; top: 28px; width: 8px; height: 8px; border: 1px solid var(--fx-violet); rotate: 45deg; background: var(--space-0); transition: background .25s; }
