@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-withDefaults(defineProps<{ mode?: 'knowledge' | 'topics' }>(), { mode: 'knowledge' })
 const scene = ref<HTMLElement | null>(null)
 const active = ref(false)
 let observer: IntersectionObserver | null = null
@@ -15,16 +14,16 @@ onBeforeUnmount(() => { observer?.disconnect(); document.removeEventListener('vi
 </script>
 
 <template>
-  <div ref="scene" class="knowledge-atlas" :class="{ 'atlas-active': active, 'atlas-topics': mode === 'topics' }" aria-hidden="true">
+  <div ref="scene" class="knowledge-atlas" :class="{ 'atlas-active': active }" aria-hidden="true">
     <div class="atlas-aura" />
     <div class="atlas-world">
       <div class="atlas-floor" />
       <div class="atlas-orbit orbit-one"><i /><b /></div><div class="atlas-orbit orbit-two"><i /></div>
-      <div class="atlas-sheet sheet-notes"><span>{{ mode === 'topics' ? 'READ' : 'NOTES' }}</span><div><i v-for="n in 9" :key="n" /></div></div>
-      <div class="atlas-sheet sheet-tags"><span>{{ mode === 'topics' ? 'CHAPTERS' : 'TAGS' }}</span><div><i v-for="n in 6" :key="n" /></div></div>
-      <div class="atlas-sheet sheet-topics"><span>{{ mode === 'topics' ? 'SERIES' : 'LINKS' }}</span><div><i v-for="n in 3" :key="n" /></div></div>
+      <div class="atlas-sheet sheet-notes"><span>NOTES</span><div><i v-for="n in 9" :key="n" /></div></div>
+      <div class="atlas-sheet sheet-tags"><span>TAGS</span><div><i v-for="n in 6" :key="n" /></div></div>
+      <div class="atlas-sheet sheet-topics"><span>LINKS</span><div><i v-for="n in 3" :key="n" /></div></div>
       <svg class="atlas-bridges" viewBox="0 0 280 280" fill="none"><path d="M40 140C40 40 240 40 240 140S40 240 40 140M80 220L140 60L210 220" /><path class="atlas-packets" d="M40 140C40 40 240 40 240 140S40 240 40 140M80 220L140 60L210 220" /></svg>
     </div>
-    <span class="atlas-coordinate">{{ mode === 'topics' ? 'TOPICS / LEARNING PATHS' : 'KNOWLEDGE / CONSTELLATION' }}</span><span class="atlas-caption">{{ mode === 'topics' ? '探索 · 学习 · 实践' : '检索 · 关联 · 沉淀' }}</span>
+    <span class="atlas-coordinate">KNOWLEDGE / CONSTELLATION</span><span class="atlas-caption">检索 · 关联 · 沉淀</span>
   </div>
 </template>

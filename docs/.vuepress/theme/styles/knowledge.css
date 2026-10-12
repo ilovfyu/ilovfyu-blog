@@ -6,7 +6,6 @@
 .knowledge-metrics dt { color: var(--text-2); font: 11px var(--font-sans); }
 .knowledge-metrics dd { margin: 10px 0 0; color: var(--text-1); font: 30px var(--font-code); }
 .knowledge-hero .knowledge-atlas { position: relative; height: 280px; min-width: 0; perspective: 700px; animation: none; overflow: hidden; }
-.atlas-topics { --atlas-accent: var(--fx-violet); --atlas-secondary: var(--fx-cyan); }
 .atlas-aura { position: absolute; inset: 10%; background: radial-gradient(ellipse, color-mix(in srgb, var(--atlas-accent, var(--fx-cyan)) 15%, transparent), transparent 70%); filter: blur(15px); }
 .atlas-world { position: absolute; width: 280px; height: 280px; left: calc(50% - 140px); top: 10px; transform-style: preserve-3d; transform: rotateX(50deg) rotateZ(-28deg); animation: atlas-camera 14s ease-in-out infinite alternate; }
 .atlas-floor { position: absolute; inset: -15px; background-image: linear-gradient(var(--space-line) 1px, transparent 1px), linear-gradient(90deg, var(--space-line) 1px, transparent 1px); background-size: 28px 28px; mask-image: radial-gradient(ellipse, black, transparent 72%); transform: translateZ(-10px); }
