@@ -12,7 +12,8 @@
     "blog:sync": "node --env-file-if-exists=.env scripts/siyuan-sync.mjs",
     "blog:preview": "npm run blog:sync && npm run docs:dev -- --host 127.0.0.1 --port 8092",
     "blog:publish": "node --env-file-if-exists=.env scripts/blog-publish.mjs",
-    "test:publishing": "node --test tests/publishing.test.mjs"
+    "test:publishing": "node --test tests/publishing.test.mjs",
+    "test:knowledge": "node --test tests/knowledge.test.mjs"
   },
   "devDependencies": {
     "@lucide/vue": "^1.28.0",

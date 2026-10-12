@@ -55,8 +55,20 @@ npm run blog:doctor
 | `custom-blog-description` | 目录卡片的摘要 |
 | `custom-blog-category` | `ai`、`frontend`、`engineering`、`thinking` |
 | `custom-blog-tags` | 标签用逗号分隔，例如 `Vue,工程实践` |
-| `custom-blog-series` | 知识库系列，例如 `TypeScript` |
+| `custom-blog-series` | 知识库专题（连续的学习系列），例如 `TypeScript` |
 | `custom-blog-group` | 知识库分组，例如 `类型系统` |
+
+### 知识库的专题与标签
+
+在思源的「知识库」目录下写笔记，为文档设置 `custom-blog-series`，同名系列会自动汇聚成一张专题卡片；`custom-blog-group` 展示该专题中的章节分组，`custom-blog-tags` 提供可组合的标签筛选。例如：
+
+```text
+custom-blog-series = TypeScript
+custom-blog-group = 类型系统
+custom-blog-tags = TypeScript,类型推导,工程实践
+```
+
+发布后，知识库可按专题、多个标签和关键词一起查找；多标签使用交集，同时满足全部已选标签才显示。标签旁的数字表示当前条件下的匹配数量。筛选会保存到网址，刷新、分享链接及浏览器后退都能恢复条件。专题与标签直接由已发布笔记生成，无需另建博客页面。
 
 ## 3. 写完后同步和预览
 

@@ -20,6 +20,7 @@ import './theme/styles/platform-landings.css'
 import './theme/styles/annotation-landing.css'
 import './theme/styles/project-showcase.css'
 import './theme/styles/building-projects.css'
+import './theme/styles/knowledge.css'
 
 export default defineClientConfig({
   enhance({ app }) {
