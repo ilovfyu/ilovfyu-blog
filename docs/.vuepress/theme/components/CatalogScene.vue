@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { drawTopicJourney, type JourneyPalette } from '../scenes/topic-journey'
-const props = defineProps<{ steps: { name: string; href: string }[]; label?: string }>()
+import { drawCatalogScene, type CatalogSceneKind, type CatalogScenePalette } from '../scenes/catalog-scene'
+const props = defineProps<{ kind: CatalogSceneKind }>()
 const stage = ref<HTMLElement | null>(null)
 const canvas = ref<HTMLCanvasElement | null>(null)
 const ready = ref(false)
 const running = ref(false)
-const selected = ref(-1)
 let context: CanvasRenderingContext2D | null = null
 let resizeObserver: ResizeObserver | null = null, visibilityObserver: IntersectionObserver | null = null, themeObserver: MutationObserver | null = null
 let motion: MediaQueryList | null = null, finePointer: MediaQueryList | null = null
-let palette: JourneyPalette = { primary: '#7559af', secondary: '#08778a', text: '#625442', surface: '#f2ede4', dark: false }
+let palette: CatalogScenePalette = { primary: '#7559af', secondary: '#08778a', text: '#625442', surface: '#f2ede4', dark: false }
 let width = 0, height = 0, frame = 0, elapsed = 0, previous = 0, painted = 0, visible = false
 const pointer = { x: 0, y: 0 }, target = { x: 0, y: 0 }
-function paint() { if (context && width && height) drawTopicJourney(context, width, height, elapsed, props.steps.length, selected.value, pointer, palette) }
+function paint() { if (context && width && height) drawCatalogScene(context, width, height, props.kind, elapsed, pointer, palette) }
 function tick(now: number) {
   frame = requestAnimationFrame(tick)
   elapsed += Math.min((now - previous) / 1000, .05); previous = now
@@ -28,7 +27,8 @@ function sync() {
 function refreshPalette() {
   if (!stage.value) return
   const style = getComputedStyle(stage.value)
-  palette = { primary: style.getPropertyValue('--fx-violet').trim(), secondary: style.getPropertyValue('--fx-cyan').trim(), text: style.getPropertyValue('--text-2').trim(), surface: style.getPropertyValue('--space-1').trim(), dark: document.documentElement.dataset.theme === 'dark' }
+  const color = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback
+  palette = { primary: color(props.kind === 'topics' ? '--fx-violet' : '--fx-cyan', palette.primary), secondary: color(props.kind === 'topics' ? '--fx-cyan' : '--cyan', palette.secondary), text: color('--text-2', palette.text), surface: color('--space-1', palette.surface), dark: document.documentElement.dataset.theme === 'dark' }
   paint()
 }
 function resize() {
@@ -43,9 +43,8 @@ function move(event: PointerEvent) {
   const bounds = stage.value.getBoundingClientRect()
   target.x = (event.clientX - bounds.left) / bounds.width * 2 - 1; target.y = (event.clientY - bounds.top) / bounds.height * 2 - 1
 }
-function leave() { target.x = target.y = 0; selected.value = -1 }
-watch(() => props.steps, paint)
-watch(selected, paint)
+function leave() { target.x = target.y = 0 }
+watch(() => props.kind, refreshPalette)
 onMounted(() => {
   if (!canvas.value) return
   context = canvas.value.getContext('2d'); if (!context) return
@@ -62,8 +61,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="stage" class="topic-journey" :class="{ 'journey-ready': ready }" :data-motion="running ? 'running' : 'still'" @pointermove="move" @pointerleave="leave">
-    <div class="journey-scene" aria-hidden="true"><canvas ref="canvas" /><svg class="journey-fallback" viewBox="0 0 800 220" fill="none"><path d="M70 155C230 0 450 210 730 70M70 164C230 9 450 219 730 79" /></svg><div class="journey-coordinate"><span>{{ label || 'CHAPTER / FLIGHTPATH' }}</span><span>01 → {{ String(Math.max(steps.length, 1)).padStart(2, '0') }}</span></div><span class="journey-depth">FOLLOW THE THREAD</span></div>
-    <nav v-if="steps.length" class="journey-stops" aria-label="专题航线入口"><a v-for="(step, index) in steps" :key="step.href + index" :href="step.href" @pointerenter="selected = index" @focus="selected = index" @blur="selected = -1"><span>{{ String(index + 1).padStart(2, '0') }}</span><strong>{{ step.name }}</strong><span aria-hidden="true">↗</span></a></nav>
+  <div ref="stage" class="catalog-scene" :class="{ 'catalog-scene-ready': ready }" :data-kind="kind" :data-motion="running ? 'running' : 'still'" aria-hidden="true" @pointermove="move" @pointerleave="leave">
+    <div class="catalog-scene-aura" /><canvas ref="canvas" />
+    <div class="catalog-scene-fallback"><i /><b /><span>{{ kind === 'topics' ? 'READ' : 'WRITE' }}</span></div>
+    <span class="catalog-scene-coordinate">{{ kind === 'topics' ? 'CHAPTER / PRISM' : 'WRITING / IN MOTION' }}</span>
+    <span class="catalog-scene-caption">{{ kind === 'topics' ? '探索 · 关联 · 深入' : '观察 · 构建 · 记录' }}</span>
   </div>
 </template>

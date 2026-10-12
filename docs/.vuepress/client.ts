@@ -23,6 +23,7 @@ import './theme/styles/project-showcase.css'
 import './theme/styles/building-projects.css'
 import './theme/styles/knowledge.css'
 import './theme/styles/topics.css'
+import './theme/styles/catalog-scenes.css'
 
 export default defineClientConfig({
   enhance({ app }) {

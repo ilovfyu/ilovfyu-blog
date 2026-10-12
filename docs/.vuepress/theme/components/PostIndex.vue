@@ -3,10 +3,13 @@ import { computed, ref } from 'vue'
 import { ArrowUpRight, Search, Shuffle } from '@lucide/vue'
 import { withBase, useRouter } from 'vuepress/client'
 import { notes, type Category } from '../data/content'
+import CatalogScene from './CatalogScene.vue'
 
 const router = useRouter()
 const category = ref<Category>('all')
 const query = ref('')
+const publishedDirections = new Set(notes.map(note => note.category)).size
+const digits = (value: number) => String(value).padStart(2, '0')
 const categories: { key: Category; label: string }[] = [
   { key: 'all', label: '全部' }, { key: 'ai', label: 'AI 与数据' },
   { key: 'frontend', label: '前端体验' }, { key: 'engineering', label: '工程架构' },
@@ -18,18 +21,21 @@ const visibleNotes = computed(() => notes.filter(note =>
 ))
 function randomArticle() {
   const list = visibleNotes.value
-  if (list.length) router.push(withBase(list[Math.floor(Math.random() * list.length)].path))
+  if (list.length) void router.push(list[Math.floor(Math.random() * list.length)].path)
 }
 function reset() { category.value = 'all'; query.value = '' }
 </script>
 
 <template>
   <main class="post-index catalog-page">
-    <header class="catalog-hero">
-      <p class="catalog-kicker">WRITING / FIELD NOTES</p>
-      <h1>随笔</h1>
-      <p class="catalog-description">记录问题如何被理解，也留下构建、阅读与生活中的观察。每篇文章，都从一个具体的问题开始。</p>
-      <span class="catalog-count">{{ notes.length }} 篇文章 · 持续更新</span>
+    <header class="catalog-hero catalog-split-hero post-hero">
+      <div class="post-hero-copy">
+        <p class="catalog-kicker">WRITING / FIELD NOTES</p>
+        <h1>随笔</h1>
+        <p class="catalog-description">记录问题如何被理解，也留下构建、阅读与生活中的观察。每篇文章，都从一个具体的问题开始。</p>
+        <dl class="post-metrics"><div><dt>已发布随笔</dt><dd>{{ digits(notes.length) }}</dd></div><div><dt>内容方向</dt><dd>{{ digits(publishedDirections) }}</dd></div></dl>
+      </div>
+      <CatalogScene kind="writing" />
     </header>
     <section class="catalog-body" aria-label="随笔目录">
       <div v-if="notes.length" class="catalog-toolbar">

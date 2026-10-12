@@ -1,0 +1,21 @@
+/* Match the knowledge header's rhythm while giving each catalog its own sculpture. */
+.catalog-split-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr); align-items: center; gap: 48px; }
+.catalog-split-hero > :first-child { min-width: 0; }.catalog-split-hero .catalog-description { max-width: 630px; }
+.post-metrics { display: flex; gap: clamp(24px, 4vw, 56px); margin: 30px 0 0; }
+.post-metrics dt { color: var(--text-2); font: 11px var(--font-sans); }.post-metrics dd { margin: 10px 0 0; color: var(--text-1); font: 30px var(--font-code); }
+.post-index .post-hero h1 { background: linear-gradient(115deg, var(--text-1) 25%, var(--fx-cyan) 75%, var(--cyan)); background-clip: text; color: transparent; }
+.catalog-split-hero > .catalog-scene { --sculpture-accent: var(--fx-violet); position: relative; height: 300px; min-width: 0; animation: none; overflow: hidden; }
+.catalog-scene[data-kind="writing"] { --sculpture-accent: var(--fx-cyan); }
+.catalog-scene canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity .3s; }.catalog-scene-ready canvas { opacity: 1; }
+.catalog-scene-aura { position: absolute; inset: 15% 12%; z-index: -1; background: radial-gradient(ellipse, color-mix(in srgb, var(--sculpture-accent) 9%, transparent), transparent 72%); }
+.catalog-scene-coordinate { position: absolute; left: 4px; top: 24px; writing-mode: vertical-rl; color: var(--sculpture-accent); font: 8px var(--font-code); letter-spacing: .16em; }
+.catalog-scene-caption { position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; color: var(--text-2); font: 10px var(--font-sans); letter-spacing: .16em; }
+.catalog-scene-fallback { position: absolute; width: 160px; height: 180px; left: calc(50% - 80px); top: calc(50% - 90px); display: grid; place-items: center; color: var(--sculpture-accent); }
+.catalog-scene-fallback i, .catalog-scene-fallback b { position: absolute; inset: 20px; border: 1px solid currentColor; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: color-mix(in srgb, var(--sculpture-accent) 10%, transparent); }.catalog-scene-fallback b { inset: 36px; opacity: .5; }.catalog-scene-fallback span { font: 12px var(--font-code); letter-spacing: .18em; }.catalog-scene-ready .catalog-scene-fallback { display: none; }
+@media (max-width: 760px) {
+  .catalog-split-hero { grid-template-columns: minmax(0, 1fr) 200px; gap: 10px; }.catalog-split-hero > .catalog-scene { height: 250px; }.catalog-scene-coordinate { display: none; }.post-metrics, .topic-metrics { gap: 24px; }.post-metrics dd, .topic-metrics dd { font-size: 26px; }
+}
+@media (max-width: 560px) {
+  .catalog-split-hero { grid-template-columns: 1fr; gap: 12px; }.catalog-split-hero > .catalog-scene { height: 230px; }.catalog-scene-caption { bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .catalog-scene *, .catalog-split-hero > * { animation: none !important; transition: none !important; } }

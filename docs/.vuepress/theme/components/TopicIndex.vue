@@ -4,7 +4,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
 import { knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
-import TopicJourney from './TopicJourney.vue'
+import CatalogScene from './CatalogScene.vue'
 
 const articles = normalizeKnowledgeNotes(knowledge)
 const topics = knowledgeTopics(articles)
@@ -22,11 +22,6 @@ const totalNotes = topics.reduce((count, item) => count + item.count, 0)
 const results = computed(() => {
   const tokens = query.value.normalize('NFKC').trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
   return topics.filter(item => tokens.every(token => `${item.name} ${item.groups.join(' ')}`.normalize('NFKC').toLocaleLowerCase().includes(token)))
-})
-const journeySteps = computed(() => {
-  if (topic.value) return chapters.value.map(chapter => ({ name: chapter.name, href: `#${chapter.id}` }))
-  const featured = topics[0]
-  return featured ? knowledgeTopicChapters(articles, featured.name).map(chapter => ({ name: chapter.name, href: `${topicPath(featured.name)}#${chapter.id}` })) : []
 })
 const activeChapter = ref('')
 const readProgress = computed(() => { const index = chapters.value.findIndex(chapter => chapter.id === activeChapter.value); return index < 0 ? 0 : (index + 1) / chapters.value.length * 100 })
@@ -59,7 +54,7 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
 
 <template>
   <main class="topic-page catalog-page">
-    <header class="catalog-hero topic-hero">
+    <header class="catalog-hero catalog-split-hero topic-hero">
       <div class="topic-hero-copy">
         <a v-if="requested" class="topic-back" :href="overviewPath"><ArrowLeft aria-hidden="true" />全部专题</a>
         <p class="catalog-kicker">{{ topic ? 'SERIES / READING PATH' : 'TOPICS / DEEP EXPLORATION' }}</p>
@@ -68,7 +63,7 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
         <dl class="topic-metrics"><div v-if="!topic"><dt>学习专题</dt><dd>{{ digits(topics.length) }}</dd></div><div><dt>{{ topic ? '专题笔记' : '收录笔记' }}</dt><dd>{{ digits(topic?.count ?? totalNotes) }}</dd></div><div><dt>章节分组</dt><dd>{{ digits(topic ? chapters.length : totalChapters) }}</dd></div></dl>
         <a v-if="firstNote" class="catalog-button topic-start" :href="withBase(firstNote.path)">开始阅读 <ArrowUpRight aria-hidden="true" /></a>
       </div>
-      <TopicJourney v-if="journeySteps.length && (!requested || topic)" :steps="journeySteps" :label="`${topic?.name || topics[0]?.name || '专题'} / 章节航线`" />
+      <CatalogScene kind="topics" />
     </header>
     <div v-if="topic" class="catalog-body topic-reading-layout">
       <aside class="topic-chapter-nav" aria-label="专题章节导航"><p class="catalog-kicker">READING / CHAPTERS</p><div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div><a v-for="(chapter, index) in chapters" :key="chapter.id" :href="`#${chapter.id}`" :aria-current="activeChapter === chapter.id ? 'location' : undefined"><span>{{ digits(index + 1) }}</span><strong>{{ chapter.name }}</strong><small>{{ chapter.entries.length }}</small></a></aside>
