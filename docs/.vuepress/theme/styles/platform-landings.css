@@ -301,14 +301,18 @@
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.35; transform: scale(0.8); }
 }
-.platform-title {
+.platform-landing .platform-title {
   max-width: 760px;
   margin: 22px 0 0;
   white-space: pre-line;
-  font: 700 clamp(44px, 6.7vw, 92px) / 1.02 var(--font-disp);
+  font: 700 clamp(36px, 4.2vw, 58px) / 1.18 var(--font-disp);
+  text-wrap: balance;
   letter-spacing: -0.045em;
 }
 .platform-title span {
+  display: inline-block;
+  margin-top: .25em;
+  font-size: .78em;
   background: linear-gradient(120deg, var(--platform-accent) 12%, var(--platform-secondary) 90%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -938,8 +942,8 @@
   .platform-hero-inner {
     padding: 42px 0 54px;
   }
-  .platform-title {
-    font-size: clamp(40px, 12.8vw, 62px);
+  .platform-landing .platform-title {
+    font-size: clamp(30px, 8.5vw, 44px);
   }
   .platform-description {
     font-size: 14px;

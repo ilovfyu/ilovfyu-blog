@@ -7,6 +7,7 @@ export type ContentEntry = {
   date: string
   title: string
   summary: string
+  preview?: { heading: string; paragraphs: string[] }
   path: string
   tags: string[]
   series: string

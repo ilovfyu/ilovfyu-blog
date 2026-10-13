@@ -67,7 +67,19 @@ let revealObserver: IntersectionObserver | null = null
 let roleIndex = 0
 let rolePhase: 'typing' | 'pausing' | 'deleting' = 'pausing'
 
-const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const reducedMotion = ref(false)
+const portrait = ref<HTMLElement | null>(null)
+const portraitRunning = ref(false)
+let portraitObserver: IntersectionObserver | undefined
+let motion: MediaQueryList | undefined
+let portraitVisible = false
+function syncMotion() {
+  reducedMotion.value = !!motion?.matches
+  portraitRunning.value = portraitVisible && !document.hidden && !reducedMotion.value
+  window.clearTimeout(roleTimer)
+  if (portraitRunning.value) roleTimer = window.setTimeout(typeRole, 1200)
+  else if (reducedMotion.value) { roleText.value = roles[0]; roleIndex = 0; rolePhase = 'pausing' }
+}
 
 function computeStickyOffset() {
   const themeNavHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vp-nav-height')) || 64
@@ -102,11 +114,12 @@ function onScroll() {
 function scrollToSection(id: string) {
   const el = document.getElementById(id)
   if (!el) return
-  const behavior = reducedMotion ? 'auto' : 'smooth'
+  const behavior = reducedMotion.value ? 'auto' : 'smooth'
   el.scrollIntoView({ behavior, block: 'start' })
 }
 
 function typeRole() {
+  if (!portraitRunning.value) return
   const full = roles[roleIndex]
   if (rolePhase === 'pausing') {
     rolePhase = 'deleting'
@@ -142,7 +155,7 @@ function onCardMove(e: MouseEvent) {
 }
 
 function onPortraitMove(e: MouseEvent) {
-  if (reducedMotion) return
+  if (reducedMotion.value) return
   const el = e.currentTarget as HTMLElement
   const rect = el.getBoundingClientRect()
   const px = (e.clientX - rect.left) / rect.width - 0.5
@@ -172,12 +185,17 @@ async function copyEmail() {
 
 onMounted(() => {
   document.body.classList.add('about-active')
+  motion = matchMedia('(prefers-reduced-motion: reduce)')
+  motion.addEventListener('change', syncMotion)
+  document.addEventListener('visibilitychange', syncMotion)
+  portraitObserver = new IntersectionObserver(([entry]) => { portraitVisible = entry.isIntersecting; syncMotion() }, { threshold: .05 })
+  if (portrait.value) portraitObserver.observe(portrait.value)
+  syncMotion()
   computeStickyOffset()
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', computeStickyOffset, { passive: true })
-  if (!reducedMotion) {
-    roleTimer = window.setTimeout(typeRole, 2100)
+  if (!reducedMotion.value) {
     nextTick(() => {
       const page = document.querySelector('.profile-page')
       if (!page || typeof IntersectionObserver === 'undefined') return
@@ -206,6 +224,9 @@ onBeforeUnmount(() => {
   if (copyTimer) window.clearTimeout(copyTimer)
   if (roleTimer) window.clearTimeout(roleTimer)
   revealObserver?.disconnect()
+  portraitObserver?.disconnect()
+  motion?.removeEventListener('change', syncMotion)
+  document.removeEventListener('visibilitychange', syncMotion)
 })
 </script>
 
@@ -229,8 +250,8 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <figure class="profile-portrait profile-reveal" @mousemove="onPortraitMove" @mouseleave="onPortraitLeave">
-          <div class="profile-portrait-image"><img :src="withBase('/avatar.svg')" alt="ILOVFYU" /></div>
+        <figure ref="portrait" class="profile-portrait profile-reveal" :data-motion="portraitRunning ? 'running' : 'still'" @mousemove="onPortraitMove" @mouseleave="onPortraitLeave">
+          <div class="profile-portrait-image"><img :src="withBase('/avatar.svg')" alt="ILOVFYU" /><span class="profile-portrait-scan" aria-hidden="true" /></div>
           <figcaption>
             <span>一句自我提醒</span>
             <blockquote>代码让我把想法变成可运行的东西，写作让我确认自己是否真正理解它。</blockquote>

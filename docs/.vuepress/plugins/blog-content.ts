@@ -1,4 +1,5 @@
 import type { App, Plugin } from 'vuepress/core'
+import { articlePreview } from './article-preview'
 
 const categoryLabels: Record<string, string> = {
   ai: 'AI 与数据', frontend: '前端体验', engineering: '工程架构', thinking: '产品与生活',
@@ -18,6 +19,7 @@ async function writeCatalog(app: App) {
       title: page.title,
       path: page.path,
       summary: typeof fm.description === 'string' ? fm.description : typeof fm.summary === 'string' ? fm.summary : '',
+      preview: articlePreview(page.content),
       date,
       category,
       label: typeof fm.label === 'string' ? fm.label : (fm.project as { label?: string })?.label || categoryLabels[category],

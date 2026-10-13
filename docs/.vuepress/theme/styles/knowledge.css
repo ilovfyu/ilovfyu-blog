@@ -22,6 +22,11 @@
 .sheet-tags { --atlas-depth: 48px; inset: 92px 61px; border-color: var(--atlas-secondary, var(--fx-violet)); background: color-mix(in srgb, var(--atlas-secondary, var(--fx-violet)) 8%, var(--space-1)); animation-delay: -2s; }
 .sheet-tags > span { color: var(--atlas-secondary, var(--fx-violet)); }.sheet-tags i { background: color-mix(in srgb, var(--atlas-secondary, var(--fx-violet)) 14%, transparent); border-color: color-mix(in srgb, var(--atlas-secondary, var(--fx-violet)) 35%, transparent); }
 .sheet-topics { --atlas-depth: 96px; inset: 104px 78px; animation-delay: -4s; }
+.atlas-sheet { transition: scale .65s ease, box-shadow .65s ease; }
+.atlas-sheet i { transition: background .4s, border-color .4s; }
+.atlas-filtered .sheet-tags { scale: 1.08; box-shadow: 0 6px 0 color-mix(in srgb, var(--fx-violet) 20%, var(--space-1)), 0 0 32px color-mix(in srgb, var(--fx-violet) 14%, transparent); }
+.sheet-tags i.atlas-selected { background: var(--fx-violet); border-color: var(--fx-violet); }
+.atlas-filtered .sheet-topics { scale: 1.04; }
 .atlas-bridges { position: absolute; inset: 0; width: 280px; height: 280px; color: var(--atlas-accent, var(--fx-cyan)); transform: translateZ(28px); }
 .atlas-bridges path { stroke: currentColor; stroke-width: 1; opacity: .25; }
 .atlas-bridges .atlas-packets { stroke-width: 2; stroke-dasharray: 18 290; opacity: .8; animation: atlas-packet 6s linear infinite; }

@@ -32,6 +32,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Verify knowledge filters
         run: npm run test:knowledge
+      - name: Verify article excerpts
+        run: npm run test:reading
       - name: Build VuePress
         run: npm run docs:build
         env:

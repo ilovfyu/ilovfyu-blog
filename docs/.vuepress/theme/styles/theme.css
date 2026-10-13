@@ -983,6 +983,11 @@ body {
   height: 100%;
   object-fit: cover;
 }
+.profile-portrait-scan { position: absolute; inset: 9px; overflow: hidden; pointer-events: none; }
+.profile-portrait-scan::before { content: ''; position: absolute; inset: -30% 0 auto; height: 30%; border-bottom: 1px solid color-mix(in srgb, var(--fx-cyan) 55%, transparent); background: linear-gradient(transparent, color-mix(in srgb, var(--fx-cyan) 9%, transparent)); animation: portrait-scan 8s cubic-bezier(.4, 0, .2, 1) infinite; }
+.profile-portrait[data-motion="still"] .profile-portrait-scan::before { animation-play-state: paused; }
+@keyframes portrait-scan { 0%, 12% { transform: translateY(0); opacity: 0; } 18% { opacity: .7; } 64% { transform: translateY(435%); opacity: .7; } 72%, 100% { transform: translateY(435%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .profile-portrait-scan { display: none; } }
 .profile-portrait figcaption {
   position: relative;
   z-index: 2;

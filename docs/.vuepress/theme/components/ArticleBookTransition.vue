@@ -2,14 +2,16 @@
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, withBase } from 'vuepress/client'
 import { knowledge, notes, projects } from '../data/content'
-import { drawArticleBook, type BookPalette } from '../scenes/article-book'
+import { createBookTextures, drawArticleBook, type BookContent, type BookPalette, type BookTextures } from '../scenes/article-book'
 
 const router = useRouter()
 const entries = [...notes, ...knowledge, ...projects.filter(entry => entry.project?.view !== 'showcase')]
 const findArticle = (path: string) => entries.find(item => item.path === path || withBase(item.path) === path)
 const active = ref(false), phase = ref('materializing'), title = ref('')
 const canvas = ref<HTMLCanvasElement | null>(null), stage = ref<HTMLElement | null>(null)
-const duration = 1900
+const duration = 2400
+let textures: BookTextures | undefined
+let bookContent: BookContent | undefined, compact = false
 let frame = 0, releaseTimer = 0, watchdog = 0, generation = 0, started = 0, painted = 0, progress = 0
 let navigated = false, skipped = false
 let release: (() => void) | null = null
@@ -19,7 +21,7 @@ let historyTime = -Infinity, width = 0, height = 0
 function resume() { clearTimeout(releaseTimer); if (release) { const resolve = release; release = null; resolve() } }
 function cleanup(focus = false) {
   generation++; resume(); cancelAnimationFrame(frame); clearTimeout(watchdog)
-  frame = 0; active.value = false; context = null; palette = null
+  frame = 0; active.value = false; context = null; palette = null; textures = undefined; bookContent = undefined
   document.body.classList.remove('book-transition-active', 'book-revealing')
   if (focus) {
     const heading = document.querySelector<HTMLElement>('.article-page h1, .project-record-page h1')
@@ -30,18 +32,21 @@ function skip() { skipped = true; resume(); if (navigated) cleanup(true) }
 function resize() {
   if (!canvas.value || !context) return
   width = innerWidth; height = innerHeight
+  if (palette && bookContent && (!textures || compact !== (width < 640))) {
+    compact = width < 640; textures = createBookTextures(bookContent, palette, compact)
+  }
   const dpr = Math.min(devicePixelRatio || 1, 1.5)
   canvas.value.width = Math.round(width * dpr); canvas.value.height = Math.round(height * dpr)
   context.setTransform(dpr, 0, 0, dpr, 0, 0)
-  if (palette) drawArticleBook(context, width, height, progress, palette)
+  if (palette) drawArticleBook(context, width, height, progress, palette, textures)
 }
 function paint(now: number) {
   frame = requestAnimationFrame(paint)
   if (now - painted < 25 || !context || !palette) return
   painted = now; progress = Math.min(1, (now - started) / duration)
-  phase.value = progress < .3 ? 'materializing' : progress < .64 ? 'turning' : 'dissolving'
-  if (progress >= .64) document.body.classList.add('book-revealing')
-  try { drawArticleBook(context, width, height, progress, palette) }
+  phase.value = progress < .3 ? 'materializing' : progress < .65 ? 'turning' : 'dissolving'
+  if (progress >= .65) document.body.classList.add('book-revealing')
+  try { drawArticleBook(context, width, height, progress, palette, textures) }
   catch { cancelAnimationFrame(frame); frame = 0; skip(); return }
   if (progress === 1) { cancelAnimationFrame(frame); frame = 0; if (navigated) cleanup(true) }
 }
@@ -77,7 +82,8 @@ onMounted(() => {
     context = canvas.value?.getContext('2d') || null
     if (!context || !canvas.value) { cleanup(); return }
     const style = getComputedStyle(canvas.value), color = (name: string) => style.getPropertyValue(name).trim()
-    palette = { primary: color('--fx-cyan'), secondary: color('--fx-violet'), dark: document.documentElement.dataset.theme === 'dark' }
+    palette = { primary: color('--fx-cyan'), secondary: color('--fx-violet'), ink: color('--text-1'), dark: document.documentElement.dataset.theme === 'dark' }
+    bookContent = entry
     try { resize() } catch { cleanup(); return }
     started = performance.now(); painted = 0; frame = requestAnimationFrame(paint); stage.value?.focus({ preventScroll: true })
     watchdog = window.setTimeout(() => cleanup(), 5000)

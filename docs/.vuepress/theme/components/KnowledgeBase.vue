@@ -67,7 +67,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
         <p class="catalog-description">用标签串起关联，用关键词快速定位。把学习与实践沉淀成可以随时查阅的知识笔记。</p>
         <dl class="knowledge-metrics"><div><dt>已发布笔记</dt><dd>{{ digits(articles.length) }}</dd></div><div><dt>关联标签</dt><dd>{{ digits(tags.length) }}</dd></div></dl>
       </div>
-      <KnowledgeAtlas />
+      <KnowledgeAtlas :selected-tags="activeTags.length" :result-count="results.length" :filtered="filtered" />
     </header>
     <div v-if="articles.length" class="catalog-body knowledge-workspace">
       <section ref="resultSection" id="knowledge-notes" class="knowledge-note-results" aria-label="知识笔记筛选与结果">
