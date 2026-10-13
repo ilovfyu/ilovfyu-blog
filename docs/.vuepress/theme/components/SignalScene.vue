@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Pause, Play } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 type Point = { x: number; y: number; z: number }
@@ -11,7 +10,6 @@ const modes = [
   { code: '03', name: 'WRITE', title: '写作', description: '把经验串成线，留下每次选择背后的理由。' },
 ]
 const mode = ref(0)
-const paused = ref(false)
 const reduced = ref(false)
 const stage = ref<HTMLElement | null>(null)
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -161,10 +159,10 @@ function tick(timestamp: number) {
   frame = requestAnimationFrame(tick)
 }
 function start() {
-  if (frame || paused.value || reduced.value || !visible || document.hidden) return
+  if (frame || reduced.value || !visible || document.hidden) return
   frame = requestAnimationFrame(tick)
 }
-function syncPlayback() { stop(); if (paused.value || reduced.value) paint(); else start() }
+function syncPlayback() { stop(); if (reduced.value) paint(); else start() }
 function syncTheme() { light = document.documentElement.dataset.theme !== 'dark'; paint(1 / 60) }
 function syncMotion() { reduced.value = !!motionQuery?.matches; pointer.tx = pointer.ty = 0; syncPlayback() }
 function onVisibility() { if (document.hidden) stop(); else start() }
@@ -180,15 +178,14 @@ function resize() {
   paint(1 / 60)
 }
 function onPointer(event: PointerEvent) {
-  if (!finePointer || reduced.value || paused.value || !stage.value) return
+  if (!finePointer || reduced.value || !stage.value) return
   const bounds = stage.value.getBoundingClientRect()
   pointer.tx = (event.clientX - bounds.left) / bounds.width - 0.5
   pointer.ty = (event.clientY - bounds.top) / bounds.height - 0.5
 }
 function resetPointer() { pointer.tx = pointer.ty = 0 }
 
-watch(mode, () => { if (paused.value || reduced.value) paint(); else start() })
-watch(paused, syncPlayback)
+watch(mode, () => { if (reduced.value) paint(); else start() })
 onMounted(() => {
   motionQuery = matchMedia('(prefers-reduced-motion: reduce)')
   reduced.value = motionQuery.matches
@@ -217,9 +214,8 @@ onBeforeUnmount(() => {
   <div class="signal-scene" :data-signal-mode="modes[mode].name.toLowerCase()">
     <div ref="stage" class="signal-stage" @pointermove="onPointer" @pointerleave="resetPointer">
       <canvas ref="canvas" class="signal-canvas" aria-hidden="true" />
-      <div class="signal-core" aria-hidden="true"><strong>FYU</strong><span>{{ modes[mode].name }} / {{ paused || reduced ? 'STILL' : 'IN MOTION' }}</span></div>
+      <div class="signal-core" aria-hidden="true"><strong>FYU</strong><span>{{ modes[mode].name }} / {{ reduced ? 'STILL' : 'IN MOTION' }}</span></div>
       <span class="signal-coordinate" aria-hidden="true">{{ modes[mode].code }} / {{ ['CONNECTED FIELD', 'SPATIAL STRUCTURE', 'CONTINUOUS THREAD'][mode] }}</span>
-      <button v-if="!reduced" class="signal-playback" type="button" :aria-label="paused ? '恢复信号动态' : '暂停信号动态'" :aria-pressed="paused" @click="paused = !paused"><Play v-if="paused" aria-hidden="true" /><Pause v-else aria-hidden="true" /></button>
     </div>
     <p class="signal-description" aria-live="polite">{{ modes[mode].description }}</p>
     <div class="signal-controls" role="group" aria-label="切换个人信号形态">

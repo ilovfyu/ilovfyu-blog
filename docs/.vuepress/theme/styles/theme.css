@@ -2632,17 +2632,6 @@ body:has(.article-page) .article-breath-field > i { opacity: .1; }
 .signal-core strong { color: var(--text-1); font: 700 40px/1 var(--font-disp); letter-spacing: -0.075em; }
 .signal-core span { color: var(--signal-accent); font: 7px/1.4 var(--font-code); letter-spacing: 0.09em; }
 .signal-coordinate { position: absolute; bottom: 9px; left: 8px; color: var(--text-3); font: 8px var(--font-code); letter-spacing: 0.06em; pointer-events: none; }
-.signal-playback {
-  position: absolute; top: 0; right: 0;
-  display: grid; place-items: center;
-  width: 44px; height: 44px;
-  border: 0; border-radius: 6px;
-  background: color-mix(in srgb, var(--space-1) 74%, transparent);
-  color: var(--text-2); cursor: pointer;
-  transition: color 0.2s, background-color 0.2s;
-}
-.signal-playback svg { width: 14px; height: 14px; }
-.signal-playback:hover, .signal-playback[aria-pressed="true"] { color: var(--signal-accent); background: color-mix(in srgb, var(--signal-accent) 10%, var(--space-1)); }
 .hero-signal .signal-description { min-height: 24px; margin: 4px 0 10px; color: var(--text-2); font: 11px/1.8 var(--font-sans); text-align: center; }
 .signal-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding-top: 10px; border-top: 1px solid var(--space-line); }
 .signal-controls button {
@@ -2658,7 +2647,7 @@ body:has(.article-page) .article-breath-field > i { opacity: .1; }
 .signal-controls button[aria-pressed="true"] { color: var(--signal-accent); background: color-mix(in srgb, var(--signal-accent) 8%, transparent); border-color: color-mix(in srgb, var(--signal-accent) 20%, transparent); }
 .signal-controls button[aria-pressed="true"] i { transform: translateX(-50%) scaleX(1); }
 .signal-controls button:hover { color: var(--text-1); border-color: var(--space-line); }
-.blog-custom-page .signal-controls button:focus-visible, .blog-custom-page .signal-playback:focus-visible { outline-offset: -3px; }
+.blog-custom-page .signal-controls button:focus-visible { outline-offset: -3px; }
 [data-theme="light"] .hero-signal-heading span:last-child { color: var(--text-3); }
 .post-index-row, .knowledge-note-row { animation-fill-mode: backwards; }
 .interaction-motion :is(.featured-article, .article-card, .home-project-card) {

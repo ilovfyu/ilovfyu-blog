@@ -9,7 +9,7 @@ let raf = 0
 let removeGuard: (() => void) | null = null
 
 function play() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  if (document.body.classList.contains('book-transition-active') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   active.value = false
   window.clearTimeout(timer)
   window.cancelAnimationFrame(raf)
@@ -20,7 +20,7 @@ function play() {
 }
 
 onMounted(() => {
-  removeGuard = router.beforeEach(() => play())
+  removeGuard = router.beforeEach((to, from) => { if (to.path !== from.path) play() })
 })
 
 onBeforeUnmount(() => {

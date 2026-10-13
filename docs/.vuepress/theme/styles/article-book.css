@@ -1,0 +1,13 @@
+.article-book-transition { position: fixed; inset: 0; z-index: 10000; overflow: hidden; pointer-events: auto; touch-action: none; outline: none; background: transparent; }
+.article-book-transition canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.book-transition-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.book-transition-active .page-gate { display: none; }
+:is(.article-page, .project-record-page) .vp-doc-container { transition: opacity 600ms ease, filter 600ms ease; }
+.book-transition-active:not(.book-revealing) :is(.article-page, .project-record-page) .vp-doc-container { opacity: .45; filter: blur(1.5px); }
+/* Page corners anticipate the spectral reading transition without another pointer spotlight. */
+:is(.post-index-row, .knowledge-note-row) { position: relative; }
+:is(.post-index-row, .knowledge-note-row)::before { content: ''; position: absolute; bottom: 12px; right: 4px; width: 26px; height: 26px; pointer-events: none; clip-path: polygon(100% 0, 100% 100%, 0 100%); background: linear-gradient(135deg, transparent 44%, color-mix(in srgb, var(--fx-cyan) 28%, var(--space-1)) 46%, var(--space-1)); transform-origin: right bottom; transform: scale(.35); opacity: 0; transition: opacity 240ms, transform 320ms; }
+:is(.post-index-row, .knowledge-note-row):is(:hover, :focus-visible)::before { transform: scale(1); opacity: 1; }
+:is(.post-index-row, .knowledge-note-row) > svg { transition: transform 240ms ease; }
+:is(.post-index-row, .knowledge-note-row):is(:hover, :focus-visible) > svg { transform: translate(2px, -2px) rotate(-8deg); }
+@media (prefers-reduced-motion: reduce) { .article-book-transition { display: none; }:is(.post-index-row, .knowledge-note-row)::before, :is(.article-page, .project-record-page) .vp-doc-container { transition: none; } }

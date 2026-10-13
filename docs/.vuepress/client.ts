@@ -11,6 +11,7 @@ import CosmicCanvas from './theme/components/CosmicCanvas.vue'
 import InteractionMotion from './theme/components/InteractionMotion.vue'
 import PageGate from './theme/components/PageGate.vue'
 import ArticleAtmosphere from './theme/components/ArticleAtmosphere.vue'
+import ArticleBookTransition from './theme/components/ArticleBookTransition.vue'
 
 import './theme/styles/theme.css'
 import './theme/styles/moyin-landing.css'
@@ -24,6 +25,7 @@ import './theme/styles/building-projects.css'
 import './theme/styles/knowledge.css'
 import './theme/styles/topics.css'
 import './theme/styles/catalog-scenes.css'
+import './theme/styles/article-book.css'
 
 export default defineClientConfig({
   enhance({ app }) {
@@ -36,5 +38,5 @@ export default defineClientConfig({
     app.component('project-showcase', ProjectShowcase)
     app.component('project-record-hero', ProjectRecordHero)
   },
-  rootComponents: [CosmicCanvas, InteractionMotion, PageGate, ArticleAtmosphere],
+  rootComponents: [CosmicCanvas, InteractionMotion, ArticleBookTransition, PageGate, ArticleAtmosphere],
 })
