@@ -14,7 +14,8 @@
     "blog:publish": "node --env-file-if-exists=.env scripts/blog-publish.mjs",
     "test:publishing": "node --test tests/publishing.test.mjs",
     "test:knowledge": "node --test tests/knowledge.test.mjs",
-    "test:reading": "node --test tests/article-preview.test.mjs"
+    "test:reading": "node --test tests/article-preview.test.mjs",
+    "test:rendering": "node --test tests/rendering.test.mjs"
   },
   "devDependencies": {
     "@lucide/vue": "^1.28.0",

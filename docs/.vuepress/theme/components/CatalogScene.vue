@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { bookTransitionActive } from '../utils/motion-state'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { drawCatalogScene, type CatalogSceneKind, type CatalogScenePalette } from '../scenes/catalog-scene'
 const props = defineProps<{ kind: CatalogSceneKind }>()
@@ -20,7 +21,7 @@ function tick(now: number) {
   painted = now; pointer.x += (target.x - pointer.x) * .08; pointer.y += (target.y - pointer.y) * .08; paint()
 }
 function sync() {
-  running.value = ready.value && visible && !document.hidden && !motion?.matches
+  running.value = ready.value && visible && !document.hidden && !motion?.matches && !bookTransitionActive.value
   if (running.value && !frame) { previous = performance.now(); frame = requestAnimationFrame(tick) }
   else if (!running.value) { cancelAnimationFrame(frame); frame = 0; pointer.x = pointer.y = target.x = target.y = 0; paint() }
 }
@@ -45,6 +46,7 @@ function move(event: PointerEvent) {
 }
 function leave() { target.x = target.y = 0 }
 watch(() => props.kind, refreshPalette)
+watch(bookTransitionActive, sync)
 onMounted(() => {
   if (!canvas.value) return
   context = canvas.value.getContext('2d'); if (!context) return

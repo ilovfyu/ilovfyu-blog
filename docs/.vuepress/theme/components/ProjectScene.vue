@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { bookTransitionActive } from '../utils/motion-state'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { drawProjectScene, type SceneKind, type ScenePalette } from '../scenes/project-scene'
 const props = defineProps<{ kind: SceneKind }>()
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -30,7 +31,7 @@ function tick(now: number) {
   paint()
 }
 function sync() {
-  const animate = ready.value && visible && !document.hidden && !motion?.matches
+  const animate = ready.value && visible && !document.hidden && !motion?.matches && !bookTransitionActive.value
   running.value = animate
   if (animate && !frame) { previous = performance.now(); frame = requestAnimationFrame(tick) }
   else if (!animate) { cancelAnimationFrame(frame); frame = 0; pointer.x = pointer.y = target.x = target.y = 0; paint() }
@@ -56,6 +57,7 @@ function onMove(event: PointerEvent) {
   target.y = Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1))
 }
 function onLeave() { target.x = target.y = 0 }
+watch(bookTransitionActive, sync)
 onMounted(() => {
   if (!canvas.value) return
   context = canvas.value.getContext('2d')

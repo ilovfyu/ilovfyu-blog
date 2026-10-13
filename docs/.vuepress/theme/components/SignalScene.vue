@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { bookTransitionActive } from '../utils/motion-state'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 type Point = { x: number; y: number; z: number }
@@ -78,13 +79,12 @@ let themeObserver: MutationObserver | null = null
 let motionQuery: MediaQueryList | null = null
 const pointer = { x: 0, y: 0, tx: 0, ty: 0 }
 
+let cosYaw = 1, sinYaw = 0, cosPitch = 1, sinPitch = 0
 function project(point: Point, index = 0): Projected {
-  const yaw = time * 0.16 + pointer.x * 0.42 + 0.3
-  const pitch = Math.sin(time * 0.13) * 0.12 + pointer.y * 0.3 - 0.15
-  const x = point.x * Math.cos(yaw) - point.z * Math.sin(yaw)
-  const z = point.x * Math.sin(yaw) + point.z * Math.cos(yaw)
-  const y = point.y * Math.cos(pitch) - z * Math.sin(pitch)
-  const depth = point.y * Math.sin(pitch) + z * Math.cos(pitch)
+  const x = point.x * cosYaw - point.z * sinYaw
+  const z = point.x * sinYaw + point.z * cosYaw
+  const y = point.y * cosPitch - z * sinPitch
+  const depth = point.y * sinPitch + z * cosPitch
   const scale = 3.8 / (3.8 + depth)
   const size = Math.min(width * 0.34, height * 0.38)
   return { x: width / 2 + x * size * scale, y: height / 2 + y * size * scale, z: depth, scale, index }
@@ -92,6 +92,8 @@ function project(point: Point, index = 0): Projected {
 
 function paint(delta = 0) {
   if (!context || !width || !height) return
+  const yaw = time * .16 + pointer.x * .42 + .3, pitch = Math.sin(time * .13) * .12 + pointer.y * .3 - .15
+  cosYaw = Math.cos(yaw); sinYaw = Math.sin(yaw); cosPitch = Math.cos(pitch); sinPitch = Math.sin(pitch)
   const ctx = context
   ctx.clearRect(0, 0, width, height)
   const target = shapes[mode.value]
@@ -159,7 +161,7 @@ function tick(timestamp: number) {
   frame = requestAnimationFrame(tick)
 }
 function start() {
-  if (frame || reduced.value || !visible || document.hidden) return
+  if (frame || reduced.value || !visible || document.hidden || bookTransitionActive.value) return
   frame = requestAnimationFrame(tick)
 }
 function syncPlayback() { stop(); if (reduced.value) paint(); else start() }
@@ -185,6 +187,7 @@ function onPointer(event: PointerEvent) {
 }
 function resetPointer() { pointer.tx = pointer.ty = 0 }
 
+watch(bookTransitionActive, syncPlayback)
 watch(mode, () => { if (reduced.value) paint(); else start() })
 onMounted(() => {
   motionQuery = matchMedia('(prefers-reduced-motion: reduce)')

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { bookTransitionActive } from '../utils/motion-state'
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, withBase } from 'vuepress/client'
 import { knowledge, notes, projects } from '../data/content'
@@ -21,6 +22,7 @@ let historyTime = -Infinity, width = 0, height = 0
 function resume() { clearTimeout(releaseTimer); if (release) { const resolve = release; release = null; resolve() } }
 function cleanup(focus = false) {
   generation++; resume(); cancelAnimationFrame(frame); clearTimeout(watchdog)
+  bookTransitionActive.value = false
   frame = 0; active.value = false; context = null; palette = null; textures = undefined; bookContent = undefined
   document.body.classList.remove('book-transition-active', 'book-revealing')
   if (focus) {
@@ -75,6 +77,7 @@ onMounted(() => {
     const entry = findArticle(to.path)
     if (!entry || to.path === from.path || motion?.matches || document.hidden || performance.now() - historyTime < 300) { if (active.value) cleanup(); return }
     cleanup(); const token = generation
+    bookTransitionActive.value = true
     title.value = entry.title; active.value = true; phase.value = 'materializing'; progress = 0; navigated = skipped = false
     document.body.classList.add('book-transition-active')
     await nextTick()
@@ -107,8 +110,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div v-if="active" ref="stage" class="article-book-transition" :data-phase="phase" tabindex="-1" @wheel.prevent @touchmove.prevent>
+  <Teleport v-if="active" to="body">
+    <div ref="stage" class="article-book-transition" :data-phase="phase" tabindex="-1" @wheel.prevent @touchmove.prevent>
       <canvas ref="canvas" aria-hidden="true" />
       <span class="book-transition-status" role="status" aria-live="polite">正在打开 {{ title }}</span>
     </div>

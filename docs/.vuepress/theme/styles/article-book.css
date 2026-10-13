@@ -11,3 +11,8 @@
 :is(.post-index-row, .knowledge-note-row) > svg { transition: transform 240ms ease; }
 :is(.post-index-row, .knowledge-note-row):is(:hover, :focus-visible) > svg { transform: translate(2px, -2px) rotate(-8deg); }
 @media (prefers-reduced-motion: reduce) { .article-book-transition { display: none; }:is(.post-index-row, .knowledge-note-row)::before, :is(.article-page, .project-record-page) .vp-doc-container { transition: none; } }
+
+/* The teleported book stays active; underlying page effects resume after it exits. */
+.book-transition-active #app *,
+.book-transition-active #app *::before,
+.book-transition-active #app *::after { animation-play-state: paused !important; }

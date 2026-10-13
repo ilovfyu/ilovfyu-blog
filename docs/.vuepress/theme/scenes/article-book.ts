@@ -45,14 +45,16 @@ export function drawArticleBook(ctx: CanvasRenderingContext2D, width: number, he
   ctx.clearRect(0, 0, width, height)
   const p = clamp(progress), opening = ease(p / .3), turning = ease((p - .18) / .5)
   const dissolve = ease((p - .65) / .35), materialize = ease(p / .16), opacity = materialize * (1 - dissolve)
+  if (opacity <= 0) return
   const scale = Math.min(width * .30, height * .34, 350) * (.86 + opening * .14 + dissolve * .06)
   const centerY = height * (.53 - opening * .015 - dissolve * .025)
   const pitch = .20, yaw = -.10 + p * .15, roll = -.035 + p * .05
+  const cy = Math.cos(yaw), syaw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch), cr = Math.cos(roll), sr = Math.sin(roll)
   const project = (x: number, y: number, z: number): Point => {
-    const rx = x * Math.cos(yaw) + z * Math.sin(yaw), rz = z * Math.cos(yaw) - x * Math.sin(yaw)
-    const py = y * Math.cos(pitch) - rz * Math.sin(pitch), depth = y * Math.sin(pitch) + rz * Math.cos(pitch)
+    const rx = x * cy + z * syaw, rz = z * cy - x * syaw
+    const py = y * cp - rz * sp, depth = y * sp + rz * cp
     const perspective = 5 / (5 - depth), px = rx * scale * perspective, sy = py * scale * perspective
-    return { x: width / 2 + px * Math.cos(roll) - sy * Math.sin(roll), y: centerY + px * Math.sin(roll) + sy * Math.cos(roll) }
+    return { x: width / 2 + px * cr - sy * sr, y: centerY + px * sr + sy * cr }
   }
   const leaf = (u: number, v: number, angle: number, layer = 0, bend = 0) => project(Math.cos(angle) * u * 1.13, (v - .5) * 1.5, Math.sin(angle) * u * 1.13 + Math.sin(u * Math.PI) * bend + layer)
   const path = (points: Point[], close = false) => { ctx.beginPath(); points.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); if (close) ctx.closePath() }
@@ -61,8 +63,10 @@ export function drawArticleBook(ctx: CanvasRenderingContext2D, width: number, he
   }
   // Project a text texture onto the curved leaf in thin strips. The back face reads naturally too.
   const lettering = (texture: HTMLCanvasElement, angle: number, layer: number, bend: number, strength: number) => {
+    const alpha = opacity * strength * .86 * ease(Math.abs(Math.cos(angle)) / .3)
+    if (alpha < .001) return
     const reverse = Math.cos(angle) < 0
-    ctx.globalAlpha = opacity * strength * .86 * ease(Math.abs(Math.cos(angle)) / .3)
+    ctx.globalAlpha = alpha
     for (let i = 0; i < 28; i++) {
       const u0 = i / 28, u1 = (i + 1) / 28
       const a = leaf(reverse ? 1 - u0 : u0, 0, angle, layer, bend)

@@ -34,6 +34,7 @@ function attachListeners() {
 
 function detachListeners() {
   window.cancelAnimationFrame(frame)
+  frame = 0
   window.removeEventListener('scroll', requestProgressUpdate)
   window.removeEventListener('resize', requestProgressUpdate)
 }

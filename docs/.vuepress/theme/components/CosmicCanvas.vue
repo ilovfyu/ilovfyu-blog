@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { useRoute } from 'vuepress/client'
+import { bookTransitionActive } from '../utils/motion-state'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 type Star = {
   x: number
@@ -22,7 +22,6 @@ type Comet = { x: number; y: number; vx: number; vy: number; life: number; maxLi
 type DataPacket = { from: number; to: number; progress: number; speed: number; size: number; bit: '0' | '1' }
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const route = useRoute()
 const CHARS = '<>{}()=>&*#$_+.·'
 
 let ctx: CanvasRenderingContext2D | null = null
@@ -90,7 +89,7 @@ function resize() {
   if (!canvas) return
 
   mobile = innerWidth < 760 || matchMedia('(pointer: coarse)').matches
-  const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.35 : 2)
+  const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.35 : 1.5)
   canvas.width = Math.round(innerWidth * dpr)
   canvas.height = Math.round(innerHeight * dpr)
   ctx = canvas.getContext('2d')
@@ -150,31 +149,28 @@ function resize() {
   }))
 }
 
+let nebulaTextures: HTMLCanvasElement[] = []
 function drawNebula(time: number, w: number, h: number) {
   if (!ctx || lightMode) return
-  const mouseX = pointer.active ? (pointer.x - w / 2) * 0.025 : 0
-  const mouseY = pointer.active ? (pointer.y - h / 2) * 0.018 : 0
-  const drift = Math.sin(time * 0.055)
-
-  const nebula = ctx.createRadialGradient(w * 0.18 + drift * 70 + mouseX, h * 0.12 + mouseY, 0, w * 0.18, h * 0.12, w * 0.72)
-  nebula.addColorStop(0, 'rgba(150,112,80,0.15)')
-  nebula.addColorStop(0.42, 'rgba(150,120,80,0.065)')
-  nebula.addColorStop(1, 'rgba(0,0,0,0)')
-  ctx.fillStyle = nebula
-  ctx.fillRect(0, 0, w, h)
-
-  const nebula2 = ctx.createRadialGradient(w * 0.86 - drift * 55 - mouseX, h * 0.84 - mouseY, 0, w * 0.86, h * 0.84, w * 0.56)
-  nebula2.addColorStop(0, 'rgba(224,163,72,0.075)')
-  nebula2.addColorStop(0.5, 'rgba(120,100,70,0.025)')
-  nebula2.addColorStop(1, 'rgba(0,0,0,0)')
-  ctx.fillStyle = nebula2
-  ctx.fillRect(0, 0, w, h)
-
-  const core = ctx.createRadialGradient(w * 0.54, h * 0.48 + Math.cos(time * 0.04) * 35, 0, w * 0.54, h * 0.48, w * 0.3)
-  core.addColorStop(0, 'rgba(196,120,62,0.035)')
-  core.addColorStop(1, 'rgba(0,0,0,0)')
-  ctx.fillStyle = core
-  ctx.fillRect(0, 0, w, h)
+  if (!nebulaTextures.length) {
+    nebulaTextures = [
+      [[0, 'rgba(150,112,80,.15)'], [.42, 'rgba(150,120,80,.065)'], [1, 'rgba(150,120,80,0)']],
+      [[0, 'rgba(224,163,72,.075)'], [.5, 'rgba(120,100,70,.025)'], [1, 'rgba(120,100,70,0)']],
+      [[0, 'rgba(196,120,62,.035)'], [1, 'rgba(196,120,62,0)']],
+    ].map(stops => {
+      const texture = document.createElement('canvas'); texture.width = texture.height = 256
+      const layer = texture.getContext('2d')!
+      const gradient = layer.createRadialGradient(128, 128, 0, 128, 128, 128)
+      stops.forEach(([offset, color]) => gradient.addColorStop(Number(offset), String(color)))
+      layer.fillStyle = gradient; layer.fillRect(0, 0, 256, 256)
+      return texture
+    })
+  }
+  const mouseX = pointer.active ? (pointer.x - w / 2) * .025 : 0
+  const mouseY = pointer.active ? (pointer.y - h / 2) * .018 : 0
+  const drift = Math.sin(time * .055)
+  const layers = [[w * .18 + drift * 70 + mouseX, h * .12 + mouseY, w * .72], [w * .86 - drift * 55 - mouseX, h * .84 - mouseY, w * .56], [w * .54, h * .48 + Math.cos(time * .04) * 35, w * .3]]
+  layers.forEach(([x, y, radius], i) => ctx!.drawImage(nebulaTextures[i], x - radius, y - radius, radius * 2, radius * 2))
 }
 
 function positionStars(delta: number, w: number, h: number) {
@@ -467,9 +463,8 @@ function render(timeMs: number, animate = true) {
 
 function draw(time: number) {
   if (!running) return
-  const readingPage = route.path.startsWith('/posts/') || route.path.startsWith('/topics/') || route.path.startsWith('/knowledge/') || route.path.startsWith('/notes/')
-  const frameInterval = mobile || readingPage ? 1000 / 30 : 1000 / 60
-  if (!lastPaint || time - lastPaint >= frameInterval) {
+  const frameInterval = 1000 / 30
+  if (!lastPaint || time - lastPaint >= frameInterval - .5) {
     render(time)
     lastPaint = time
   }
@@ -477,7 +472,7 @@ function draw(time: number) {
 }
 
 function start() {
-  if (running || reduced || document.hidden || lightMode) return
+  if (running || reduced || document.hidden || lightMode || bookTransitionActive.value) return
   running = true
   lastFrame = 0
   lastPaint = 0
@@ -540,6 +535,8 @@ function onVisibility() {
   else start()
 }
 
+watch(bookTransitionActive, blocked => { if (blocked) stop(); else start() })
+
 onMounted(() => {
   motionQuery = matchMedia('(prefers-reduced-motion: reduce)')
   reduced = motionQuery.matches
@@ -562,6 +559,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stop()
+  nebulaTextures = []
   window.removeEventListener('resize', onResize)
   window.removeEventListener('pointermove', onPointer)
   window.removeEventListener('pointerleave', onPointerLeave)
