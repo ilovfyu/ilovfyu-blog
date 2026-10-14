@@ -37,7 +37,8 @@ test('curved lettering stays finite and balanced through both themes and viewpor
         drawArticleBook(recorder.ctx, width, height, progress, { ...palette, dark }, [{}, {}])
         recorder.verify()
         assert.ok(recorder.calls.includes('stroke'))
-        assert.ok(recorder.calls.includes('drawImage'))
+        if (progress > .1) assert.ok(recorder.calls.includes('drawImage'))
+        else assert.ok(!recorder.calls.includes('drawImage'))
       }
     }
   }

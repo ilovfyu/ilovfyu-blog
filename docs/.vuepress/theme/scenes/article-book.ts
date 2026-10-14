@@ -88,6 +88,12 @@ export function drawArticleBook(ctx: CanvasRenderingContext2D, width: number, he
     stroke(outline, color, opacity * strength * .75, 1.1, palette.dark ? 8 : 3)
     if (texture) lettering(texture, angle, layer, bend, strength * textStrength)
   }
+  // Light follows the leaf curvature, instead of filling the screen with bloom.
+  const gild = (angle: number, layer: number, bend: number, strength: number) => {
+    const sweep = (p * 1.65) % 1
+    const line = Array.from({ length: 18 }, (_, i) => leaf(sweep, i / 17, angle, layer + .002, bend))
+    stroke(line, palette.secondary, opacity * strength * Math.sin(sweep * Math.PI) * .32, 1.3, palette.dark ? 4 : 0)
+  }
   const left = .14 + opening * (Math.PI - .22), right = .065
   // Stacked contours create a complete floating book, rather than a single page wipe.
   for (const angle of [left, right]) {
@@ -95,7 +101,8 @@ export function drawArticleBook(ctx: CanvasRenderingContext2D, width: number, he
       const points = [leaf(0, 1, angle, -i * .013), leaf(1.015, 1, angle, -i * .013), leaf(1.015, 0, angle, -i * .013)]
       stroke(points, palette.secondary, opacity * .22, .7)
     }
-    sheet(angle, angle === left ? palette.secondary : palette.primary, 0, .035, .85, textures?.[angle === left ? 0 : 1], angle === left ? 1 : ease((turning - .45) / .15))
+    sheet(angle, angle === left ? palette.secondary : palette.primary, 0, .035, .85, textures?.[angle === left ? 0 : 1], angle === left ? ease((opening - .32) / .45) : ease((turning - .45) / .15))
+    gild(angle, .004, .035, .6)
   }
   if (turning > .01 && turning < .99) {
     for (let i = 3; i >= 1; i--) {
@@ -105,10 +112,18 @@ export function drawArticleBook(ctx: CanvasRenderingContext2D, width: number, he
   }
   const angle = .07 + turning * (Math.PI - .14), bend = Math.sin(angle) * .35
   // Hand the excerpt from the turning leaf to the revealed page, avoiding doubled translucent text.
-  sheet(angle, palette.primary, .05, bend, 1, turning < .5 ? textures?.[1] : undefined, 1 - ease((turning - .4) / .1))
+  sheet(angle, palette.primary, .05, bend, 1, turning < .5 ? textures?.[1] : undefined, ease((opening - .32) / .45) * (1 - ease((turning - .4) / .1)))
+  gild(angle, .055, bend, 1)
   const edge = Array.from({ length: 40 }, (_, i) => leaf(1, i / 39, angle, .05, bend))
   stroke(edge, palette.primary, opacity * .9, 1.8, palette.dark ? 16 : 5)
   stroke([leaf(0, 0, 0, .08), leaf(0, 1, 0, .08)], palette.primary, opacity * .65, 1.4, 8)
+  // A subtly curved binding and luminous stitching make the book feel complete.
+  const binding = Array.from({ length: 28 }, (_, i) => leaf(0, i / 27, 0, .09 + Math.sin(i / 27 * Math.PI) * .015))
+  stroke(binding, palette.secondary, opacity * .28, 4, 0)
+  for (let i = 0; i < 8; i++) {
+    const v = .13 + i * .105
+    stroke([leaf(.025, v, left, .08), leaf(.025, v, right, .08)], palette.secondary, opacity * .45, .7)
+  }
   // Leaves disintegrate into drifting sparks across the screen during the slow dissolve.
   const energy = Math.sin(turning * Math.PI) * .5 + Math.sin(dissolve * Math.PI)
   for (let i = 0; i < 110; i++) {
@@ -118,7 +133,13 @@ export function drawArticleBook(ctx: CanvasRenderingContext2D, width: number, he
     const x = origin.x + Math.sin(i * 2.4) * drift, y = origin.y - dissolve * (height * .25 + v * scale * .4) - age * 20
     ctx.globalAlpha = materialize * energy * (1 - dissolve) * (.25 + (1 - age) * .45)
     ctx.fillStyle = i % 3 ? palette.primary : palette.secondary
-    const size = i % 9 ? 1.3 : 2.6; ctx.fillRect(x, y, size, size)
+    const size = i % 9 ? 1.3 : 2.6
+    if (i % 9 === 0 && dissolve > .02) {
+      const alpha = ctx.globalAlpha
+      stroke([{ x: x - Math.sin(i * 2.4) * dissolve * 14, y: y + dissolve * 12 }, { x, y }], ctx.fillStyle as string, alpha * .4, .8)
+      ctx.globalAlpha = alpha
+    }
+    ctx.fillRect(x, y, size, size)
   }
   ctx.globalAlpha = 1
 }

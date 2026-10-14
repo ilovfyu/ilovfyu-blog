@@ -9,9 +9,10 @@ export function drawCatalogScene(ctx: CanvasRenderingContext2D, width: number, h
   const scale = Math.min(width / 3.6, height / 3.7)
   const yaw = (kind === 'topics' ? .55 + time * .13 : -.32 + Math.sin(time * .25) * .07) + pointer.x * .1
   const pitch = (kind === 'topics' ? .2 : .62) + pointer.y * .06
+  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch)
   const transform = (v: Vec) => {
-    const x = v.x * Math.cos(yaw) + v.z * Math.sin(yaw), z = v.z * Math.cos(yaw) - v.x * Math.sin(yaw)
-    return { x, y: v.y * Math.cos(pitch) - z * Math.sin(pitch), z: v.y * Math.sin(pitch) + z * Math.cos(pitch) }
+    const x = v.x * cy + v.z * sy, z = v.z * cy - v.x * sy
+    return { x, y: v.y * cp - z * sp, z: v.y * sp + z * cp }
   }
   const project = (v: Vec) => {
     const p = transform(v), depth = 5 / (5 + p.z)
@@ -64,6 +65,10 @@ export function drawCatalogScene(ctx: CanvasRenderingContext2D, width: number, h
       face([edge(.2, side, spread), edge(.5, side, spread + .18), edge(.8, side, spread), edge(.5, side, spread - .06)], side === 1 ? palette.secondary : palette.primary, .48)
     }
     paintFaces()
+    // A narrow triangular light section climbs the prism, revealing its folded surface.
+    const scan = (time * .095) % 1
+    const band = [edge(scan, 0, .016), edge(scan, 1, .016), edge(scan, 2, .016), edge(scan, 0, .016)]
+    line(band, palette.secondary, Math.sin(scan * Math.PI) * .7, 1.6)
     for (let side = 0; side < 3; side++) {
       const points = Array.from({ length: 40 }, (_, i) => edge(i / 39, side))
       line(points, side === 1 ? palette.secondary : palette.primary, .85, 1.3)

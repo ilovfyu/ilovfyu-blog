@@ -26,6 +26,7 @@ import './theme/styles/knowledge.css'
 import './theme/styles/topics.css'
 import './theme/styles/catalog-scenes.css'
 import './theme/styles/article-book.css'
+import './theme/styles/motion-polish.css'
 
 export default defineClientConfig({
   enhance({ app }) {

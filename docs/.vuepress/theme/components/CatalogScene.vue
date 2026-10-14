@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="stage" class="catalog-scene" :class="{ 'catalog-scene-ready': ready }" :data-kind="kind" :data-motion="running ? 'running' : 'still'" aria-hidden="true" @pointermove="move" @pointerleave="leave">
-    <div class="catalog-scene-aura" /><canvas ref="canvas" />
+    <div class="catalog-scene-aura" /><div class="catalog-scene-calibration"><i v-for="tick in 12" :key="tick" :style="{ '--tick': tick }" /></div><canvas ref="canvas" />
     <div class="catalog-scene-fallback"><i /><b /><span>{{ kind === 'topics' ? 'READ' : 'WRITE' }}</span></div>
     <span class="catalog-scene-coordinate">{{ kind === 'topics' ? 'CHAPTER / PRISM' : 'WRITING / IN MOTION' }}</span>
     <span class="catalog-scene-caption">{{ kind === 'topics' ? '探索 · 关联 · 深入' : '观察 · 构建 · 记录' }}</span>

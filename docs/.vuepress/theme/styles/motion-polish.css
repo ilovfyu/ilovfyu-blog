@@ -1,0 +1,67 @@
+/* Light is a detail of the object, rather than a second full-screen effect. */
+.project-focus-hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(270px, .85fr); align-items: center; gap: 36px; }
+.project-focus-hero .project-lab-intro h1 span { display: block; margin: 14px 0 0; font-size: .52em; line-height: 1.5; }
+.build-sculpture { position: relative; min-width: 0; height: 320px; isolation: isolate; pointer-events: none; }
+.build-sculpture svg { position: relative; display: block; width: 100%; height: 100%; }
+.build-sculpture-aura { position: absolute; inset: 20% 12% 12%; background: radial-gradient(ellipse, color-mix(in srgb, var(--fx-cyan) 9%, transparent), transparent 68%); }
+.sculpture-ground { stroke: var(--fx-cyan); stroke-width: .7; opacity: .12; }
+.sculpture-conduit { stroke: var(--fx-cyan); stroke-width: .7; opacity: .22; }
+.sculpture-pane { fill: color-mix(in srgb, var(--fx-cyan) 9%, var(--space-1)); stroke: var(--fx-cyan); stroke-opacity: .5; stroke-width: 1; }
+.sculpture-pane.secondary { fill: color-mix(in srgb, var(--fx-violet) 9%, var(--space-1)); stroke: var(--fx-violet); }
+.sculpture-depth { fill: color-mix(in srgb, var(--fx-cyan) 18%, var(--space-1)); stroke: var(--fx-cyan); stroke-opacity: .25; }
+.sculpture-volume { fill: color-mix(in srgb, var(--fx-cyan) 7%, var(--space-1)); stroke: var(--fx-cyan); stroke-opacity: .65; stroke-width: 1; }
+.sculpture-side { fill: var(--fx-cyan); opacity: .1; }
+.sculpture-core { fill: var(--fx-cyan); fill-opacity: .11; stroke: var(--fx-cyan); stroke-opacity: .7; }
+.sculpture-glyph { stroke: var(--fx-cyan); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.sculpture-rule { stroke: var(--fx-cyan); stroke-width: .7; opacity: .25; }
+.sculpture-slot { fill: var(--fx-violet); fill-opacity: .2; stroke: var(--fx-violet); stroke-opacity: .65; }
+.sculpture-bright { stroke: var(--fx-cyan); stroke-width: 1.5; stroke-linecap: round; }.sculpture-bright.secondary { stroke: var(--fx-violet); }
+.sculpture-thread { stroke: var(--fx-cyan); stroke-width: .8; stroke-dasharray: 2 5; opacity: .25; }
+.sculpture-data { stroke: var(--fx-cyan); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 12 290; opacity: .8; animation: sculpture-transfer 5s linear infinite; }.sculpture-data.reverse { stroke: var(--fx-violet); animation-direction: reverse; animation-delay: -2s; }.sculpture-data.vertical { stroke: var(--fx-violet); stroke-dasharray: 9 190; animation: sculpture-vertical 3.8s linear infinite; opacity: .7; }
+.sculpture-layer { animation: sculpture-suspend 7s ease-in-out infinite; }.layer-foundation { animation-delay: -4s; }.layer-architecture { animation-delay: -2s; }.layer-idea { animation-duration: 6s; }
+.sculpture-markers { stroke: var(--fx-cyan); stroke-width: .8; stroke-opacity: .4; }.sculpture-markers text { fill: var(--text-3); stroke: none; font: 8px var(--font-code); letter-spacing: .16em; }
+.sculpture-sparks { stroke: var(--fx-violet); stroke-width: 1; opacity: .4; animation: sculpture-sparks 8s ease-in-out infinite; }
+.build-sculpture-caption { position: absolute; inset: auto 0 -10px; text-align: center; color: var(--text-2); font: 10px var(--font-sans); letter-spacing: .18em; }
+.build-sculpture[data-motion="still"] :is(.sculpture-layer, .sculpture-data, .sculpture-sparks) { animation-play-state: paused; }
+.writing-trail { position: relative; width: min(100%, 760px); margin: 52px auto 8px; color: var(--fx-cyan); text-align: center; pointer-events: none; }
+.writing-trail > span { display: block; color: var(--text-2); font: 12px var(--font-sans); letter-spacing: .16em; }
+.writing-trail svg { display: block; width: 100%; height: 94px; margin-block: 8px; }
+.writing-guides { stroke: var(--fx-cyan); stroke-opacity: .12; stroke-width: .6; }
+.writing-ink { stroke: var(--fx-cyan); stroke-opacity: .24; stroke-width: .9; }
+.writing-ink-flow { stroke: var(--fx-cyan); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 76 960; animation: writing-flow 9s cubic-bezier(.22,.5,.42,1) infinite; }
+.writing-flakes { stroke: var(--fx-violet); stroke-opacity: .4; animation: sculpture-sparks 9s ease-in-out -3s infinite; }
+.writing-trail small { color: var(--text-3); font: 8px var(--font-code); letter-spacing: .24em; }
+.writing-trail[data-motion="still"] :is(.writing-ink-flow, .writing-flakes) { animation-play-state: paused; }
+.catalog-scene-calibration { position: absolute; inset: 14px 10px 28px; pointer-events: none; border-block: 1px solid color-mix(in srgb, var(--sculpture-accent) 10%, transparent); mask-image: linear-gradient(90deg, transparent, black 20%, black 80%, transparent); }
+.catalog-scene-calibration::before, .catalog-scene-calibration::after { content: ''; position: absolute; top: -2px; width: 4px; height: 4px; border: 1px solid var(--sculpture-accent); opacity: .55; rotate: 45deg; }.catalog-scene-calibration::before { left: 16%; }.catalog-scene-calibration::after { right: 16%; top: auto; bottom: -2px; }
+.catalog-scene-calibration i { position: absolute; left: calc(var(--tick) * 8.33%); bottom: -1px; width: 1px; height: 4px; background: var(--sculpture-accent); opacity: .3; }.catalog-scene-calibration i:nth-child(3n) { height: 7px; }
+.atlas-refraction { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.atlas-refraction::after { content: ''; position: absolute; top: -20%; left: -70%; width: 55%; height: 140%; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fx-cyan) 18%, transparent), transparent); transform: skewX(-22deg); animation: atlas-refraction 9s ease-in-out infinite; }.sheet-topics .atlas-refraction::after { animation-delay: -4s; }
+.atlas-floor-sweep { position: absolute; inset: -15px; border-top: 1px solid color-mix(in srgb, var(--fx-cyan) 45%, transparent); transform: translateZ(-9px); mask-image: radial-gradient(ellipse, black, transparent 72%); animation: atlas-floor-sweep 8s ease-in-out infinite; }
+.atlas-fiducials { position: absolute; inset: 20px 28px 35px; pointer-events: none; }.atlas-fiducials i { position: absolute; width: 10px; height: 10px; border-top: 1px solid var(--fx-cyan); border-left: 1px solid var(--fx-cyan); opacity: .35; }.atlas-fiducials i:nth-child(2) { right: 0; rotate: 90deg; }.atlas-fiducials i:nth-child(3) { bottom: 0; right: 0; rotate: 180deg; }.atlas-fiducials i:nth-child(4) { bottom: 0; rotate: 270deg; }
+.knowledge-atlas .atlas-refraction::after, .knowledge-atlas .atlas-floor-sweep { animation-play-state: paused; }.knowledge-atlas.atlas-active .atlas-refraction::after, .knowledge-atlas.atlas-active .atlas-floor-sweep { animation-play-state: running; }
+/* Reading links gain a brief directional accent when approached by pointer or keyboard. */
+:is(.post-index-row, .knowledge-note-row, .topic-reading-link) { transition: border-color .3s, background .3s, transform .35s cubic-bezier(.2,.7,.2,1); }
+:is(.post-index-row, .knowledge-note-row):is(:hover, :focus-visible) { background: linear-gradient(100deg, color-mix(in srgb, var(--fx-cyan) 4%, transparent), transparent 75%); }
+.topic-reading-link:is(:hover, :focus-visible) { transform: translateX(3px); background: color-mix(in srgb, var(--fx-violet) 3%, var(--space-1)); }
+@keyframes sculpture-suspend { 0%,100% { translate: 0 2px; } 50% { translate: 0 -6px; } }
+@keyframes sculpture-transfer { to { stroke-dashoffset: -302; } }
+@keyframes sculpture-vertical { to { stroke-dashoffset: -199; } }
+@keyframes sculpture-sparks { 0%,100% { opacity: .18; translate: 0 0; } 50% { opacity: .65; translate: 0 -4px; } }
+@keyframes writing-flow { 0% { stroke-dashoffset: 0; opacity: 0; } 10%,80% { opacity: .8; } 100% { stroke-dashoffset: -1036; opacity: 0; } }
+@keyframes atlas-refraction { 0%,55% { translate: 0; opacity: 0; } 62% { opacity: .8; } 85%,100% { translate: 380%; opacity: 0; } }
+@keyframes atlas-floor-sweep { 0%,100% { translate: 0 15px; opacity: 0; } 20% { opacity: .45; } 70% { translate: 0 260px; opacity: 0; } }
+@media (max-width: 900px) { .project-focus-hero { gap: 16px; grid-template-columns: minmax(0, 1.1fr) minmax(240px, .9fr); }.build-sculpture { height: 290px; } }
+@media (max-width: 600px) { .project-focus-hero { grid-template-columns: 1fr; gap: 12px; }.build-sculpture { height: 250px; max-width: 430px; width: 100%; justify-self: center; }.project-focus-hero .project-lab-stats { gap: 28px; }.writing-trail { margin-top: 36px; }.writing-trail svg { height: 70px; } }
+@media (prefers-reduced-motion: reduce) {
+  :is(.build-sculpture, .writing-trail, .knowledge-atlas) *, .atlas-refraction::after { animation: none !important; }
+  :is(.post-index-row, .knowledge-note-row, .topic-reading-link) { transition: none; }
+  .topic-reading-link:is(:hover, :focus-visible) { transform: none; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .sculpture-layer { transition: transform .8s cubic-bezier(.2,.75,.2,1); }
+  .project-focus-hero:hover .layer-idea { transform: translateY(-9px); }
+  .project-focus-hero:hover .layer-architecture { transform: translateY(-3px); }
+  .project-focus-hero:hover .layer-foundation { transform: translateY(4px); }
+  .project-focus-hero:hover .sculpture-core { fill-opacity: .22; }
+}

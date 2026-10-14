@@ -1,22 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useSceneMotion } from '../utils/use-scene-motion'
 
 const props = defineProps<{ name: string }>()
 const kind = computed(() => /fastapi/i.test(props.name) ? 'api' : /博客/.test(props.name) ? 'publish' : 'library')
 const stage = ref<HTMLElement | null>(null)
-const running = ref(false)
-let observer: IntersectionObserver | undefined
-let motion: MediaQueryList | undefined
-let visible = false
-function sync() { running.value = visible && !document.hidden && !motion?.matches }
-onMounted(() => {
-  motion = matchMedia('(prefers-reduced-motion: reduce)')
-  observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync() }, { threshold: .05 })
-  if (stage.value) observer.observe(stage.value)
-  motion.addEventListener('change', sync)
-  document.addEventListener('visibilitychange', sync)
-})
-onBeforeUnmount(() => { observer?.disconnect(); motion?.removeEventListener('change', sync); document.removeEventListener('visibilitychange', sync) })
+const running = useSceneMotion(stage)
 </script>
 
 <template>

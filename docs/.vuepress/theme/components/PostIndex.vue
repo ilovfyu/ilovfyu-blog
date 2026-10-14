@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { ArrowUpRight, Search, Shuffle } from '@lucide/vue'
 import { withBase, useRouter } from 'vuepress/client'
 import { notes, type Category } from '../data/content'
+import WritingTrail from './WritingTrail.vue'
 import CatalogScene from './CatalogScene.vue'
 
 const router = useRouter()
@@ -54,6 +55,7 @@ function reset() { category.value = 'all'; query.value = '' }
         </a>
       </TransitionGroup>
       <div v-else class="catalog-empty"><h2>{{ notes.length ? '暂时没有匹配的随笔' : '还没有发布随笔' }}</h2><p>{{ notes.length ? '换一个关键词，或回到全部文章。' : '新的文章发布后，会出现在这里。' }}</p><button v-if="notes.length" type="button" class="catalog-button" @click="reset">重置筛选</button></div>
+      <WritingTrail />
     </section>
   </main>
 </template>

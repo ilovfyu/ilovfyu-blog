@@ -107,6 +107,14 @@ function paint(delta = 0) {
   const projected = points.map(project)
   const alpha = light ? 0.34 : 0.36
 
+  // Small translucent facets catch a moving highlight; the network stays readable beneath them.
+  for (let i = 0; i < count - 12; i += 18) {
+    const a = projected[i], b = projected[i + 5], c = projected[i + 11]
+    const glint = (Math.sin(time * .6 + i * .18) + 1) * .5
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.lineTo(c.x, c.y); ctx.closePath()
+    ctx.fillStyle = `rgba(${colors[(mode.value + 1) % 3]},${.025 + glint * (light ? .045 : .065)})`; ctx.fill()
+  }
+
   // 透视地平线与两道空间轨道，为点阵提供前后层次。
   ctx.lineWidth = 0.65
   for (let ring = 0; ring < 2; ring++) {
@@ -120,6 +128,15 @@ function paint(delta = 0) {
     }
     ctx.strokeStyle = 'rgba(' + colors[ring] + ',' + (light ? 0.2 : 0.22) + ')'
     ctx.stroke()
+  }
+  // Calibration marks float in the same space as the sculpture, with a travelling accent.
+  for (let i = 0; i < 40; i++) {
+    const angle = i / 40 * Math.PI * 2
+    const a = project({ x: Math.cos(angle) * 1.4, y: -.1, z: Math.sin(angle) * 1.4 })
+    const b = project({ x: Math.cos(angle) * (i % 5 ? 1.43 : 1.48), y: -.1, z: Math.sin(angle) * (i % 5 ? 1.43 : 1.48) })
+    const focus = (time * 2) % 40, lit = Math.abs(i - focus) < 2
+    ctx.strokeStyle = `rgba(${colors[lit ? (mode.value + 1) % 3 : mode.value]},${lit ? .7 : .17})`
+    ctx.lineWidth = lit ? 1.2 : .7; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke()
   }
   edges[mode.value].forEach(([from, to], index) => {
     const a = projected[from]
