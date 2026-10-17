@@ -183,38 +183,143 @@
       "route": "/projects/20261012035207-l8xx3ew/"
     },
     {
-      "id": "20261012215906-8cmd9qf",
-      "path": "docs/notes/siyuan/20261012215906-8cmd9qf.md",
-      "title": "02 · 参数与数据校验",
-      "route": "/notes/20261012215906-8cmd9qf/"
+      "id": "20261017142208-d89f0p6",
+      "path": "docs/notes/siyuan/20261017142208-d89f0p6.md",
+      "title": "02 · 路由、状态码与 OpenAPI",
+      "route": "/notes/20261017142208-d89f0p6/"
     },
     {
-      "id": "20261012215906-krsmfiv",
-      "path": "docs/notes/siyuan/20261012215906-krsmfiv.md",
-      "title": "01 · FastAPI 快速入门",
-      "route": "/notes/20261012215906-krsmfiv/"
+      "id": "20261017142208-i7zbewn",
+      "path": "docs/notes/siyuan/20261017142208-i7zbewn.md",
+      "title": "01 · 2026 年的 FastAPI：版本、环境与第一条路由",
+      "route": "/notes/20261017142208-i7zbewn/"
     },
     {
-      "id": "20261012215906-uzuv92d",
-      "path": "docs/notes/siyuan/20261012215906-uzuv92d.md",
-      "title": "03 · 依赖注入与项目组织",
-      "route": "/notes/20261012215906-uzuv92d/"
+      "id": "20261017142209-h4p0nbf",
+      "path": "docs/notes/siyuan/20261017142209-h4p0nbf.md",
+      "title": "03 · Pydantic 2：请求模型与响应模型",
+      "route": "/notes/20261017142209-h4p0nbf/"
     },
     {
-      "id": "20261012215907-4axxt36",
-      "path": "docs/notes/siyuan/20261012215907-4axxt36.md",
-      "title": "04 · 测试与部署",
-      "route": "/notes/20261012215907-4axxt36/"
+      "id": "20261017142209-nebhdfz",
+      "path": "docs/notes/siyuan/20261017142209-nebhdfz.md",
+      "title": "04 · 参数来源、表单与文件上传",
+      "route": "/notes/20261017142209-nebhdfz/"
+    },
+    {
+      "id": "20261017142209-qlxg3nd",
+      "path": "docs/notes/siyuan/20261017142209-qlxg3nd.md",
+      "title": "05 · 错误处理与统一错误契约",
+      "route": "/notes/20261017142209-qlxg3nd/"
+    },
+    {
+      "id": "20261017142210-acudhzz",
+      "path": "docs/notes/siyuan/20261017142210-acudhzz.md",
+      "title": "08 · SQLAlchemy 2.1：模型、会话与仓储",
+      "route": "/notes/20261017142210-acudhzz/"
+    },
+    {
+      "id": "20261017142210-bsvzj3r",
+      "path": "docs/notes/siyuan/20261017142210-bsvzj3r.md",
+      "title": "07 · 项目结构、应用工厂与 lifespan",
+      "route": "/notes/20261017142210-bsvzj3r/"
+    },
+    {
+      "id": "20261017142210-xie6k4d",
+      "path": "docs/notes/siyuan/20261017142210-xie6k4d.md",
+      "title": "06 · 依赖注入：函数、类与 yield",
+      "route": "/notes/20261017142210-xie6k4d/"
+    },
+    {
+      "id": "20261017142211-9ewlnyp",
+      "path": "docs/notes/siyuan/20261017142211-9ewlnyp.md",
+      "title": "10 · Alembic 迁移：让数据库可演进",
+      "route": "/notes/20261017142211-9ewlnyp/"
+    },
+    {
+      "id": "20261017142211-tsz390t",
+      "path": "docs/notes/siyuan/20261017142211-tsz390t.md",
+      "title": "09 · 异步 SQLAlchemy、事务与连接池",
+      "route": "/notes/20261017142211-tsz390t/"
+    },
+    {
+      "id": "20261017142212-9ql23d5",
+      "path": "docs/notes/siyuan/20261017142212-9ql23d5.md",
+      "title": "13 · 认证：OAuth2、JWT 与密码哈希",
+      "route": "/notes/20261017142212-9ql23d5/"
+    },
+    {
+      "id": "20261017142212-cyniko7",
+      "path": "docs/notes/siyuan/20261017142212-cyniko7.md",
+      "title": "11 · 查询、分页与仓储层设计",
+      "route": "/notes/20261017142212-cyniko7/"
+    },
+    {
+      "id": "20261017142212-fptrbhp",
+      "path": "docs/notes/siyuan/20261017142212-fptrbhp.md",
+      "title": "12 · 配置与密钥：pydantic-settings",
+      "route": "/notes/20261017142212-fptrbhp/"
+    },
+    {
+      "id": "20261017142213-gll0bu0",
+      "path": "docs/notes/siyuan/20261017142213-gll0bu0.md",
+      "title": "15 · 后台任务、流式响应与 SSE",
+      "route": "/notes/20261017142213-gll0bu0/"
+    },
+    {
+      "id": "20261017142213-i9q8ufz",
+      "path": "docs/notes/siyuan/20261017142213-i9q8ufz.md",
+      "title": "14 · 授权、CORS 与中间件",
+      "route": "/notes/20261017142213-i9q8ufz/"
+    },
+    {
+      "id": "20261017142213-ilyt0xq",
+      "path": "docs/notes/siyuan/20261017142213-ilyt0xq.md",
+      "title": "16 · WebSocket：连接、广播与鉴权",
+      "route": "/notes/20261017142213-ilyt0xq/"
+    },
+    {
+      "id": "20261017142214-lhqniiy",
+      "path": "docs/notes/siyuan/20261017142214-lhqniiy.md",
+      "title": "18 · 可观测性、生产部署与 CI",
+      "route": "/notes/20261017142214-lhqniiy/"
+    },
+    {
+      "id": "20261017142214-ze4a51h",
+      "path": "docs/notes/siyuan/20261017142214-ze4a51h.md",
+      "title": "17 · 测试进阶：TestClient、httpx2 与数据库隔离",
+      "route": "/notes/20261017142214-ze4a51h/"
+    },
+    {
+      "id": "20261017142215-ptyjvm8",
+      "path": "docs/notes/siyuan/20261017142215-ptyjvm8.md",
+      "title": "19 · 综合实战：生产级任务 API",
+      "route": "/notes/20261017142215-ptyjvm8/"
     }
   ],
   "files": {
-    "docs/notes/siyuan/20261012020836-7jlsg0x.md": "1c0b5f03fef75ebfa952c864ef97b28ca863e917ef5aea7f644c7dfe496eaa1b",
-    "docs/notes/siyuan/20261012020836-7my80n4.md": "4f106acdd9710a4bff968f749797703b0fcc3e4c1b253503331fbfdd98c743fd",
-    "docs/notes/siyuan/20261012020836-sjietk8.md": "f259f0ae82031515457a9a8a1d8edf6291a2dc073e78661a3a593e88f3f7d7e2",
-    "docs/notes/siyuan/20261012215906-8cmd9qf.md": "9d122e4c7d42798468da3dcaf356379260fd29dd7214317a1e00f9af4221623b",
-    "docs/notes/siyuan/20261012215906-krsmfiv.md": "0fa74b340fa702d376c8a80ddb77b74d8555f4c8682cacc17c049c98e6dec090",
-    "docs/notes/siyuan/20261012215906-uzuv92d.md": "934ecc3a1301778d097023b00cfdbbfe1f384c9dd24efc768e21e9fbb3177bb9",
-    "docs/notes/siyuan/20261012215907-4axxt36.md": "694fa01336815c10fc562677f124997e651962dc4439d490f7393a51c502c38f",
+    "docs/notes/siyuan/20261012020836-7jlsg0x.md": "a3670bd74ac5b811c8b08b5511da1d767ba06f63de227ff041a52bbc19643a34",
+    "docs/notes/siyuan/20261012020836-7my80n4.md": "f582bf736d1914bb614f7ec3b2fec3e87ace058e1a50b658f869d89ab3fca9ad",
+    "docs/notes/siyuan/20261012020836-sjietk8.md": "28e218e2422bb51a0de9fca0640a8ef97332998f95f3a6e5a3e3723b9e112a6a",
+    "docs/notes/siyuan/20261017142208-d89f0p6.md": "6fa877f520f2e4393a372f72a0dc9595169e36fe94f3fcc5b37038eac0de6e90",
+    "docs/notes/siyuan/20261017142208-i7zbewn.md": "4dd812cbda5d498beffc958d4007d9317f220943dfb75517acb22321c7df84b9",
+    "docs/notes/siyuan/20261017142209-h4p0nbf.md": "438ed3a1374ee871311400c279c1fc5591c0af2dad4f79263af8679ca35f2cb3",
+    "docs/notes/siyuan/20261017142209-nebhdfz.md": "4c5e786e3bfb65b157315727e9d9c7dd35b6e4656fdc8069b7fe7a01f4971530",
+    "docs/notes/siyuan/20261017142209-qlxg3nd.md": "6c7846df0730524c03c06f1630e2244a5df1c78355df80286e4de68b29b61d82",
+    "docs/notes/siyuan/20261017142210-acudhzz.md": "1f7022774ba7de91b3f50ee24bce13e3b3f7fda2bd083b876d7f92c2b00af7ff",
+    "docs/notes/siyuan/20261017142210-bsvzj3r.md": "a7a7a8420a8adb60d12ece9385d95aa026ceb677106f68db4359e0f49b3a3883",
+    "docs/notes/siyuan/20261017142210-xie6k4d.md": "fe2219be1345dfe783e12138b2627f0a32da78f8d113c966e64a1e7458b55c98",
+    "docs/notes/siyuan/20261017142211-9ewlnyp.md": "8a30b4e00ad0f12243c072561d95c3f26e1b0f92159056378380b6fbe6d825f2",
+    "docs/notes/siyuan/20261017142211-tsz390t.md": "4cd2bf509ac91f3f57d04061c0552a951c1712295be2e776850d1e07a8d6fd43",
+    "docs/notes/siyuan/20261017142212-9ql23d5.md": "ac75896a9fba7a7472b63f3400ba1bd11fe35076b52d5bf24ed382f24ef2b7a3",
+    "docs/notes/siyuan/20261017142212-cyniko7.md": "99636d0d9bb3d5ab4868a87ff3e5d89eca159597679906f1bb80527b78889e63",
+    "docs/notes/siyuan/20261017142212-fptrbhp.md": "661a59eb05a1c0a9f938336dfa70d00457bf3c4a47e0adf19f5bff80b110903f",
+    "docs/notes/siyuan/20261017142213-gll0bu0.md": "4af86dd7a74e468bb58622a7a2f32201188c70debf7fce4687f69f0c182ad838",
+    "docs/notes/siyuan/20261017142213-i9q8ufz.md": "77a073ec7b95e79796961ac3f069a6642d9b270a472a2549089bb2589b9e49f4",
+    "docs/notes/siyuan/20261017142213-ilyt0xq.md": "e5263ce931ba39ca7946e2de3b2f60da8aad28818188ad024a77ce1d442dfd0d",
+    "docs/notes/siyuan/20261017142214-lhqniiy.md": "eaed5db35da64866db05c58af18cdb5e71f9801635d042dfac85fd2a2e41e68b",
+    "docs/notes/siyuan/20261017142214-ze4a51h.md": "a3498bef9196b602e88fbfb36f0ad020ce50b44dcebe37d5336efa7b39d87624",
+    "docs/notes/siyuan/20261017142215-ptyjvm8.md": "d8b29d53674db66dccbb28fcde255b919a9c5b1b4707e8cebf3a04a0f93f35d3",
     "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
     "docs/projects/siyuan/20261012015817-1v5swr7.md": "ecf909844cfa30519a9966aa4925a57000a45cb7c66be629d32dec7c1eb35156",
     "docs/projects/siyuan/20261012015818-c0wqxhs.md": "96346ce9c8b0039bc0983baf6b1868b5720100e68d0e2300d72984521d6ce725",
