@@ -9,6 +9,11 @@ import { notes, knowledge, projects } from '../data/content'
 const featuredProjects = projects.filter(project => project.project?.group === '持续构建')
 
 const recentNotes = notes.slice(1, 4)
+const discoveryLinks = [
+  { path: '/posts/', count: notes.length, title: '随笔', caption: '实践与思考' },
+  { path: '/knowledge/', count: knowledge.length, title: '知识库', caption: '连接零散的知识' },
+  { path: '/projects/', count: projects.length, title: '项目', caption: '把想法变成作品' },
+]
 const scrollPct = ref(0)
 const now = ref('')
 
@@ -35,6 +40,7 @@ onMounted(() => {
 
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll, { passive: true })
 
   const page = document.querySelector('.technical-home')
   const revealItems = [...document.querySelectorAll<HTMLElement>('.technical-home .reveal')]
@@ -65,6 +71,7 @@ onBeforeUnmount(() => {
   clearInterval(clockTimer)
   cancelAnimationFrame(scrollRaf)
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
   io?.disconnect()
   ambientIo?.disconnect()
 })
@@ -84,6 +91,7 @@ onBeforeUnmount(() => {
           <div class="hero-actions">
             <a class="btn btn-primary" href="#latest">{{ notes.length ? '开始阅读' : '探索博客' }} <b>↓</b></a>
           </div>
+          <a class="hero-secondary" :href="withBase('/projects/')">看看正在构建的项目 <span aria-hidden="true">↗</span></a>
           <p class="hero-coordinate">SHENZHEN, CN <span>／</span> CODE · SYSTEMS · LIFE</p>
         </div>
         <div class="hero-signal" aria-label="代码、构建与写作">
@@ -94,31 +102,51 @@ onBeforeUnmount(() => {
       <div class="hero-bottom-rail" aria-hidden="true"><span>SCROLL TO EXPLORE</span><i /><span>TRANSMITTING IDEAS · EST. 2024</span></div>
     </section>
 
-    <section id="latest" class="featured-section section">
-      <header class="section-head reveal"><h2>最新随笔</h2><p class="sub">记录问题背景、工程约束与实践过程。</p></header>
-      <div v-if="notes.length" class="featured-article featured-article--single reveal">
-        <a :href="withBase(notes[0].path)" class="featured-copy">
-          <div class="article-meta"><b>{{ notes[0].label }}</b><span>{{ notes[0].date }}</span></div>
-          <h3>{{ notes[0].title }}</h3>
-          <p>{{ notes[0].summary }}</p>
-          <div class="article-tags"><span v-for="tag in notes[0].tags" :key="tag">#{{ tag }}</span></div>
-          <span class="read-link">阅读全文 <b>↗</b></span>
+    <nav class="home-discovery section" aria-label="探索博客">
+      <a v-for="(entry, index) in discoveryLinks" :key="entry.path" :href="withBase(entry.path)" class="discovery-link">
+        <span class="discovery-index" aria-hidden="true">0{{ index + 1 }}</span>
+        <span class="discovery-copy"><strong>{{ entry.title }} <small>{{ entry.count }}</small></strong><span>{{ entry.caption }}</span></span>
+        <span class="discovery-arrow" aria-hidden="true">↗</span>
+      </a>
+    </nav>
+
+    <section id="latest" class="featured-section section editorial-section">
+      <header class="section-head reveal editorial-heading">
+        <div><p class="catalog-kicker">THE JOURNAL / 最近更新</p><h2>值得展开的一页。</h2><p class="sub">记录问题背景、工程约束与实践过程。</p></div>
+        <a class="home-project-all" :href="withBase('/posts/')">全部随笔 <b aria-hidden="true">↗</b></a>
+      </header>
+      <div v-if="notes.length" class="editorial-grid" :class="{ 'has-recent': recentNotes.length }">
+        <a :href="withBase(notes[0].path)" class="featured-article editorial-feature reveal">
+          <div class="editorial-cover" aria-hidden="true">
+            <span>FIELD NOTES / 001</span>
+            <svg viewBox="0 0 600 200" fill="none">
+              <path class="cover-orbit" d="M70 135L300 25L530 135L300 190Z" />
+              <path class="cover-orbit" d="M115 110L300 22L485 110L300 198Z" />
+              <path class="cover-sheet" d="M190 88L325 32L421 78L286 140Z" />
+              <path class="cover-sheet cover-sheet-top" d="M190 64L325 8L421 54L286 116Z" />
+              <path class="cover-writing" d="M230 61L320 24M251 71L341 34M272 81L320 61" />
+              <circle cx="70" cy="135" r="4" /><circle cx="530" cy="135" r="4" />
+            </svg>
+            <span>{{ notes[0].label }} / 随笔</span>
+          </div>
+          <div class="featured-copy">
+            <div class="article-meta"><b>{{ notes[0].label }}</b><time>{{ notes[0].date }}</time></div>
+            <h3>{{ notes[0].title }}</h3>
+            <p>{{ notes[0].summary }}</p>
+            <div class="article-tags"><span v-for="tag in notes[0].tags" :key="tag">#{{ tag }}</span></div>
+            <span class="read-link">展开阅读 <b aria-hidden="true">↗</b></span>
+          </div>
         </a>
+        <div v-if="recentNotes.length" class="editorial-recent">
+          <p class="editorial-side-label">继续探索 / MORE NOTES</p>
+          <a v-for="(note, index) in recentNotes" :key="note.path" :href="withBase(note.path)" class="editorial-note reveal">
+            <span class="editorial-note-number" aria-hidden="true">0{{ index + 2 }}</span>
+            <div><div class="article-meta"><b>{{ note.label }}</b><time>{{ note.date }}</time></div><h3>{{ note.title }}</h3><p>{{ note.summary }}</p></div>
+            <span class="editorial-note-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
       <div v-else class="catalog-empty reveal"><p class="catalog-kicker">A NEW CHAPTER</p><h3>新的记录，从这里开始。</h3><p>目前还没有发布随笔，之后的文章会出现在这里。</p></div>
-    </section>
-
-    <section v-if="recentNotes.length" class="article-section section">
-      <header class="section-head reveal"><h2>最近随笔</h2><p class="sub">不追逐资讯更新，只记录值得反复回看的原理、实践与思考。</p></header>
-      <div class="article-grid">
-        <a v-for="note in recentNotes" :key="note.path" :href="withBase(note.path)" class="article-card reveal">
-          <div class="article-meta"><b :class="`tag-${note.category}`">{{ note.label }}</b><time>{{ note.date }}</time></div>
-          <h3>{{ note.title }}</h3><p>{{ note.summary }}</p>
-          <div class="article-tags"><span v-for="tag in note.tags" :key="tag">#{{ tag }}</span></div>
-          <span class="article-arrow">↗</span>
-        </a>
-      </div>
-      <a class="home-project-all reveal" :href="withBase('/posts/')">全部随笔 <b aria-hidden="true">↗</b></a>
     </section>
 
     <section class="home-study section">

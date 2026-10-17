@@ -9,8 +9,8 @@ const router = useRouter()
 const entries = [...notes, ...knowledge, ...projects.filter(entry => entry.project?.view !== 'showcase')]
 const findArticle = (path: string) => entries.find(item => item.path === path || withBase(item.path) === path)
 const active = ref(false), phase = ref('materializing'), title = ref('')
-const canvas = ref<HTMLCanvasElement | null>(null), stage = ref<HTMLElement | null>(null)
-const duration = 2400
+const canvas = ref<HTMLCanvasElement | null>(null), skipButton = ref<HTMLButtonElement | null>(null)
+const duration = 1200
 let textures: BookTextures | undefined
 let bookContent: BookContent | undefined, compact = false
 let frame = 0, releaseTimer = 0, watchdog = 0, generation = 0, started = 0, painted = 0, progress = 0
@@ -58,7 +58,7 @@ function hidden() { if (document.hidden && active.value) skip() }
 function keyboard(event: KeyboardEvent) {
   if (!active.value) return
   if (event.key === 'Escape') { event.preventDefault(); skip() }
-  if (event.key === 'Tab') { event.preventDefault(); stage.value?.focus({ preventScroll: true }) }
+  if (event.key === 'Tab') { event.preventDefault(); skipButton.value?.focus({ preventScroll: true }) }
 }
 function followArticle(event: MouseEvent) {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !(event.target instanceof Element)) return
@@ -88,10 +88,10 @@ onMounted(() => {
     palette = { primary: color('--fx-cyan'), secondary: color('--fx-violet'), ink: color('--text-1'), dark: document.documentElement.dataset.theme === 'dark' }
     bookContent = entry
     try { resize() } catch { cleanup(); return }
-    started = performance.now(); painted = 0; frame = requestAnimationFrame(paint); stage.value?.focus({ preventScroll: true })
+    started = performance.now(); painted = 0; frame = requestAnimationFrame(paint); skipButton.value?.focus({ preventScroll: true })
     watchdog = window.setTimeout(() => cleanup(), 5000)
     // Enter the article while the spectral book is still unfolding over the screen.
-    await new Promise<void>(resolve => { release = resolve; releaseTimer = window.setTimeout(resume, 240) })
+    await new Promise<void>(resolve => { release = resolve; releaseTimer = window.setTimeout(resume, 120) })
     return token === generation ? undefined : false
   })
   removeAfter = router.afterEach((_to, _from, failure) => {
@@ -111,8 +111,9 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport v-if="active" to="body">
-    <div ref="stage" class="article-book-transition" :data-phase="phase" tabindex="-1" @wheel.prevent @touchmove.prevent>
+    <div class="article-book-transition" :data-phase="phase" role="dialog" aria-modal="true" aria-label="正在打开文章" @wheel.prevent @touchmove.prevent>
       <canvas ref="canvas" aria-hidden="true" />
+      <button ref="skipButton" class="book-transition-skip" type="button" @click="skip">跳过动画 <kbd>Esc</kbd></button>
       <span class="book-transition-status" role="status" aria-live="polite">正在打开 {{ title }}</span>
     </div>
   </Teleport>

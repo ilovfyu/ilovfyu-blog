@@ -16,3 +16,7 @@
 .book-transition-active #app *,
 .book-transition-active #app *::before,
 .book-transition-active #app *::after { animation-play-state: paused !important; }
+
+.book-transition-skip { position: absolute; top: max(20px, env(safe-area-inset-top)); right: max(20px, env(safe-area-inset-right)); display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--space-line); border-radius: 8px; background: var(--space-1); color: var(--text-1); font: 13px var(--font-sans); cursor: pointer; }
+.book-transition-skip kbd { color: var(--text-2); font: 11px var(--font-code); }
+.book-transition-skip:focus-visible { outline: 2px solid var(--fx-cyan); outline-offset: 4px; }

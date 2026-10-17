@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { Check, Eye, EyeOff, LoaderCircle, LogIn, Mail, Smartphone, Sparkles, UserPlus } from '@lucide/vue'
+import { Check, Eye, EyeOff, LogIn, Mail, Smartphone, Sparkles, UserPlus } from '@lucide/vue'
 import { withBase, usePageData } from 'vuepress/client'
 import type { ProjectMeta } from '../data/content'
 const page = usePageData()
@@ -8,7 +8,6 @@ const project = computed(() => page.value.frontmatter.project as ProjectMeta)
 const mode = ref<'login' | 'register'>('login'), method = ref<'phone' | 'email'>('phone')
 const phone = ref(''), email = ref(''), password = ref(''), code = ref('')
 const agreementAccepted = ref(false), passwordVisible = ref(false)
-const isSubmitting = false, isSendingCode = false, cooldown = 0, formError = ''
 const formMessage = ref('')
 const isRegister = computed(() => mode.value === 'register')
 const accountLabel = computed(() => method.value === 'phone' ? '手机号' : '邮箱地址')
@@ -17,8 +16,6 @@ const submitLabel = computed(() => isRegister.value ? '创建账号' : '登录')
 const switchMode = (value: 'login' | 'register') => { mode.value = value; formMessage.value = '' }
 const switchMethod = (value: 'phone' | 'email') => { method.value = value; formMessage.value = '' }
 const explainDemo = () => { formMessage.value = '这是静态产品界面演示，不会发送、保存账号或创建用户。' }
-const submit = explainDemo, sendCode = explainDemo, resetPassword = explainDemo, startSocialLogin = explainDemo
-const startDemoLogin = () => { window.location.href = withBase(project.value.record) }
 const activeStage = ref(2), burstStage = ref(-1), renderPct = ref(68)
 const workspaceGlow = ref({ x: 50, y: 50 })
 const embers = Array.from({ length: 14 }, (_, i) => ({ left: (i * 13) % 100, size: 2 + i % 3, drift: i % 2 ? 25 : -25, delay: -i, duration: 6 + i % 4, warm: i % 2 === 0 }))
@@ -90,12 +87,12 @@ onBeforeUnmount(() => { clearInterval(timer); clearTimeout(burstTimer) })
         </div>
 
         <div class="xiake-auth-panel-body"><p class="xiake-auth-feedback" role="note">界面演示，请勿输入真实账号或密码。</p>
-          <div class="xiake-auth-method" role="tablist" aria-label="账号方式">
-            <button type="button" role="tab" :aria-selected="method === 'phone'" :class="{ active: method === 'phone' }" @click="switchMethod('phone')"><Smartphone />手机号</button>
-            <button type="button" role="tab" :aria-selected="method === 'email'" :class="{ active: method === 'email' }" @click="switchMethod('email')"><Mail />邮箱</button>
+          <div class="xiake-auth-method" role="group" aria-label="账号方式">
+            <button type="button" :aria-pressed="method === 'phone'" :class="{ active: method === 'phone' }" @click="switchMethod('phone')"><Smartphone />手机号</button>
+            <button type="button" :aria-pressed="method === 'email'" :class="{ active: method === 'email' }" @click="switchMethod('email')"><Mail />邮箱</button>
           </div>
 
-          <form class="xiake-auth-form" @submit.prevent="submit">
+          <form class="xiake-auth-form" @submit.prevent="explainDemo">
             <div class="xiake-field">
               <label for="xiake-account">{{ accountLabel }}</label>
               <input id="xiake-account" v-if="method === 'phone'" v-model="phone" type="tel" autocomplete="tel" inputmode="tel" :placeholder="accountPlaceholder" />
@@ -106,17 +103,14 @@ onBeforeUnmount(() => { clearInterval(timer); clearTimeout(burstTimer) })
               <label for="xiake-code">验证码</label>
               <div class="xiake-code-row">
                 <input id="xiake-code" v-model="code" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" placeholder="6 位验证码" />
-                <button type="button" :disabled="isSendingCode || cooldown > 0" @click="sendCode">
-                  <LoaderCircle v-if="isSendingCode" class="xiake-spin" />
-                  <template v-else>{{ cooldown > 0 ? `${cooldown}s` : '获取验证码' }}</template>
-                </button>
+                <button type="button" @click="explainDemo">获取验证码</button>
               </div>
             </div>
 
             <div class="xiake-field">
               <div class="xiake-field-row">
                 <label for="xiake-password">密码</label>
-                <button v-if="!isRegister" type="button" class="xiake-forgot" @click="resetPassword">忘记密码？</button>
+                <button v-if="!isRegister" type="button" class="xiake-forgot" @click="explainDemo">忘记密码？</button>
               </div>
               <div class="xiake-field-with-action">
                 <input id="xiake-password" v-model="password" :type="passwordVisible ? 'text' : 'password'" :autocomplete="isRegister ? 'new-password' : 'current-password'" placeholder="至少 8 个字符" />
@@ -129,13 +123,11 @@ onBeforeUnmount(() => { clearInterval(timer); clearTimeout(burstTimer) })
               <span><i><Check /></i>我已阅读并同意<a :href="withBase(project.record)">服务条款</a>与<a :href="withBase(project.record)">隐私政策</a></span>
             </label>
 
-            <p v-if="formError" class="xiake-auth-feedback error" role="alert">{{ formError }}</p>
             <p v-if="formMessage" class="xiake-auth-feedback success" role="status">{{ formMessage }}</p>
 
-            <button type="submit" class="xiake-auth-submit" :disabled="isSubmitting">
-              <LoaderCircle v-if="isSubmitting" class="xiake-spin" />
-              <component :is="isRegister ? UserPlus : LogIn" v-else />
-              <span>{{ isSubmitting ? '正在处理...' : submitLabel }}</span>
+            <button type="submit" class="xiake-auth-submit">
+              <component :is="isRegister ? UserPlus : LogIn" aria-hidden="true" />
+              <span>{{ submitLabel }}</span>
             </button>
           </form>
 
@@ -143,13 +135,13 @@ onBeforeUnmount(() => { clearInterval(timer); clearTimeout(burstTimer) })
 
           <div class="xiake-oauth">
             <span class="xiake-oauth-line" aria-hidden="true" />
-            <button type="button" class="xiake-oauth-icon" title="使用 GitHub 登录" aria-label="使用 GitHub 登录" @click="startSocialLogin('github')">
+            <button type="button" class="xiake-oauth-icon" title="使用 GitHub 登录" aria-label="使用 GitHub 登录" @click="explainDemo">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.084-.729.084-.729 1.205.084 1.84 1.237 1.84 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>
             </button>
-            <button type="button" class="xiake-oauth-icon is-google" title="使用 Google 登录" aria-label="使用 Google 登录" @click="startSocialLogin('google')">
+            <button type="button" class="xiake-oauth-icon is-google" title="使用 Google 登录" aria-label="使用 Google 登录" @click="explainDemo">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.23-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42Z" /><path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.75Z" /><path fill="#FBBC05" d="M6.54 13.83A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.26.31-1.83V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.53Z" /><path fill="#EA4335" d="M12 6.14c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.23 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.7 5.39l3.24 2.53c.77-2.31 2.92-4.03 5.46-4.03Z" /></svg>
             </button>
-            <button type="button" class="xiake-oauth-icon is-wechat" title="使用微信登录" aria-label="使用微信登录" @click="startSocialLogin('wechat')">
+            <button type="button" class="xiake-oauth-icon is-wechat" title="使用微信登录" aria-label="使用微信登录" @click="explainDemo">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.25 4C4.7 4 1 6.93 1 10.55c0 2.08 1.18 3.95 3.12 5.2L3.2 18.9l4.1-2.08c.62.14 1.27.22 1.95.22.26 0 .52-.02.78-.04a6.4 6.4 0 0 1-.28-1.86c0-3.82 3.67-6.94 8.2-6.94.4 0 .8.03 1.2.08C18.25 5.8 14.35 4 9.25 4Zm-2.5 5.2a1.15 1.15 0 1 1 0-2.3 1.15 1.15 0 0 1 0 2.3Zm5 0a1.15 1.15 0 1 1 0-2.3 1.15 1.15 0 0 1 0 2.3Zm3.95 1.05c-3.6 0-6.5 2.28-6.5 5.1s2.9 5.1 6.5 5.1c.64 0 1.25-.08 1.82-.22l3.28 1.67-.73-2.52c1.33-.98 2.13-2.4 2.13-4.03 0-2.82-2.9-5.1-6.5-5.1Zm-1.95 4.25a.95.95 0 1 1 0-1.9.95.95 0 0 1 0 1.9Zm3.9 0a.95.95 0 1 1 0-1.9.95.95 0 0 1 0 1.9Z" /></svg>
             </button>
             <span class="xiake-oauth-line" aria-hidden="true" />
@@ -157,10 +149,10 @@ onBeforeUnmount(() => { clearInterval(timer); clearTimeout(burstTimer) })
 
           <div class="xiake-demo-login">
             <span class="xiake-demo-login-divider"><i />或<i /></span>
-            <button type="button" class="xiake-demo-login-btn" @click="startDemoLogin">
+            <a class="xiake-demo-login-btn" :href="withBase(project.record)">
               <Sparkles />
               <span>查看项目记录</span>
-            </button>
+            </a>
             <small>静态界面演示 · 查看项目记录了解设计</small>
           </div>
         </div>

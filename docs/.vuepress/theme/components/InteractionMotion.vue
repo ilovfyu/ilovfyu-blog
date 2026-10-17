@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, watch } from 'vue'
 import { useRoute } from 'vuepress/client'
 
 const route = useRoute()
-const cards = '.featured-article, .article-card, .home-project-card, .building-card'
+const cards = '.featured-article, .article-card, .building-card'
 const rows = '.post-index-row, .knowledge-note-row'
 const magnets = '.hero-actions .btn-primary, .profile-actions > a'
 const controls = '.catalog-button, .catalog-filters button, .knowledge-tag'
@@ -21,7 +21,7 @@ function reset() {
   cancelAnimationFrame(frame); frame = 0
   if (active) {
     active.classList.remove('motion-tracking')
-    for (const property of ['--motion-rx', '--motion-ry', '--motion-px', '--motion-py']) active.style.removeProperty(property)
+    for (const property of ['--motion-rx', '--motion-ry', '--motion-px', '--motion-py', '--pointer-x', '--pointer-y']) active.style.removeProperty(property)
   }
   active = null; bounds = null
 }
