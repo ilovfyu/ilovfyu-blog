@@ -2,6 +2,7 @@ import { viteBundler } from '@vuepress/bundler-vite'
 import { defineUserConfig } from 'vuepress'
 import { plumeTheme } from 'vuepress-theme-plume'
 import { blogContentPlugin } from './plugins/blog-content'
+import { siteFeatures } from './theme/data/features'
 import { resolve } from 'node:path'
 
 const giscusRepoId = process.env.GISCUS_REPO_ID
@@ -21,6 +22,7 @@ export default defineUserConfig({
   title: 'ILOVFYU',
   description: '记录 AI、前端、系统架构与开发实践的个人技术博客。',
   base: siteBase,
+  pagePatterns: ['**/*.md', '!.vuepress', ...(siteFeatures.about ? [] : ['!about/**'])],
   bundler: viteBundler({
     // Absolute public URLs already include the deployment base; keep them out of Vue asset imports.
     vuePluginOptions: { template: { transformAssetUrls: { includeAbsolute: false } } },
@@ -62,7 +64,7 @@ export default defineUserConfig({
       { text: '知识库', link: '/knowledge/', activeMatch: '^/(knowledge|notes)/' },
       { text: '专题', link: '/topics/', activeMatch: '^/topics/' },
       { text: '项目', link: '/projects/', activeMatch: '^/projects/' },
-      { text: '关于', link: '/about/' },
+      ...(siteFeatures.about ? [{ text: '关于', link: '/about/' }] : []),
     ],
     profile: {
       name: 'ILOVFYU',

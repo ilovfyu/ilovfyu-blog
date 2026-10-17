@@ -71,3 +71,6 @@
   .discovery-arrow, .editorial-note-arrow, .editorial-feature .read-link b, .hero-secondary span { transform: none !important; }
 }
 @media print { .article-reading-status { display: none; } }
+
+.technical-home .home-footer-section { padding-block: 24px 40px; border-bottom: 0; }
+.home-footer-section .cosmic-footer { margin-top: 0; }

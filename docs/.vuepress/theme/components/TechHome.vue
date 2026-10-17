@@ -5,6 +5,7 @@ import SignalScene from './SignalScene.vue'
 import AnimatedProjectSection from './AnimatedProjectSection.vue'
 
 import { notes, knowledge, projects } from '../data/content'
+import { siteFeatures } from '../data/features'
 
 const featuredProjects = projects.filter(project => project.project?.group === '持续构建')
 
@@ -171,7 +172,7 @@ onBeforeUnmount(() => {
       <a class="home-project-all" :href="withBase('/projects/')">查看全部项目 <b aria-hidden="true">↗</b></a>
     </section>
 
-    <section class="author-section section">
+    <section v-if="siteFeatures.about" class="author-section section">
       <header class="section-head reveal"><h2>关于博主</h2><p class="sub">代码是工作的一部分，写作是整理思考的方式。</p></header>
       <div class="author-spread reveal">
         <div class="author-identity">
@@ -183,7 +184,9 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-      <footer class="cosmic-footer"><span><b>ILOVFYU</b></span><span>记录代码、系统与思考</span><span>深圳 · {{ now }}</span></footer>
     </section>
+    <div class="section home-footer-section">
+      <footer class="cosmic-footer"><span><b>ILOVFYU</b></span><span>记录代码、系统与思考</span><span>深圳 · {{ now }}</span></footer>
+    </div>
   </main>
 </template>
