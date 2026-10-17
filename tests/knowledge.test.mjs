@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
+import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
   { path: '/a/', title: '缓存稳定前缀', summary: 'Skills 动态变化的工程实践', series: 'Agent 工程', group: '缓存', tags: [' Python ', 'KV Cache', 'PYTHON'] },
@@ -27,7 +27,7 @@ test('topic, tag intersection and search combine; summaries and Unicode tag spel
   assert.deepEqual(filterKnowledgeNotes(notes, { ...all, tags: ['Ｐｙｔｈｏｎ', 'Skills'] }).map(note => note.path), ['/b/'])
   assert.equal(filterKnowledgeNotes(notes, { ...all, tags: ['Vue', 'Python'] }).length, 0)
 })
-test('facet counts reflect the current topic, query and all other selected tags', () => {
+test('facet counts reflect the current topic, query and selected tag intersection', () => {
   const facets = knowledgeTagFacets(notes, { topic: 'Agent 工程', tags: ['Python'], query: '' })
   const counts = Object.fromEntries(facets.map(facet => [facet.tag.toLowerCase(), facet.count]))
   assert.deepEqual(counts, { 'kv cache': 1, python: 2, skills: 1, vue: 0 })
@@ -65,10 +65,56 @@ test('topic chapters use natural reading order, preserve distinct articles and h
     source[2],
   ])
   const chapters = knowledgeTopicChapters(entries, 'Agent 工程')
-  assert.deepEqual(chapters.map(chapter => [chapter.id, chapter.name, chapter.entries.map(note => note.path)]), [
-    ['topic-chapter-1', '基础', ['/a2/', '/b/']],
-    ['topic-chapter-2', '学习笔记', ['/b2/']],
-    ['topic-chapter-3', '进阶', ['/a/']],
+  assert.deepEqual(chapters.map(chapter => [chapter.name, chapter.count, chapter.entries.map(note => note.path)]), [
+    ['基础', 2, ['/a2/', '/b/']],
+    ['未分组', 1, ['/b2/']],
+    ['进阶', 1, ['/a/']],
   ])
   assert.deepEqual(knowledgeTopicChapters(entries, '尚未发布'), [])
+})
+
+test('tag counts preserve AND selection, Unicode spelling, topic and search constraints', () => {
+  const counts = filters => Object.fromEntries(knowledgeTagFacets(notes, filters).map(facet => [facet.tag.toLowerCase(), facet.count]))
+  assert.deepEqual(counts({ ...all, tags: ['Python', 'KV Cache'] }), { 'kv cache': 1, python: 1, skills: 0, vue: 0 })
+  assert.deepEqual(counts({ ...all, tags: ['Python', 'Skills'] }), { 'kv cache': 0, python: 1, skills: 1, vue: 0 })
+  assert.deepEqual(counts({ ...all, tags: ['Python', 'Vue'] }), { 'kv cache': 0, python: 0, skills: 0, vue: 0 })
+  assert.deepEqual(counts({ topic: 'Agent 工程', query: '接口', tags: ['Ｐｙｔｈｏｎ', 'Skills'] }), { 'kv cache': 0, python: 1, skills: 1, vue: 0 })
+})
+
+
+test('nested directories preserve direct articles, all descendants, and distinct same-named folders', () => {
+  const entries = normalizeKnowledgeNotes([
+    { ...source[0], path: '/intro/', series: 'FastAPI', group: '', title: '00 · 概览' },
+    { ...source[0], path: '/basic/', series: 'FastAPI', group: '基础', title: '01 · 基础导读' },
+    { ...source[0], path: '/request/', series: 'FastAPI', group: '基础 / 请求 / 参数', title: '02 · 参数' },
+    { ...source[0], path: '/response/', series: 'FastAPI', group: '高级 / 请求 / 参数', title: '03 · 进阶参数' },
+  ])
+  const chapters = knowledgeTopicChapters(entries, 'FastAPI')
+  assert.deepEqual(chapters.map(chapter => [chapter.name, chapter.count]), [['未分组', 1], ['基础', 2], ['高级', 1]])
+  assert.deepEqual(chapters[1].entries.map(note => note.path), ['/basic/'])
+  assert.deepEqual(chapters[1].children[0].children[0].entries.map(note => note.path), ['/request/'])
+  const flat = flattenKnowledgeChapters(chapters)
+  assert.equal(flat.length, 7)
+  assert.equal(flat.flatMap(chapter => chapter.entries).length, entries.length)
+  assert.equal(new Set(flat.map(chapter => chapter.id)).size, flat.length)
+  const originalIds = new Map(flat.map(chapter => [chapter.path.join('/'), chapter.id]))
+  const added = { ...entries[0], path: '/new/', title: '00 · 新笔记', group: '新增目录', groupPath: ['新增目录'] }
+  for (const chapter of flattenKnowledgeChapters(knowledgeTopicChapters([added, ...entries], 'FastAPI'))) {
+    const original = originalIds.get(chapter.path.join('/'))
+    if (original) assert.equal(chapter.id, original)
+  }
+})
+
+test('hierarchies accept normalized path arrays and keep reserved characters safe in anchors', () => {
+  const entries = normalizeKnowledgeNotes([
+    { ...source[0], series: 'FastAPI', group: 'ignored', groupPath: [' 基础 ', '请求 & 响应 #1?', '输入'] },
+    { ...source[1], series: 'FastAPI', group: '基础\\请求 & 响应 #1?\\输出' },
+  ])
+  const chapters = knowledgeTopicChapters(entries, 'FastAPI')
+  const flat = flattenKnowledgeChapters(chapters)
+  assert.equal(chapters[0].count, 2)
+  assert.equal(chapters[0].children.length, 1)
+  assert.equal(chapters[0].children[0].children.length, 2)
+  assert.ok(flat.every(chapter => /^[a-z0-9-]+$/.test(chapter.id)))
+  assert.equal(filterKnowledgeNotes(entries, { ...all, query: '响应 输入' }).length, 1)
 })

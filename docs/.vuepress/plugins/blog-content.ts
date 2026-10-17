@@ -1,5 +1,6 @@
 import type { App, Plugin } from 'vuepress/core'
 import { articlePreview } from './article-preview'
+import { knowledgeStructure } from '../theme/utils/knowledge-path'
 
 const categoryLabels: Record<string, string> = {
   ai: 'AI 与数据', frontend: '前端体验', engineering: '工程架构', thinking: '产品与生活',
@@ -15,6 +16,11 @@ async function writeCatalog(app: App) {
     if (!collection || fm.draft === true || fm.index === false || /(?:^|\/)README\.md$/i.test(source)) continue
     const category = typeof fm.category === 'string' && fm.category in categoryLabels ? fm.category : 'engineering'
     const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : typeof fm.date === 'string' ? fm.date.slice(0, 10) : ''
+    const folders = source.split('/').slice(1, -1)
+    // SiYuan uses document IDs on disk; its editorial paths are exported in frontmatter.
+    const structure = collection === 'notes'
+      ? knowledgeStructure(folders[0] === 'siyuan' ? [] : folders, fm.series, fm.groupPath ?? fm.group)
+      : { series: '未分类', group: '', groupPath: [] }
     const entry = {
       title: page.title,
       path: page.path,
@@ -24,8 +30,7 @@ async function writeCatalog(app: App) {
       category,
       label: typeof fm.label === 'string' ? fm.label : (fm.project as { label?: string })?.label || categoryLabels[category],
       tags: Array.isArray(fm.tags) ? fm.tags.filter((tag): tag is string => typeof tag === 'string') : [],
-      series: typeof fm.series === 'string' ? fm.series : '未分类',
-      group: typeof fm.group === 'string' ? fm.group : '',
+      ...structure,
       project: fm.project || null,
     }
     catalogs[collection === 'posts' ? 'notes' : collection === 'notes' ? 'knowledge' : 'projects'].push(entry)

@@ -1,5 +1,7 @@
+import { knowledgePath } from './knowledge-path.ts'
+
 export type KnowledgeNote = {
-  title: string; summary: string; path: string; series: string; group: string; tags: string[]
+  title: string; summary: string; path: string; series: string; group: string; groupPath?: string[]; tags: string[]
 }
 export type KnowledgeFilters = { topic: string | null; tags: string[]; query: string }
 export type KnowledgeTopic = { name: string; count: number; groups: string[] }
@@ -7,7 +9,10 @@ const key = (value: string) => value.normalize('NFKC').trim().toLocaleLowerCase(
 const distinct = (values: string[]) => [...new Map(values.filter(value => value.trim()).map(value => [key(value), value.trim()])).values()]
 
 export function normalizeKnowledgeNotes<T extends KnowledgeNote>(notes: T[]): T[] {
-  return notes.map(note => ({ ...note, series: note.series.trim() || '未分类', group: note.group.trim(), tags: distinct(note.tags) }))
+  return notes.map(note => {
+    const groupPath = knowledgePath(note.groupPath ?? note.group)
+    return { ...note, series: note.series.trim() || '未分类', group: groupPath.join(' / '), groupPath, tags: distinct(note.tags) }
+  })
 }
 export function knowledgeTopics(notes: KnowledgeNote[]): KnowledgeTopic[] {
   const topics = new Map<string, KnowledgeTopic>()
@@ -15,7 +20,8 @@ export function knowledgeTopics(notes: KnowledgeNote[]): KnowledgeTopic[] {
     if (note.series === '未分类') continue
     const topic = topics.get(note.series) || { name: note.series, count: 0, groups: [] }
     topic.count++
-    topic.groups = distinct([...topic.groups, note.group])
+    const path = knowledgePath(note.groupPath ?? note.group)
+    topic.groups = distinct([...topic.groups, ...path.map((_, index) => path.slice(0, index + 1).join(' / '))])
     topics.set(note.series, topic)
   }
   return [...topics.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'zh-CN'))
@@ -62,14 +68,44 @@ export function knowledgePage<T>(notes: T[], page: number, pageSize = 15) {
 export function knowledgeTopicPath(name: string): string {
   return `/topics/?series=${encodeURIComponent(name)}`
 }
-/** Numbered titles define reading order; chapter groups retain their first appearance. */
-export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topic: string) {
+export type KnowledgeChapter<T extends KnowledgeNote = KnowledgeNote> = {
+  id: string; name: string; path: string[]; entries: T[]; children: KnowledgeChapter<T>[]; count: number
+}
+
+/** Full directory identity avoids collisions between same-named folders in different branches. */
+function chapterId(path: string[]): string {
+  return path.length ? 'topic-group-' + path.map(part => Array.from(part, char => char.codePointAt(0)!.toString(16)).join('-')).join('--') : 'topic-ungrouped'
+}
+
+/** Build every directory level; a folder can contain both articles and subfolders. */
+export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topic: string): KnowledgeChapter<T>[] {
   const ordered = notes.filter(note => note.series === topic).sort((a, b) => a.title.localeCompare(b.title, 'zh-CN', { numeric: true }) || a.path.localeCompare(b.path))
-  const chapters = new Map<string, T[]>()
+  const chapters: KnowledgeChapter<T>[] = []
+  const byPath = new Map<string, KnowledgeChapter<T>>()
   for (const note of ordered) {
-    const group = note.group || '学习笔记'
-    const entries = chapters.get(group) || []
-    entries.push(note); chapters.set(group, entries)
+    const path = knowledgePath(note.groupPath ?? note.group)
+    let siblings = chapters
+    let parent: KnowledgeChapter<T> | undefined
+    // Ungrouped articles keep their own section alongside directory roots.
+    for (let depth = 0; depth < Math.max(1, path.length); depth++) {
+      const current = path.slice(0, depth + 1)
+      const identity = JSON.stringify(current)
+      let chapter = byPath.get(identity)
+      if (!chapter) {
+        chapter = { id: chapterId(current), name: current.at(-1) || '未分组', path: current, entries: [], children: [], count: 0 }
+        byPath.set(identity, chapter)
+        siblings.push(chapter)
+      }
+      chapter.count++
+      parent = chapter
+      siblings = chapter.children
+    }
+    parent!.entries.push(note)
   }
-  return [...chapters].map(([name, entries], index) => ({ id: `topic-chapter-${index + 1}`, name, entries }))
+  return chapters
+}
+
+/** Preorder is shared by the first-reading link, scroll tracking and chapter counts. */
+export function flattenKnowledgeChapters<T extends KnowledgeNote>(chapters: KnowledgeChapter<T>[]): KnowledgeChapter<T>[] {
+  return chapters.flatMap(chapter => [chapter, ...flattenKnowledgeChapters(chapter.children)])
 }

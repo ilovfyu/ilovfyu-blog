@@ -44,7 +44,7 @@ tags: [工程实践]
 ---
 ```
 
-随笔分类可用 `ai`、`frontend`、`engineering`、`thinking`。知识笔记可设置 `series` 与 `group`；`permalink` 可指定稳定链接。正文支持标准 Markdown。
+随笔分类可用 `ai`、`frontend`、`engineering`、`thinking`。知识笔记按 `docs/notes/专题/一级分组/二级分组/文章.md` 的目录层级自动组织，支持继续嵌套。也可以设置 `series` 与 `group`（如 `基础 / 请求与响应`）覆盖自动分组；`permalink` 可指定稳定链接。正文支持标准 Markdown。
 
 `docs/.vuepress/plugins/blog-content.ts` 在构建及开发时根据实际页面生成目录数据。新增、修改、删除文章时无需手工维护数组。空内容时显示空状态，搜索和随机阅读控件只在存在文章时出现。
 

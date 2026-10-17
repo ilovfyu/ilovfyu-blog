@@ -12,6 +12,7 @@ export type ContentEntry = {
   tags: string[]
   series: string
   group: string
+  groupPath?: string[]
   project?: ProjectMeta | null
 }
 

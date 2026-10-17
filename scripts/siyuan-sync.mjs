@@ -6,6 +6,7 @@ import { fromMarkdown } from 'mdast-util-from-markdown'
 import { gfm } from 'micromark-extension-gfm'
 import { gfmFromMarkdown } from 'mdast-util-gfm'
 import { projectMetadata } from './project-metadata.mjs'
+import { knowledgeStructure } from '../docs/.vuepress/theme/utils/knowledge-path.ts'
 
 export const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const managedPath = path => /^(?:docs\/(?:posts|notes|projects)\/siyuan\/\d{14}-[a-z0-9]{7}\.md|docs\/\.vuepress\/public\/siyuan\/[a-f0-9]{64}(?:\.[a-z0-9]+)?|\.siyuan\/manifest\.json)$/.test(path)
@@ -64,7 +65,7 @@ function decodeAttributes(attrs) {
   return Object.fromEntries(Object.entries(attrs || {}).map(([key, value]) => [key, String(value).replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')]))
 }
 
-function frontmatter(doc, attrs, section, body, permalink, project) {
+function frontmatter(doc, attrs, section, body, permalink, project, structure) {
   const title = attrs['custom-blog-title'] || doc.content || doc.hpath.split('/').pop()
   const date = attrs['custom-blog-date'] || `${doc.id.slice(0, 4)}-${doc.id.slice(4, 6)}-${doc.id.slice(6, 8)}`
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) throw new Error(`${doc.id} 的 custom-blog-date 须为有效的 YYYY-MM-DD。`)
@@ -76,7 +77,7 @@ function frontmatter(doc, attrs, section, body, permalink, project) {
     description: attrs['custom-blog-description'] || (firstParagraph ? text(firstParagraph).replace(/\s+/g, ' ').slice(0, 140) : ''),
     category: attrs['custom-blog-category'] || section.category || 'engineering',
     tags: (attrs['custom-blog-tags'] || '').split(/[,，]/).map(tag => tag.trim()).filter(Boolean),
-    ...(section.collection === 'notes' ? { series: attrs['custom-blog-series'] || section.series || '知识笔记', group: attrs['custom-blog-group'] || '' } : {}),
+    ...(section.collection === 'notes' ? structure : {}),
     ...(attrs['custom-blog-index'] === 'false' ? { index: false } : {}),
     ...(project ? { project, ...(project.view === 'showcase' ? { pageLayout: 'home', config: [{ type: 'custom' }], comments: false, index: false } : { pageClass: 'project-record-page' }) } : {}),
   }
@@ -174,6 +175,10 @@ async function performSync({ root, config, client, dryRun }) {
     if (!section) continue
     candidates.push({ doc, section, attrs })
   }
+  const directoryPaths = new Set(docs.flatMap(doc => {
+    const parts = doc.hpath.split('/').filter(Boolean)
+    return parts.slice(0, -1).map((_, index) => '/' + parts.slice(0, index + 1).join('/'))
+  }))
   const selected = []
   for (const candidate of candidates.filter(({ doc }) => !draftPaths.some(path => under(doc.hpath, path)))) {
     // Export block references as links, regardless of the user's desktop export settings.
@@ -220,7 +225,12 @@ async function performSync({ root, config, client, dryRun }) {
     })
     const path = `docs/${section.collection}/siyuan/${doc.id}.md`
     const project = section.collection === 'projects' ? projectMetadata(attrs, content, id => routes.get(id)) : null
-    files.set(path, Buffer.from(frontmatter(doc, attrs, section, content, routes.get(doc.id), project)))
+    const folders = doc.hpath.slice(section.path?.length || 0).split('/').filter(Boolean)
+    if (!directoryPaths.has(doc.hpath)) folders.pop()
+    const structure = section.collection === 'notes'
+      ? knowledgeStructure(folders, attrs['custom-blog-series'] || section.series, attrs['custom-blog-group'], '知识笔记', !!section.series)
+      : undefined
+    files.set(path, Buffer.from(frontmatter(doc, attrs, section, content, routes.get(doc.id), project, structure)))
     documents.push({ id: doc.id, path, title: attrs['custom-blog-title'] || doc.content, route: routes.get(doc.id) })
   }
   const manifestPath = '.siyuan/manifest.json'

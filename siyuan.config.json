@@ -4,7 +4,7 @@
   "excludePaths": ["/草稿"],
   "sections": [
     { "path": "/随笔", "collection": "posts", "category": "engineering" },
-    { "path": "/知识库", "collection": "notes", "series": "知识笔记" },
+    { "path": "/知识库", "collection": "notes" },
     { "path": "/项目", "collection": "projects" }
   ]
 }

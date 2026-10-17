@@ -258,8 +258,13 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   await symlink(resolve(projectRoot, 'node_modules'), resolve(root, 'node_modules'))
   await cp(resolve(projectRoot, 'package.json'), resolve(root, 'package.json'))
   await sync(options)
+  const manualDirectory = resolve(root, 'docs/notes/目录测试/基础/请求与响应')
+  await mkdir(manualDirectory, { recursive: true })
+  await writeFile(resolve(manualDirectory, '参数校验.md'), '---\ntitle: 目录分组测试\npermalink: /notes/directory-fixture/\n---\n\n目录推导正文。')
   const result = spawnSync('npm', ['run', 'docs:build'], { cwd: root, encoding: 'utf8', env: { ...process.env, DEPLOY_ENV: 'gh-pages', SITE_HOSTNAME: 'https://ilovfyu.github.io', PAGES_BASE_PATH: '/ilovfyu-blog' } })
   assert.equal(result.status, 0, result.stdout + result.stderr)
+  const catalog = await readFile(resolve(root, 'docs/.vuepress/.temp/build/blog-content.js'), 'utf8')
+  assert.match(catalog, /"title":"目录分组测试"[^\n]+?"series":"目录测试","group":"基础 \/ 请求与响应","groupPath":\["基础","请求与响应"\]/)
   const html = await readFile(resolve(root, `docs/.vuepress/dist/posts/${first}/index.html`), 'utf8')
   assert.match(html, /<table>/)
   assert.match(html, /src="\/ilovfyu-blog\/siyuan\/[a-f0-9]{64}\.png"/)
@@ -277,4 +282,34 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
     assert.match(productHtml, /class="project-showcase"/, doc.title)
     assert.doesNotMatch(productHtml, /<h1[^>]*>Theme Plume<\/h1>/, doc.title)
   }
+})
+
+test('SiYuan directory nesting and moves update topic metadata while retaining article URLs', async t => {
+  const { root, options, state } = await fixture(t, [
+    document(first, '/知识库/FastAPI/基础/请求/01 · 参数', '参数正文'),
+    document(second, '/知识库/FastAPI/高级/异步/02 · 并发', '并发正文'),
+    document('20261012030000-ccccccc', '/知识库/FastAPI/基础', '基础导读正文'),
+    document('20261012040000-ddddddd', '/知识库/FastAPI', '专题介绍正文'),
+    document('20261012050000-eeeeeee', '/知识库/FastAPI/空目录', ''),
+  ])
+  const automatic = { ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes' }] } }
+  const result = await sync(automatic)
+  assert.equal(result.documents.length, 4)
+  const content = id => readFile(resolve(root, `docs/notes/siyuan/${id}.md`), 'utf8')
+  assert.match(await content(first), /series: "FastAPI"\ngroup: "基础 \/ 请求"\ngroupPath: \["基础","请求"\]/)
+  assert.match(await content('20261012030000-ccccccc'), /groupPath: \["基础"\]/)
+  assert.match(await content('20261012040000-ddddddd'), /series: "FastAPI"\ngroup: ""\ngroupPath: \[\]/)
+  state.docs[0].hpath = '/知识库/FastAPI/高级/请求/01 · 参数'
+  const moved = await sync(automatic)
+  assert.match(await content(first), /groupPath: \["高级","请求"\]/)
+  assert.equal(moved.documents.find(doc => doc.id === first).route, `/notes/${first}/`)
+  state.docs[0].attrs = { 'custom-blog-series': 'API 实践', 'custom-blog-group': '认证 / 依赖' }
+  await sync(automatic)
+  assert.match(await content(first), /series: "API 实践"\ngroup: "认证 \/ 依赖"\ngroupPath: \["认证","依赖"\]/)
+})
+
+test('a configured series keeps every directory below its section as a group', async t => {
+  const { root, options } = await fixture(t, [document(first, '/知识库/FastAPI/基础/路由/01 · 路由', '正文')])
+  await sync({ ...options, config: { ...config, sections: [{ path: '/知识库/FastAPI', collection: 'notes', series: 'FastAPI' }] } })
+  assert.match(await readFile(resolve(root, `docs/notes/siyuan/${first}.md`), 'utf8'), /series: "FastAPI"\ngroup: "基础 \/ 路由"\ngroupPath: \["基础","路由"\]/)
 })
