@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, ArrowUpRight, BookOpen, Search } from '@lucide/vue'
+import { ArrowLeft, ArrowUpRight, BookOpen } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
@@ -126,7 +126,7 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
     <section v-else-if="requested" class="catalog-body"><div class="catalog-empty"><h2>暂时没有这个专题</h2><p>专题名称可能已调整，查看当前已发布的学习系列。</p><a class="catalog-button" :href="withBase('/topics/')">返回专题目录</a></div></section>
     <section v-else class="catalog-body topic-catalog" aria-labelledby="topic-catalog-heading">
       <header class="topic-section-heading"><div><p class="catalog-kicker">EXPLORE / LEARNING SERIES</p><h2 id="topic-catalog-heading">专题目录</h2></div><span role="status" aria-live="polite">{{ results.length }} 个专题</span></header>
-      <label v-if="topics.length" class="catalog-search topic-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索专题" placeholder="搜索专题名称或目录" /></label>
+      <div v-if="topics.length" class="article-discovery"><ArticleSearch v-model="query" label="搜索专题" heading="专题检索" fields="专题名称 / 目录" placeholder="选择一个方向，深入阅读…" /></div>
       <div v-if="results.length" class="topic-card-grid">
         <a v-for="(item, index) in results" :key="item.name" class="topic-card" :data-tone="/博客/.test(item.name) ? 'cyan' : 'violet'" :href="topicPath(item.name)">
           <div class="topic-card-copy">
