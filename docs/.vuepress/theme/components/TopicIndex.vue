@@ -3,7 +3,11 @@ import { ArrowLeft, ArrowUpRight, BookOpen, Search } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
-import { ARTICLE_PAGE_SIZE, flattenKnowledgeChapters, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
+import { flattenKnowledgeChapters, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
+import ArticlePageSize from './ArticlePageSize.vue'
+import { searchArticles } from '../utils/article-search'
+import { useArticlePageSize } from '../utils/article-page-size'
+import { useCatalogScroll } from '../utils/catalog-navigation'
 import CatalogScene from './CatalogScene.vue'
 import TopicCardVisual from './TopicCardVisual.vue'
 import TopicGroupNav from './TopicGroupNav.vue'
@@ -13,26 +17,28 @@ const articles = normalizeKnowledgeNotes(knowledge)
 const topics = knowledgeTopics(articles)
 const route = useRoute()
 const router = useRouter()
+useCatalogScroll()
+const { pageSize, rememberPageSize } = useArticlePageSize(() => route.query.size)
 const query = ref('')
 const hydrated = ref(false)
 let timer: ReturnType<typeof setTimeout> | undefined
 const requested = computed(() => !hydrated.value ? '' : typeof route.query.series === 'string' ? route.query.series : typeof route.query.topic === 'string' ? route.query.topic : '')
 const topic = computed(() => topics.find(item => item.name === requested.value))
-const chapters = computed(() => topic.value ? knowledgeTopicChapters(articles, topic.value.name) : [])
+const allChapters = computed(() => topic.value ? knowledgeTopicChapters(articles, topic.value.name) : [])
+const allFlatChapters = computed(() => flattenKnowledgeChapters(allChapters.value))
+const chapters = computed(() => topic.value ? knowledgeTopicChapters(searchArticles(articles.filter(note => note.series === topic.value!.name), query.value), topic.value.name) : [])
 const flatChapters = computed(() => flattenKnowledgeChapters(chapters.value))
-const page = computed(() => knowledgeTopicPage(chapters.value, readKnowledgeFilters(route.query, [], []).page))
+const page = computed(() => knowledgeTopicPage(chapters.value, query.value === readKnowledgeFilters(route.query, [], []).query ? readKnowledgeFilters(route.query, [], []).page : 1, pageSize.value))
 const pageChapters = computed(() => flattenKnowledgeChapters(page.value.chapters))
 const destinations = computed(() => Object.fromEntries(Object.entries(page.value.destinations).map(([id, pageNumber]) => {
-  const next = { ...route.query, page: pageNumber > 1 ? String(pageNumber) : undefined }
+  const next = { ...route.query, q: query.value.trim() ? query.value : undefined, size: String(pageSize.value), page: pageNumber > 1 ? String(pageNumber) : undefined }
   return [id, router.resolve({ path: route.path, query: next, hash: `#${id}` }).href]
 })))
 const firstNote = computed(() => flatChapters.value.find(chapter => chapter.entries.length)?.entries[0])
 const totalChapters = topics.reduce((count, item) => count + flattenKnowledgeChapters(knowledgeTopicChapters(articles, item.name)).filter(chapter => chapter.path.length).length, 0)
 const totalNotes = topics.reduce((count, item) => count + item.count, 0)
-const results = computed(() => {
-  const tokens = query.value.normalize('NFKC').trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
-  return topics.filter(item => tokens.every(token => `${item.name} ${item.groups.join(' ')}`.normalize('NFKC').toLocaleLowerCase().includes(token)))
-})
+const topicSearch = topics.map(item => ({ ...item, title: item.name, summary: item.groups.join(' ') }))
+const results = computed(() => searchArticles(topicSearch, query.value))
 const activeChapter = ref('')
 const readProgress = computed(() => { const index = flatChapters.value.findIndex(chapter => chapter.id === activeChapter.value); return index < 0 ? 0 : (index + 1) / flatChapters.value.length * 100 })
 let scrollFrame = 0
@@ -43,34 +49,45 @@ function updateChapter() {
   activeChapter.value = current?.id || ''
 }
 function queueChapter() { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateChapter) }
-watch([page, () => route.hash], async () => {
+watch(page, async () => { await nextTick(); updateChapter() })
+watch([() => route.query.page, () => route.hash, () => route.query.q, () => route.query.size, hydrated], async (current, previous) => {
   await nextTick()
+  if (previous[4] && (current[2] !== previous[2] || current[3] !== previous[3])) return
   if (route.hash) {
     let id = route.hash.slice(1)
-    try { id = decodeURIComponent(id) } catch { /* Keep malformed fragments inert. */ }
+    try { id = decodeURIComponent(id) } catch { /* Invalid fragments stay inert. */ }
     document.getElementById(id)?.scrollIntoView({ block: 'start' })
   }
   updateChapter()
 })
-function goPage(target: number) {
-  const current = knowledgeTopicPage(chapters.value, target).currentPage
-  const next = { ...route.query }
+async function goPage(target: number) {
+  const current = knowledgeTopicPage(chapters.value, target, pageSize.value).currentPage
+  const next = { ...route.query, size: String(pageSize.value) }
   if (current > 1) next.page = String(current); else delete next.page
-  void router.push({ path: route.path, query: next, hash: '#topic-articles' })
+  if (query.value.trim()) next.q = query.value; else delete next.q
+  clearTimeout(timer)
+  await router.push({ path: route.path, query: next, hash: '#topic-articles' }); await nextTick()
+  document.getElementById('topic-articles')?.scrollIntoView({ block: 'start' })
+}
+function changePageSize(value: number) {
+  clearTimeout(timer); rememberPageSize(value)
+  const next = { ...route.query, size: String(pageSize.value) }; delete next.page
+  if (query.value.trim()) next.q = query.value; else delete next.q
+  void router.push({ path: route.path, query: next, hash: '' })
 }
 const digits = (value: number) => String(value).padStart(2, '0')
-const overviewPath = computed(() => withBase(`/topics/${query.value ? `?q=${encodeURIComponent(query.value)}` : ''}`))
-function topicPath(name: string) { return withBase(`${knowledgeTopicPath(name)}${query.value ? `&q=${encodeURIComponent(query.value)}` : ''}`) }
+const overviewPath = computed(() => withBase(`/topics/?size=${pageSize.value}`))
+function topicPath(name: string) { return withBase(`${knowledgeTopicPath(name)}&size=${pageSize.value}`) }
 function restoreQuery() { clearTimeout(timer); query.value = typeof route.query.q === 'string' ? route.query.q : '' }
 watch(() => route.query.q, restoreQuery)
 onMounted(() => { restoreQuery(); hydrated.value = true; window.addEventListener('scroll', queueChapter, { passive: true }); window.addEventListener('resize', queueChapter, { passive: true }) })
 watch(query, value => {
   clearTimeout(timer)
-  if (value === (typeof route.query.q === 'string' ? route.query.q : '') || requested.value) return
+  if (value === (typeof route.query.q === 'string' ? route.query.q : '')) return
   timer = setTimeout(() => {
-    const next = { ...route.query }; delete next.q
+    const next = { ...route.query, size: String(pageSize.value) }; delete next.q; delete next.page
     if (value.trim()) next.q = value
-    void router.replace({ path: route.path, query: next, hash: route.hash })
+    void router.replace({ path: route.path, query: next, hash: '' })
   }, 220)
 })
 onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); window.removeEventListener('scroll', queueChapter); window.removeEventListener('resize', queueChapter) })
@@ -84,7 +101,7 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
         <p class="catalog-kicker">{{ topic ? 'SERIES / READING PATH' : 'TOPICS / DEEP EXPLORATION' }}</p>
         <h1>{{ topic?.name || '专题' }}</h1>
         <p class="catalog-description">{{ topic ? '按目录展开学习路径，从基础到进阶，也可以进入更细的子分组。' : '围绕一个方向，走完一条学习路径。按专题探索，从章节出发，把知识组织成连续的理解。' }}</p>
-        <dl class="topic-metrics"><div v-if="!topic"><dt>学习专题</dt><dd>{{ digits(topics.length) }}</dd></div><div><dt>{{ topic ? '专题笔记' : '收录笔记' }}</dt><dd>{{ digits(topic?.count ?? totalNotes) }}</dd></div><div><dt>目录分组</dt><dd>{{ digits(topic ? flatChapters.filter(chapter => chapter.path.length).length : totalChapters) }}</dd></div></dl>
+        <dl class="topic-metrics"><div v-if="!topic"><dt>学习专题</dt><dd>{{ digits(topics.length) }}</dd></div><div><dt>{{ topic ? '专题笔记' : '收录笔记' }}</dt><dd>{{ digits(topic?.count ?? totalNotes) }}</dd></div><div><dt>目录分组</dt><dd>{{ digits(topic ? allFlatChapters.filter(chapter => chapter.path.length).length : totalChapters) }}</dd></div></dl>
         <a v-if="firstNote" class="catalog-button topic-start" :href="withBase(firstNote.path)">开始阅读 <ArrowUpRight aria-hidden="true" /></a>
       </div>
       <CatalogScene kind="topics" />
@@ -93,10 +110,14 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
       <nav :key="topic.name" class="topic-chapter-nav" aria-label="专题目录导航">
         <p class="catalog-kicker">READING / DIRECTORY</p>
         <div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div>
+        <p v-if="!chapters.length" class="article-search-hint">没有匹配目录</p>
         <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" :destinations="destinations" /></ul>
       </nav>
       <div id="topic-articles" class="topic-reading-content">
-        <header class="topic-page-summary"><span role="status" aria-live="polite">共 {{ page.total }} 篇 · 每页 {{ ARTICLE_PAGE_SIZE }} 篇</span><span>第 {{ page.currentPage }} / {{ page.totalPages }} 页</span></header>
+        <div class="article-list-controls"><label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索专题文章" placeholder="模糊搜索本专题标题、摘要或标签" @keydown.esc.prevent="query = ''" /></label><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /></div>
+        <p class="article-search-hint">支持片段和近似拼写匹配，多关键词用空格分隔。</p>
+        <header class="topic-page-summary"><span role="status" aria-live="polite">{{ query.trim() ? '匹配' : '共' }} {{ page.total }} 篇<template v-if="query.trim()"> / 共 {{ topic.count }} 篇</template> · 每页 {{ pageSize }} 篇</span><span>第 {{ page.currentPage }} / {{ page.totalPages }} 页</span></header>
+        <div v-if="!page.total" class="catalog-empty"><h2>暂时没有匹配的文章</h2><p>换一个片段或更短的关键词，或查看专题全部文章。</p><button type="button" class="catalog-button" @click="query = ''">清除搜索</button></div>
         <TopicChapter v-for="chapter in page.chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" />
         <nav v-if="page.totalPages > 1" class="catalog-pagination" aria-label="专题文章分页"><button type="button" class="catalog-button" :disabled="page.currentPage === 1" @click="goPage(page.currentPage - 1)">上一页</button><span aria-live="polite">{{ page.currentPage }} / {{ page.totalPages }}</span><button type="button" class="catalog-button" :disabled="page.currentPage === page.totalPages" @click="goPage(page.currentPage + 1)">下一页</button></nav>
       </div>

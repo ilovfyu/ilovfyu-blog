@@ -1,3 +1,6 @@
+import { searchArticles } from './article-search.ts'
+import { ARTICLE_PAGE_SIZE } from './article-page-size.ts'
+export { ARTICLE_PAGE_SIZE } from './article-page-size.ts'
 import { knowledgePath } from './knowledge-path.ts'
 
 export type KnowledgeNote = {
@@ -30,13 +33,11 @@ export function knowledgeTags(notes: KnowledgeNote[]): string[] {
   return distinct(notes.flatMap(note => note.tags)).sort((a, b) => a.localeCompare(b, 'zh-CN'))
 }
 export function filterKnowledgeNotes<T extends KnowledgeNote>(notes: T[], filters: KnowledgeFilters): T[] {
-  const tokens = key(filters.query).split(/\s+/).filter(Boolean)
   const tags = filters.tags.map(key)
-  return notes.filter(note => {
+  return searchArticles(notes.filter(note => {
     const noteTags = new Set(note.tags.map(key))
-    const text = key(`${note.title} ${note.summary} ${note.series} ${note.group} ${note.tags.join(' ')}`)
-    return (!filters.topic || note.series === filters.topic) && tags.every(tag => noteTags.has(tag)) && tokens.every(token => text.includes(token))
-  })
+    return (!filters.topic || note.series === filters.topic) && tags.every(tag => noteTags.has(tag))
+  }), filters.query)
 }
 export function knowledgeTagFacets(notes: KnowledgeNote[], filters: KnowledgeFilters) {
   const counts = new Map<string, number>()
@@ -59,8 +60,6 @@ export function readKnowledgeFilters(query: Record<string, unknown>, topics: Kno
     page: /^\d+$/.test(rawPage) && Number.isSafeInteger(Number(rawPage)) ? Math.max(1, Number(rawPage)) : 1,
   }
 }
-export const ARTICLE_PAGE_SIZE = 10
-
 export function knowledgePage<T>(notes: T[], page: number, pageSize = ARTICLE_PAGE_SIZE) {
   const totalPages = Math.max(1, Math.ceil(notes.length / pageSize))
   const currentPage = Math.min(Math.max(1, (Number.isFinite(page) ? Math.floor(page) : 1)), totalPages)

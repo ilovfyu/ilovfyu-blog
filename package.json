@@ -13,7 +13,7 @@
     "blog:preview": "npm run blog:sync && npm run docs:dev -- --host 127.0.0.1 --port 8092",
     "blog:publish": "node --env-file-if-exists=.env scripts/blog-publish.mjs",
     "test:publishing": "node --test tests/publishing.test.mjs",
-    "test:knowledge": "node --test tests/knowledge.test.mjs tests/knowledge-path.test.mjs tests/topic-rendering.test.mjs",
+    "test:knowledge": "node --test tests/knowledge.test.mjs tests/knowledge-path.test.mjs tests/topic-rendering.test.mjs tests/article-search.test.mjs",
     "test:reading": "node --test tests/article-preview.test.mjs tests/reading-progress.test.mjs",
     "test:rendering": "node --test tests/rendering.test.mjs"
   },

@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { ArrowUpRight, RotateCcw, Search } from '@lucide/vue'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
+import ArticlePageSize from './ArticlePageSize.vue'
+import { useArticlePageSize } from '../utils/article-page-size'
+import { useCatalogScroll } from '../utils/catalog-navigation'
 import KnowledgeAtlas from './KnowledgeAtlas.vue'
 import KnowledgeTagFilter from './KnowledgeTagFilter.vue'
-import { ARTICLE_PAGE_SIZE, filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, normalizeKnowledgeNotes, readKnowledgeFilters } from '../utils/knowledge-index'
+import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, normalizeKnowledgeNotes, readKnowledgeFilters } from '../utils/knowledge-index'
 
 const articles = normalizeKnowledgeNotes(knowledge)
 const tags = knowledgeTags(articles)
 const route = useRoute()
 const router = useRouter()
+useCatalogScroll()
+const { pageSize, rememberPageSize } = useArticlePageSize(() => route.query.size)
 const activeTags = ref<string[]>([])
 const query = ref('')
 const currentPage = ref(1)
@@ -19,7 +24,7 @@ let searchTimer: ReturnType<typeof setTimeout> | undefined
 const filters = computed(() => ({ topic: null, tags: activeTags.value, query: query.value }))
 const results = computed(() => filterKnowledgeNotes(articles, filters.value))
 const facets = computed(() => knowledgeTagFacets(articles, filters.value))
-const page = computed(() => knowledgePage(results.value, currentPage.value))
+const page = computed(() => knowledgePage(results.value, currentPage.value, pageSize.value))
 const filtered = computed(() => !!activeTags.value.length || !!query.value.trim())
 const digits = (value: number) => String(value).padStart(2, '0')
 
@@ -27,18 +32,18 @@ function restore() {
   clearTimeout(searchTimer)
   const state = readKnowledgeFilters(route.query, [], tags)
   activeTags.value = state.tags; query.value = state.query
-  currentPage.value = knowledgePage(results.value, state.page).currentPage
+  currentPage.value = knowledgePage(results.value, state.page, pageSize.value).currentPage
 }
 watch(() => route.query, restore)
 onMounted(restore)
 function persist(replace = false) {
   clearTimeout(searchTimer)
-  const next = { ...route.query }
+  const next = { ...route.query, size: String(pageSize.value) }
   for (const property of ['topic', 'series', 'tag', 'q', 'page']) delete next[property]
   if (activeTags.value.length) next.tag = [...activeTags.value]
   if (query.value.trim()) next.q = query.value
   if (page.value.currentPage > 1) next.page = String(page.value.currentPage)
-  void router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
+  return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: replace ? '' : route.hash })
 }
 watch(query, value => {
   clearTimeout(searchTimer)
@@ -46,14 +51,16 @@ watch(query, value => {
   currentPage.value = 1
   searchTimer = setTimeout(() => persist(true), 220)
 })
+function changePageSize(value: number) { rememberPageSize(value); currentPage.value = 1; persist() }
 function toggleTag(tag: string) {
   activeTags.value = activeTags.value.includes(tag) ? activeTags.value.filter(item => item !== tag) : [...activeTags.value, tag]
   currentPage.value = 1; persist()
 }
 function clearTags() { activeTags.value = []; currentPage.value = 1; persist() }
 function reset() { activeTags.value = []; query.value = ''; currentPage.value = 1; persist() }
-function goPage(target: number) {
-  currentPage.value = knowledgePage(results.value, target).currentPage; persist()
+async function goPage(target: number) {
+  currentPage.value = knowledgePage(results.value, target, pageSize.value).currentPage
+  await persist(); await nextTick()
   resultSection.value?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })
 }
 onBeforeUnmount(() => clearTimeout(searchTimer))
@@ -72,13 +79,14 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
     <div v-if="articles.length" class="catalog-body knowledge-workspace">
       <section ref="resultSection" id="knowledge-notes" class="knowledge-note-results" aria-label="知识笔记筛选与结果">
         <div class="knowledge-filter-panel">
-          <div class="knowledge-search-row"><label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索知识笔记" placeholder="搜索标题、摘要、概念或标签" /></label><button v-if="filtered" type="button" class="catalog-button knowledge-reset" @click="reset"><RotateCcw aria-hidden="true" />清除筛选</button></div>
+          <div class="knowledge-search-row"><label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索知识笔记" placeholder="模糊搜索标题、摘要、概念或标签" /></label><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /><button v-if="filtered" type="button" class="catalog-button knowledge-reset" @click="reset"><RotateCcw aria-hidden="true" />清除筛选</button></div>
+          <p class="article-search-hint">支持片段和近似拼写匹配，多关键词用空格分隔。</p>
           <KnowledgeTagFilter v-if="tags.length" :facets="facets" :selected="activeTags" @toggle="toggleTag" @clear="clearTags" />
         </div>
         <header class="knowledge-result-title"><div><p class="catalog-kicker">LIBRARY / ALL NOTES</p><h2>全部笔记</h2><p v-if="activeTags.length" class="knowledge-current-tags">同时匹配 {{ activeTags.length }} 个已选标签</p></div><span class="catalog-result" role="status" aria-live="polite">{{ results.length }} 篇{{ filtered ? '匹配笔记' : '笔记' }}</span></header>
         <TransitionGroup v-if="page.entries.length" class="knowledge-note-list" name="catalog-list" tag="div">
           <a v-for="(note, index) in page.entries" :key="note.path" :href="withBase(note.path)" class="knowledge-note-row">
-            <span class="knowledge-note-number">{{ digits((page.currentPage - 1) * ARTICLE_PAGE_SIZE + index + 1) }}</span>
+            <span class="knowledge-note-number">{{ digits((page.currentPage - 1) * pageSize + index + 1) }}</span>
             <div class="knowledge-note-copy"><small>{{ note.label }}<template v-if="note.date"> · {{ note.date }}</template></small><h3>{{ note.title }}</h3><p v-if="note.summary" class="knowledge-note-summary">{{ note.summary }}</p><div v-if="note.tags.length" class="knowledge-note-tags"><span v-for="tag in note.tags" :key="tag" :class="{ 'tag-matched': activeTags.includes(tag) }">#{{ tag }}</span></div></div><ArrowUpRight aria-hidden="true" />
           </a>
         </TransitionGroup>

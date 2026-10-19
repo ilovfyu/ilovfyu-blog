@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ArrowUpRight, Search, Shuffle } from '@lucide/vue'
 import { withBase, useRoute, useRouter } from 'vuepress/client'
-import { ARTICLE_PAGE_SIZE, knowledgePage, readKnowledgeFilters } from '../utils/knowledge-index'
+import { knowledgePage, readKnowledgeFilters } from '../utils/knowledge-index'
+import { searchArticles } from '../utils/article-search'
+import { useArticlePageSize } from '../utils/article-page-size'
+import { useCatalogScroll } from '../utils/catalog-navigation'
+import ArticlePageSize from './ArticlePageSize.vue'
 import { notes, type Category } from '../data/content'
 import WritingTrail from './WritingTrail.vue'
 import CatalogScene from './CatalogScene.vue'
 
-const router = useRouter()
-const route = useRoute()
-const category = ref<Category>('all')
-const query = ref('')
+const router = useRouter(), route = useRoute()
+useCatalogScroll()
+const { pageSize, rememberPageSize } = useArticlePageSize(() => route.query.size)
+const category = ref<Category>('all'), query = ref(''), currentPage = ref(1)
+let timer: ReturnType<typeof setTimeout> | undefined
 const publishedDirections = new Set(notes.map(note => note.category)).size
 const digits = (value: number) => String(value).padStart(2, '0')
 const categories: { key: Category; label: string }[] = [
@@ -18,27 +23,43 @@ const categories: { key: Category; label: string }[] = [
   { key: 'frontend', label: '前端体验' }, { key: 'engineering', label: '工程架构' },
   { key: 'thinking', label: '产品与生活' },
 ]
-const visibleNotes = computed(() => notes.filter(note =>
-  (category.value === 'all' || note.category === category.value) &&
-  `${note.title} ${note.summary} ${note.tags.join(' ')}`.toLocaleLowerCase().includes(query.value.trim().toLocaleLowerCase()),
-))
-const page = computed(() => knowledgePage(visibleNotes.value, readKnowledgeFilters(route.query, [], []).page))
-function goPage(target: number) {
-  const next = { ...route.query }
-  const number = knowledgePage(visibleNotes.value, target).currentPage
-  if (number > 1) next.page = String(number); else delete next.page
-  void router.push({ path: route.path, query: next, hash: '#post-articles' })
+const routeCategory = () => categories.some(item => item.key === route.query.category) ? route.query.category as Category : 'all'
+const visibleNotes = computed(() => searchArticles(notes.filter(note => category.value === 'all' || note.category === category.value), query.value))
+const page = computed(() => knowledgePage(visibleNotes.value, currentPage.value, pageSize.value))
+function restore() {
+  clearTimeout(timer)
+  query.value = readKnowledgeFilters(route.query, [], []).query; category.value = routeCategory()
+  currentPage.value = knowledgePage(visibleNotes.value, readKnowledgeFilters(route.query, [], []).page, pageSize.value).currentPage
 }
-watch([category, query], () => {
-  if (!route.query.page) return
-  const next = { ...route.query }; delete next.page
-  void router.replace({ path: route.path, query: next, hash: route.hash })
+watch(() => route.query, restore)
+onMounted(restore)
+function persist(replace = false, hash = '') {
+  clearTimeout(timer)
+  const next = { ...route.query, size: String(pageSize.value) }
+  for (const property of ['q', 'category', 'page']) delete next[property]
+  if (query.value.trim()) next.q = query.value
+  if (category.value !== 'all') next.category = category.value
+  if (page.value.currentPage > 1) next.page = String(page.value.currentPage)
+  return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash })
+}
+async function goPage(target: number) {
+  currentPage.value = knowledgePage(visibleNotes.value, target, pageSize.value).currentPage
+  await persist(false, '#post-articles'); await nextTick()
+  document.getElementById('post-articles')?.scrollIntoView({ block: 'start' })
+}
+watch(query, value => {
+  clearTimeout(timer)
+  if (value === readKnowledgeFilters(route.query, [], []).query) return
+  currentPage.value = 1; timer = setTimeout(() => { void persist(true) }, 220)
 })
+watch(category, value => { if (value !== routeCategory()) { currentPage.value = 1; void persist() } })
+function changePageSize(value: number) { rememberPageSize(value); currentPage.value = 1; void persist() }
 function randomArticle() {
   const list = visibleNotes.value
   if (list.length) void router.push(list[Math.floor(Math.random() * list.length)].path)
 }
-function reset() { category.value = 'all'; query.value = '' }
+function reset() { clearTimeout(timer); void router.push({ path: route.path, query: { size: String(pageSize.value) }, hash: '' }) }
+onBeforeUnmount(() => clearTimeout(timer))
 </script>
 
 <template>
@@ -54,13 +75,15 @@ function reset() { category.value = 'all'; query.value = '' }
     </header>
     <section id="post-articles" class="catalog-body" aria-label="随笔目录">
       <div v-if="notes.length" class="catalog-toolbar">
-        <label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索随笔" placeholder="搜索标题、内容或标签" /></label>
+        <label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索随笔" placeholder="模糊搜索标题、摘要或标签" /></label>
+        <ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" />
         <button class="catalog-button" type="button" :disabled="!visibleNotes.length" @click="randomArticle"><Shuffle aria-hidden="true" /> 随机阅读</button>
       </div>
+      <p v-if="notes.length" class="article-search-hint">支持片段和近似拼写匹配，多关键词用空格分隔。</p>
       <nav v-if="notes.length" class="catalog-filters" aria-label="按随笔主题筛选">
         <button v-for="item in categories" :key="item.key" type="button" :aria-pressed="category === item.key" @click="category = item.key">{{ item.label }}<span>{{ item.key === 'all' ? notes.length : notes.filter(note => note.category === item.key).length }}</span></button>
       </nav>
-      <p v-if="notes.length" class="catalog-result" role="status">{{ visibleNotes.length }} 篇匹配的文章 · 每页 {{ ARTICLE_PAGE_SIZE }} 篇</p>
+      <p v-if="notes.length" class="catalog-result" role="status">{{ visibleNotes.length }} 篇匹配的文章 · 每页 {{ pageSize }} 篇</p>
       <TransitionGroup v-if="visibleNotes.length" class="post-index-list" name="catalog-list" tag="div">
         <a v-for="note in page.entries" :key="note.path" class="post-index-row" :href="withBase(note.path)">
           <time :datetime="note.date.replaceAll('.', '-')">{{ note.date }}</time>
