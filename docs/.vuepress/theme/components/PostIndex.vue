@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { ArrowUpRight, Search, Shuffle } from '@lucide/vue'
+import { ArrowUpRight, Shuffle } from '@lucide/vue'
 import { withBase, useRoute, useRouter } from 'vuepress/client'
 import { knowledgePage, readKnowledgeFilters } from '../utils/knowledge-index'
 import { searchArticles } from '../utils/article-search'
 import { useArticlePageSize } from '../utils/article-page-size'
 import { useCatalogScroll } from '../utils/catalog-navigation'
 import ArticlePageSize from './ArticlePageSize.vue'
+import ArticleSearch from './ArticleSearch.vue'
+import ArticlePagination from './ArticlePagination.vue'
 import { notes, type Category } from '../data/content'
 import WritingTrail from './WritingTrail.vue'
 import CatalogScene from './CatalogScene.vue'
@@ -74,12 +76,11 @@ onBeforeUnmount(() => clearTimeout(timer))
       <CatalogScene kind="writing" />
     </header>
     <section id="post-articles" class="catalog-body" aria-label="随笔目录">
-      <div v-if="notes.length" class="catalog-toolbar">
-        <label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索随笔" placeholder="模糊搜索标题、摘要或标签" /></label>
+      <div v-if="notes.length" class="catalog-toolbar article-discovery">
+        <ArticleSearch v-model="query" label="搜索随笔" placeholder="寻找一段思考、一篇随笔…" />
         <ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" />
-        <button class="catalog-button" type="button" :disabled="!visibleNotes.length" @click="randomArticle"><Shuffle aria-hidden="true" /> 随机阅读</button>
+        <button class="catalog-button" type="button" aria-label="随机阅读" :disabled="!visibleNotes.length" @click="randomArticle"><Shuffle aria-hidden="true" /><span>随机阅读</span></button>
       </div>
-      <p v-if="notes.length" class="article-search-hint">支持片段和近似拼写匹配，多关键词用空格分隔。</p>
       <nav v-if="notes.length" class="catalog-filters" aria-label="按随笔主题筛选">
         <button v-for="item in categories" :key="item.key" type="button" :aria-pressed="category === item.key" @click="category = item.key">{{ item.label }}<span>{{ item.key === 'all' ? notes.length : notes.filter(note => note.category === item.key).length }}</span></button>
       </nav>
@@ -92,7 +93,7 @@ onBeforeUnmount(() => clearTimeout(timer))
         </a>
       </TransitionGroup>
       <div v-else class="catalog-empty"><h2>{{ notes.length ? '暂时没有匹配的随笔' : '还没有发布随笔' }}</h2><p>{{ notes.length ? '换一个关键词，或回到全部文章。' : '新的文章发布后，会出现在这里。' }}</p><button v-if="notes.length" type="button" class="catalog-button" @click="reset">重置筛选</button></div>
-      <nav v-if="page.totalPages > 1" class="catalog-pagination" aria-label="随笔分页"><button type="button" class="catalog-button" :disabled="page.currentPage === 1" @click="goPage(page.currentPage - 1)">上一页</button><span aria-live="polite">{{ page.currentPage }} / {{ page.totalPages }}</span><button type="button" class="catalog-button" :disabled="page.currentPage === page.totalPages" @click="goPage(page.currentPage + 1)">下一页</button></nav>
+      <ArticlePagination :current="page.currentPage" :total="page.totalPages" label="随笔分页" @change="goPage" />
       <WritingTrail />
     </section>
   </main>

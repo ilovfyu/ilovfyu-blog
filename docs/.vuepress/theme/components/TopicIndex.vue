@@ -5,6 +5,8 @@ import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
 import { flattenKnowledgeChapters, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
 import ArticlePageSize from './ArticlePageSize.vue'
+import ArticleSearch from './ArticleSearch.vue'
+import ArticlePagination from './ArticlePagination.vue'
 import { searchArticles } from '../utils/article-search'
 import { useArticlePageSize } from '../utils/article-page-size'
 import { useCatalogScroll } from '../utils/catalog-navigation'
@@ -114,12 +116,11 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
         <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" :destinations="destinations" /></ul>
       </nav>
       <div id="topic-articles" class="topic-reading-content">
-        <div class="article-list-controls"><label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索专题文章" placeholder="模糊搜索本专题标题、摘要或标签" @keydown.esc.prevent="query = ''" /></label><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /></div>
-        <p class="article-search-hint">支持片段和近似拼写匹配，多关键词用空格分隔。</p>
+        <div class="article-list-controls article-discovery"><ArticleSearch v-model="query" label="搜索专题文章" placeholder="在这个专题里，找点什么…" /><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /></div>
         <header class="topic-page-summary"><span role="status" aria-live="polite">{{ query.trim() ? '匹配' : '共' }} {{ page.total }} 篇<template v-if="query.trim()"> / 共 {{ topic.count }} 篇</template> · 每页 {{ pageSize }} 篇</span><span>第 {{ page.currentPage }} / {{ page.totalPages }} 页</span></header>
         <div v-if="!page.total" class="catalog-empty"><h2>暂时没有匹配的文章</h2><p>换一个片段或更短的关键词，或查看专题全部文章。</p><button type="button" class="catalog-button" @click="query = ''">清除搜索</button></div>
         <TopicChapter v-for="chapter in page.chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" />
-        <nav v-if="page.totalPages > 1" class="catalog-pagination" aria-label="专题文章分页"><button type="button" class="catalog-button" :disabled="page.currentPage === 1" @click="goPage(page.currentPage - 1)">上一页</button><span aria-live="polite">{{ page.currentPage }} / {{ page.totalPages }}</span><button type="button" class="catalog-button" :disabled="page.currentPage === page.totalPages" @click="goPage(page.currentPage + 1)">下一页</button></nav>
+        <ArticlePagination :current="page.currentPage" :total="page.totalPages" label="专题文章分页" @change="goPage" />
       </div>
     </div>
     <section v-else-if="requested" class="catalog-body"><div class="catalog-empty"><h2>暂时没有这个专题</h2><p>专题名称可能已调整，查看当前已发布的学习系列。</p><a class="catalog-button" :href="withBase('/topics/')">返回专题目录</a></div></section>

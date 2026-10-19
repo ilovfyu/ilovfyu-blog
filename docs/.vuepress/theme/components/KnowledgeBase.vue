@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ArrowUpRight, RotateCcw, Search } from '@lucide/vue'
+import { ArrowUpRight, RotateCcw } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
 import ArticlePageSize from './ArticlePageSize.vue'
+import ArticleSearch from './ArticleSearch.vue'
+import ArticlePagination from './ArticlePagination.vue'
 import { useArticlePageSize } from '../utils/article-page-size'
 import { useCatalogScroll } from '../utils/catalog-navigation'
 import KnowledgeAtlas from './KnowledgeAtlas.vue'
@@ -79,8 +81,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
     <div v-if="articles.length" class="catalog-body knowledge-workspace">
       <section ref="resultSection" id="knowledge-notes" class="knowledge-note-results" aria-label="知识笔记筛选与结果">
         <div class="knowledge-filter-panel">
-          <div class="knowledge-search-row"><label class="catalog-search"><Search aria-hidden="true" /><input v-model="query" type="search" aria-label="搜索知识笔记" placeholder="模糊搜索标题、摘要、概念或标签" /></label><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /><button v-if="filtered" type="button" class="catalog-button knowledge-reset" @click="reset"><RotateCcw aria-hidden="true" />清除筛选</button></div>
-          <p class="article-search-hint">支持片段和近似拼写匹配，多关键词用空格分隔。</p>
+          <div class="knowledge-search-row article-discovery"><ArticleSearch v-model="query" label="搜索知识笔记" placeholder="查找知识、概念与灵感…" /><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /><button v-if="filtered" type="button" class="catalog-button knowledge-reset" aria-label="清除筛选" @click="reset"><RotateCcw aria-hidden="true" /><span>清除筛选</span></button></div>
           <KnowledgeTagFilter v-if="tags.length" :facets="facets" :selected="activeTags" @toggle="toggleTag" @clear="clearTags" />
         </div>
         <header class="knowledge-result-title"><div><p class="catalog-kicker">LIBRARY / ALL NOTES</p><h2>全部笔记</h2><p v-if="activeTags.length" class="knowledge-current-tags">同时匹配 {{ activeTags.length }} 个已选标签</p></div><span class="catalog-result" role="status" aria-live="polite">{{ results.length }} 篇{{ filtered ? '匹配笔记' : '笔记' }}</span></header>
@@ -91,7 +92,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
           </a>
         </TransitionGroup>
         <div v-else class="catalog-empty"><h3>暂时没有匹配的笔记</h3><p>尝试移除一个标签、换个关键词，或查看全部笔记。</p><button type="button" class="catalog-button" @click="reset">重置筛选</button></div>
-        <nav v-if="page.totalPages > 1" class="catalog-pagination" aria-label="知识笔记分页"><button type="button" class="catalog-button" :disabled="page.currentPage === 1" @click="goPage(page.currentPage - 1)">上一页</button><span aria-live="polite">{{ page.currentPage }} / {{ page.totalPages }}</span><button type="button" class="catalog-button" :disabled="page.currentPage === page.totalPages" @click="goPage(page.currentPage + 1)">下一页</button></nav>
+        <ArticlePagination :current="page.currentPage" :total="page.totalPages" label="知识笔记分页" @change="goPage" />
       </section>
     </div>
     <section v-else class="catalog-body"><div class="catalog-empty"><h2>还没有发布知识笔记</h2><p>思源中的知识笔记发布后，会自动整理标签与检索内容。</p></div></section>
