@@ -5,7 +5,7 @@ import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
 import KnowledgeAtlas from './KnowledgeAtlas.vue'
 import KnowledgeTagFilter from './KnowledgeTagFilter.vue'
-import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, normalizeKnowledgeNotes, readKnowledgeFilters } from '../utils/knowledge-index'
+import { ARTICLE_PAGE_SIZE, filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, normalizeKnowledgeNotes, readKnowledgeFilters } from '../utils/knowledge-index'
 
 const articles = normalizeKnowledgeNotes(knowledge)
 const tags = knowledgeTags(articles)
@@ -78,7 +78,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
         <header class="knowledge-result-title"><div><p class="catalog-kicker">LIBRARY / ALL NOTES</p><h2>全部笔记</h2><p v-if="activeTags.length" class="knowledge-current-tags">同时匹配 {{ activeTags.length }} 个已选标签</p></div><span class="catalog-result" role="status" aria-live="polite">{{ results.length }} 篇{{ filtered ? '匹配笔记' : '笔记' }}</span></header>
         <TransitionGroup v-if="page.entries.length" class="knowledge-note-list" name="catalog-list" tag="div">
           <a v-for="(note, index) in page.entries" :key="note.path" :href="withBase(note.path)" class="knowledge-note-row">
-            <span class="knowledge-note-number">{{ digits((page.currentPage - 1) * 15 + index + 1) }}</span>
+            <span class="knowledge-note-number">{{ digits((page.currentPage - 1) * ARTICLE_PAGE_SIZE + index + 1) }}</span>
             <div class="knowledge-note-copy"><small>{{ note.label }}<template v-if="note.date"> · {{ note.date }}</template></small><h3>{{ note.title }}</h3><p v-if="note.summary" class="knowledge-note-summary">{{ note.summary }}</p><div v-if="note.tags.length" class="knowledge-note-tags"><span v-for="tag in note.tags" :key="tag" :class="{ 'tag-matched': activeTags.includes(tag) }">#{{ tag }}</span></div></div><ArrowUpRight aria-hidden="true" />
           </a>
         </TransitionGroup>

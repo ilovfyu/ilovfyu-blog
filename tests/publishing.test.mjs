@@ -305,7 +305,8 @@ test('SiYuan directory nesting and moves update topic metadata while retaining a
   assert.equal(moved.documents.find(doc => doc.id === first).route, `/notes/${first}/`)
   state.docs[0].attrs = { 'custom-blog-series': 'API 实践', 'custom-blog-group': '认证 / 依赖' }
   await sync(automatic)
-  assert.match(await content(first), /series: "API 实践"\ngroup: "认证 \/ 依赖"\ngroupPath: \["认证","依赖"\]/)
+  assert.match(await content(first), /series: "FastAPI"\ngroup: "高级 \/ 请求"\ngroupPath: \["高级","请求"\]/)
+  assert.doesNotMatch(await content(first), /API 实践|认证 \/ 依赖/)
 })
 
 test('a configured series keeps every directory below its section as a group', async t => {

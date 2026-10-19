@@ -5,7 +5,7 @@ import { createSSRApp, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { createServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { knowledgeTopicChapters, flattenKnowledgeChapters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
+import { knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeNoteId, knowledgeTopicPage } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 // Render the actual recursive SFCs without needing a browser or a VuePress server.
 test('nested topic content and directory navigation render all levels with valid anchors', async t => {
@@ -50,4 +50,15 @@ test('nested topic content and directory navigation render all levels with valid
   assert.ok(content.includes('请求 &amp; 响应'))
   assert.ok(content.includes('2 篇笔记'))
   assert.ok(content.includes('<h4'))
+  const rootNote = { ...notes[0], path: '/notes/root/', title: '根目录笔记', group: '' }
+  const root = knowledgeTopicChapters([rootNote], 'FastAPI')[0]
+  const rootContent = await renderToString(createSSRApp({ render: () => h(Chapter, { chapter: root, activeChapter: '' }) }))
+  const rootNav = await renderToString(createSSRApp({ render: () => h('ul', [h(Nav, { chapter: root, activeChapter: '' })]) }))
+  assert.ok(rootContent.includes(`id="${knowledgeNoteId(rootNote.path)}"`))
+  assert.ok(rootNav.includes(`href="#${knowledgeNoteId(rootNote.path)}"`))
+  assert.ok(!rootContent.includes('未分组') && !rootNav.includes('未分组'))
+  const destinations = Object.fromEntries(Object.entries(knowledgeTopicPage(roots, 1, 1).destinations).map(([id, page]) => [id, `/topics/?series=FastAPI&amp;page=${page}#${id}`]))
+  const paginatedNav = await renderToString(createSSRApp({ render: () => h('ul', roots.map(chapter => h(Nav, { chapter, activeChapter, destinations }))) }))
+  assert.ok(paginatedNav.includes('page=3#'))
+  assert.ok(paginatedNav.includes(knowledgeNoteId('/notes/advanced/')))
 })

@@ -227,8 +227,9 @@ async function performSync({ root, config, client, dryRun }) {
     const project = section.collection === 'projects' ? projectMetadata(attrs, content, id => routes.get(id)) : null
     const folders = doc.hpath.slice(section.path?.length || 0).split('/').filter(Boolean)
     if (!directoryPaths.has(doc.hpath)) folders.pop()
+    // Published hierarchy follows the notebook tree. Legacy article attributes must not create phantom folders.
     const structure = section.collection === 'notes'
-      ? knowledgeStructure(folders, attrs['custom-blog-series'] || section.series, attrs['custom-blog-group'], '知识笔记', !!section.series)
+      ? knowledgeStructure(folders, section.series, undefined, '知识笔记', !!section.series)
       : undefined
     files.set(path, Buffer.from(frontmatter(doc, attrs, section, content, routes.get(doc.id), project, structure)))
     documents.push({ id: doc.id, path, title: attrs['custom-blog-title'] || doc.content, route: routes.get(doc.id) })

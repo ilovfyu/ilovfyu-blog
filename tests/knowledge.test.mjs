@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { filterKnowledgeNotes, knowledgePage, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
+import { filterKnowledgeNotes, knowledgePage, knowledgeTopicPage, knowledgeNoteId, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
   { path: '/a/', title: '缓存稳定前缀', summary: 'Skills 动态变化的工程实践', series: 'Agent 工程', group: '缓存', tags: [' Python ', 'KV Cache', 'PYTHON'] },
@@ -42,7 +42,8 @@ test('URL filters restore repeated tags and page; unknown values and malformed p
 })
 test('pagination clamps stale pages after filtering and retains all entries across pages', () => {
   const entries = Array.from({ length: 31 }, (_, id) => ({ id }))
-  assert.deepEqual(knowledgePage(entries, 3).entries, [{ id: 30 }])
+  assert.deepEqual(knowledgePage(entries, 4).entries, [{ id: 30 }])
+  assert.equal(knowledgePage(entries, 1).entries.length, 10)
   assert.equal(knowledgePage(entries.slice(0, 2), 3).currentPage, 1)
   assert.deepEqual(knowledgePage([], 9), { totalPages: 1, currentPage: 1, entries: [] })
 })
@@ -66,8 +67,8 @@ test('topic chapters use natural reading order, preserve distinct articles and h
   ])
   const chapters = knowledgeTopicChapters(entries, 'Agent 工程')
   assert.deepEqual(chapters.map(chapter => [chapter.name, chapter.count, chapter.entries.map(note => note.path)]), [
-    ['基础', 2, ['/a2/', '/b/']],
     ['未分组', 1, ['/b2/']],
+    ['基础', 2, ['/a2/', '/b/']],
     ['进阶', 1, ['/a/']],
   ])
   assert.deepEqual(knowledgeTopicChapters(entries, '尚未发布'), [])
@@ -90,9 +91,10 @@ test('nested directories preserve direct articles, all descendants, and distinct
     { ...source[0], path: '/response/', series: 'FastAPI', group: '高级 / 请求 / 参数', title: '03 · 进阶参数' },
   ])
   const chapters = knowledgeTopicChapters(entries, 'FastAPI')
-  assert.deepEqual(chapters.map(chapter => [chapter.name, chapter.count]), [['未分组', 1], ['基础', 2], ['高级', 1]])
-  assert.deepEqual(chapters[1].entries.map(note => note.path), ['/basic/'])
-  assert.deepEqual(chapters[1].children[0].children[0].entries.map(note => note.path), ['/request/'])
+  assert.deepEqual(chapters.map(chapter => [chapter.name, chapter.count]), [['未分组', 1], ['高级', 1], ['基础', 2]])
+  const basic = chapters.find(chapter => chapter.name === '基础')
+  assert.deepEqual(basic.entries.map(note => note.path), ['/basic/'])
+  assert.deepEqual(basic.children[0].children[0].entries.map(note => note.path), ['/request/'])
   const flat = flattenKnowledgeChapters(chapters)
   assert.equal(flat.length, 7)
   assert.equal(flat.flatMap(chapter => chapter.entries).length, entries.length)
@@ -117,4 +119,36 @@ test('hierarchies accept normalized path arrays and keep reserved characters saf
   assert.equal(chapters[0].children[0].children.length, 2)
   assert.ok(flat.every(chapter => /^[a-z0-9-]+$/.test(chapter.id)))
   assert.equal(filterKnowledgeNotes(entries, { ...all, query: '响应 输入' }).length, 1)
+})
+
+
+test('topic pagination caps articles at ten across folders and retains full ancestor paths', () => {
+  const entries = Array.from({ length: 27 }, (_, index) => ({ ...source[0], path: `/note-${index}/`, title: `${String(index).padStart(2, '0')} · 正文`, group: index < 2 ? '' : index < 14 ? '01 基础 / 请求 / 参数' : '02 进阶 / 请求 / 参数' }))
+  const tree = knowledgeTopicChapters(entries, 'Agent 工程')
+  const flattened = flattenKnowledgeChapters(tree)
+  const pages = [1, 2, 3].map(number => knowledgeTopicPage(tree, number))
+  assert.deepEqual(pages.map(page => page.entries.length), [10, 10, 7])
+  assert.equal(new Set(pages.flatMap(page => page.entries.map(note => note.path))).size, entries.length)
+  assert.deepEqual(pages.flatMap(page => page.entries.map(note => note.path)), entries.map(note => note.path))
+  for (const page of pages) {
+    assert.equal(flattenKnowledgeChapters(page.chapters).flatMap(chapter => chapter.entries).length, page.entries.length)
+    for (const note of page.entries) {
+      const group = flattenKnowledgeChapters(page.chapters).find(chapter => chapter.entries.some(entry => entry.path === note.path))
+      assert.deepEqual(group.path, knowledgeTopicChapters([note], 'Agent 工程').flatMap(root => flattenKnowledgeChapters([root])).at(-1).path)
+      assert.equal(page.destinations[knowledgeNoteId(note.path)], page.currentPage)
+    }
+  }
+  const advanced = flattened.find(chapter => chapter.path.join('/') === '02 进阶/请求/参数')
+  assert.equal(pages[0].destinations[advanced.id], 2)
+  assert.equal(knowledgeTopicPage(tree, 999).currentPage, 3)
+  assert.equal(knowledgeTopicPage(tree, NaN).currentPage, 1)
+  assert.equal(flattenKnowledgeChapters(tree).flatMap(chapter => chapter.entries).length, 27)
+})
+
+test('folder order is independent of the title of its first article', () => {
+  const tree = knowledgeTopicChapters([
+    { ...source[0], title: '99 · 基础', group: '01 基础' },
+    { ...source[1], title: '01 · 进阶', group: '10 进阶' },
+  ], 'Agent 工程')
+  assert.deepEqual(tree.map(chapter => chapter.name), ['01 基础', '10 进阶'])
 })

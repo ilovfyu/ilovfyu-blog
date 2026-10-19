@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowUpRight, BookOpen, Search } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
-import { flattenKnowledgeChapters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
+import { ARTICLE_PAGE_SIZE, flattenKnowledgeChapters, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
 import CatalogScene from './CatalogScene.vue'
 import TopicCardVisual from './TopicCardVisual.vue'
 import TopicGroupNav from './TopicGroupNav.vue'
@@ -20,8 +20,14 @@ const requested = computed(() => !hydrated.value ? '' : typeof route.query.serie
 const topic = computed(() => topics.find(item => item.name === requested.value))
 const chapters = computed(() => topic.value ? knowledgeTopicChapters(articles, topic.value.name) : [])
 const flatChapters = computed(() => flattenKnowledgeChapters(chapters.value))
+const page = computed(() => knowledgeTopicPage(chapters.value, readKnowledgeFilters(route.query, [], []).page))
+const pageChapters = computed(() => flattenKnowledgeChapters(page.value.chapters))
+const destinations = computed(() => Object.fromEntries(Object.entries(page.value.destinations).map(([id, pageNumber]) => {
+  const next = { ...route.query, page: pageNumber > 1 ? String(pageNumber) : undefined }
+  return [id, router.resolve({ path: route.path, query: next, hash: `#${id}` }).href]
+})))
 const firstNote = computed(() => flatChapters.value.find(chapter => chapter.entries.length)?.entries[0])
-const totalChapters = topics.reduce((count, item) => count + flattenKnowledgeChapters(knowledgeTopicChapters(articles, item.name)).length, 0)
+const totalChapters = topics.reduce((count, item) => count + flattenKnowledgeChapters(knowledgeTopicChapters(articles, item.name)).filter(chapter => chapter.path.length).length, 0)
 const totalNotes = topics.reduce((count, item) => count + item.count, 0)
 const results = computed(() => {
   const tokens = query.value.normalize('NFKC').trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
@@ -33,11 +39,25 @@ let scrollFrame = 0
 function updateChapter() {
   scrollFrame = 0
   const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4
-  const current = atEnd ? flatChapters.value.at(-1) : flatChapters.value.filter(chapter => (document.getElementById(chapter.id)?.getBoundingClientRect().top ?? Infinity) <= 180).at(-1) || chapters.value[0]
+  const current = atEnd ? pageChapters.value.at(-1) : pageChapters.value.filter(chapter => (document.getElementById(chapter.id)?.getBoundingClientRect().top ?? Infinity) <= 180).at(-1) || page.value.chapters[0]
   activeChapter.value = current?.id || ''
 }
 function queueChapter() { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateChapter) }
-watch(chapters, async () => { await nextTick(); updateChapter() })
+watch([page, () => route.hash], async () => {
+  await nextTick()
+  if (route.hash) {
+    let id = route.hash.slice(1)
+    try { id = decodeURIComponent(id) } catch { /* Keep malformed fragments inert. */ }
+    document.getElementById(id)?.scrollIntoView({ block: 'start' })
+  }
+  updateChapter()
+})
+function goPage(target: number) {
+  const current = knowledgeTopicPage(chapters.value, target).currentPage
+  const next = { ...route.query }
+  if (current > 1) next.page = String(current); else delete next.page
+  void router.push({ path: route.path, query: next, hash: '#topic-articles' })
+}
 const digits = (value: number) => String(value).padStart(2, '0')
 const overviewPath = computed(() => withBase(`/topics/${query.value ? `?q=${encodeURIComponent(query.value)}` : ''}`))
 function topicPath(name: string) { return withBase(`${knowledgeTopicPath(name)}${query.value ? `&q=${encodeURIComponent(query.value)}` : ''}`) }
@@ -64,7 +84,7 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
         <p class="catalog-kicker">{{ topic ? 'SERIES / READING PATH' : 'TOPICS / DEEP EXPLORATION' }}</p>
         <h1>{{ topic?.name || '专题' }}</h1>
         <p class="catalog-description">{{ topic ? '按目录展开学习路径，从基础到进阶，也可以进入更细的子分组。' : '围绕一个方向，走完一条学习路径。按专题探索，从章节出发，把知识组织成连续的理解。' }}</p>
-        <dl class="topic-metrics"><div v-if="!topic"><dt>学习专题</dt><dd>{{ digits(topics.length) }}</dd></div><div><dt>{{ topic ? '专题笔记' : '收录笔记' }}</dt><dd>{{ digits(topic?.count ?? totalNotes) }}</dd></div><div><dt>目录分组</dt><dd>{{ digits(topic ? flatChapters.length : totalChapters) }}</dd></div></dl>
+        <dl class="topic-metrics"><div v-if="!topic"><dt>学习专题</dt><dd>{{ digits(topics.length) }}</dd></div><div><dt>{{ topic ? '专题笔记' : '收录笔记' }}</dt><dd>{{ digits(topic?.count ?? totalNotes) }}</dd></div><div><dt>目录分组</dt><dd>{{ digits(topic ? flatChapters.filter(chapter => chapter.path.length).length : totalChapters) }}</dd></div></dl>
         <a v-if="firstNote" class="catalog-button topic-start" :href="withBase(firstNote.path)">开始阅读 <ArrowUpRight aria-hidden="true" /></a>
       </div>
       <CatalogScene kind="topics" />
@@ -73,9 +93,13 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
       <nav :key="topic.name" class="topic-chapter-nav" aria-label="专题目录导航">
         <p class="catalog-kicker">READING / DIRECTORY</p>
         <div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div>
-        <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" /></ul>
+        <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" :destinations="destinations" /></ul>
       </nav>
-      <div class="topic-reading-content"><TopicChapter v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" /></div>
+      <div id="topic-articles" class="topic-reading-content">
+        <header class="topic-page-summary"><span role="status" aria-live="polite">共 {{ page.total }} 篇 · 每页 {{ ARTICLE_PAGE_SIZE }} 篇</span><span>第 {{ page.currentPage }} / {{ page.totalPages }} 页</span></header>
+        <TopicChapter v-for="chapter in page.chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" />
+        <nav v-if="page.totalPages > 1" class="catalog-pagination" aria-label="专题文章分页"><button type="button" class="catalog-button" :disabled="page.currentPage === 1" @click="goPage(page.currentPage - 1)">上一页</button><span aria-live="polite">{{ page.currentPage }} / {{ page.totalPages }}</span><button type="button" class="catalog-button" :disabled="page.currentPage === page.totalPages" @click="goPage(page.currentPage + 1)">下一页</button></nav>
+      </div>
     </div>
     <section v-else-if="requested" class="catalog-body"><div class="catalog-empty"><h2>暂时没有这个专题</h2><p>专题名称可能已调整，查看当前已发布的学习系列。</p><a class="catalog-button" :href="withBase('/topics/')">返回专题目录</a></div></section>
     <section v-else class="catalog-body topic-catalog" aria-labelledby="topic-catalog-heading">

@@ -59,9 +59,11 @@ export function readKnowledgeFilters(query: Record<string, unknown>, topics: Kno
     page: /^\d+$/.test(rawPage) && Number.isSafeInteger(Number(rawPage)) ? Math.max(1, Number(rawPage)) : 1,
   }
 }
-export function knowledgePage<T>(notes: T[], page: number, pageSize = 15) {
+export const ARTICLE_PAGE_SIZE = 10
+
+export function knowledgePage<T>(notes: T[], page: number, pageSize = ARTICLE_PAGE_SIZE) {
   const totalPages = Math.max(1, Math.ceil(notes.length / pageSize))
-  const currentPage = Math.min(Math.max(1, Math.floor(page)), totalPages)
+  const currentPage = Math.min(Math.max(1, (Number.isFinite(page) ? Math.floor(page) : 1)), totalPages)
   return { totalPages, currentPage, entries: notes.slice((currentPage - 1) * pageSize, currentPage * pageSize) }
 }
 
@@ -102,10 +104,38 @@ export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topi
     }
     parent!.entries.push(note)
   }
+  const sort = (items: KnowledgeChapter<T>[]) => {
+    items.sort((a, b) => Number(!!a.path.length) - Number(!!b.path.length) || a.name.localeCompare(b.name, 'zh-CN', { numeric: true }))
+    items.forEach(chapter => sort(chapter.children))
+  }
+  sort(chapters)
   return chapters
 }
 
 /** Preorder is shared by the first-reading link, scroll tracking and chapter counts. */
 export function flattenKnowledgeChapters<T extends KnowledgeNote>(chapters: KnowledgeChapter<T>[]): KnowledgeChapter<T>[] {
   return chapters.flatMap(chapter => [chapter, ...flattenKnowledgeChapters(chapter.children)])
+}
+
+/** Stable article anchors also serve as destinations in the full directory tree. */
+export function knowledgeNoteId(path: string): string {
+  return 'topic-note-' + Array.from(path, char => char.codePointAt(0)!.toString(16)).join('-')
+}
+
+/** Paginate articles once, then retain only their ancestor directories on the current page. */
+export function knowledgeTopicPage<T extends KnowledgeNote>(chapters: KnowledgeChapter<T>[], requestedPage: number, pageSize = ARTICLE_PAGE_SIZE) {
+  const ordered = flattenKnowledgeChapters(chapters).flatMap(chapter => chapter.entries)
+  const page = knowledgePage(ordered, requestedPage, pageSize)
+  const selected = new Set(page.entries.map(note => note.path))
+  const destinations: Record<string, number> = {}
+  ordered.forEach((note, index) => { destinations[knowledgeNoteId(note.path)] = Math.floor(index / pageSize) + 1 })
+  const prune = (items: KnowledgeChapter<T>[]): KnowledgeChapter<T>[] => items.flatMap(chapter => {
+    const entries = chapter.entries.filter(note => selected.has(note.path))
+    const children = prune(chapter.children)
+    const first = chapter.entries[0]
+    const firstChild = chapter.children.find(child => destinations[child.id])
+    if (first || firstChild) destinations[chapter.id] = first ? destinations[knowledgeNoteId(first.path)] : destinations[firstChild!.id]
+    return entries.length || children.length ? [{ ...chapter, entries, children }] : []
+  })
+  return { ...page, total: ordered.length, chapters: prune(chapters), destinations }
 }

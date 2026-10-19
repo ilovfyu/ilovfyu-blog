@@ -55,8 +55,8 @@ npm run blog:doctor
 | `custom-blog-description` | 目录卡片的摘要 |
 | `custom-blog-category` | `ai`、`frontend`、`engineering`、`thinking` |
 | `custom-blog-tags` | 标签用逗号分隔，例如 `Vue,工程实践` |
-| `custom-blog-series` | 专题中的连续学习系列，例如 `TypeScript` |
-| `custom-blog-group` | 覆盖目录分组，例如 `基础 / 请求与响应 / 参数校验`，支持多层 |
+| `custom-blog-series` | 旧版专题属性，现由思源实际目录决定，不再覆盖目录 |
+| `custom-blog-group` | 旧版分组属性，现由思源实际目录决定，不再生成额外分组 |
 
 ### 标签检索与独立专题
 
@@ -76,15 +76,9 @@ npm run blog:doctor
 
 专题页会显示可展开、折叠的目录树，并统计各目录下包含子目录的文章总数。目录文档自身有正文时，也可以作为该目录的导读文章；空目录不会产生空白笔记。直接放在「知识库」根目录且未设置专题的文章归入「知识笔记」。
 
-已有属性仍然兼容，非空 `custom-blog-series` 优先指定专题，非空 `custom-blog-group` 优先指定分组路径。例如：
+思源发布以真实目录为准：旧的 `custom-blog-series`、`custom-blog-group` 属性不会再覆盖目录。移动或重命名目录后，重新同步即可更新专题层级，文章地址不变。`siyuan.config.json` 中某个 notes 分区若设置了 `series`，该分区会固定归入此专题，其下全部目录都作为分组。
 
-```text
-custom-blog-series = FastAPI
-custom-blog-group = 高级 / 异步与并发
-custom-blog-tags = FastAPI,Python,异步
-```
-
-要完全跟随目录移动，请清空旧的 `custom-blog-group` 覆盖值；专题名称也要跟随目录时，同时清空 `custom-blog-series`。`siyuan.config.json` 中某个 notes 分区若设置了 `series`，该分区会固定归入此专题，其下全部目录都作为分组。
+专题根目录的文章直接展示，不会虚构「未分组」目录。目录可以同时包含文章和子目录，左侧按实际层级展开；主文章区域默认每页 10 篇，分页保留祖先目录。点击左侧目录或文章，会自动进入包含它的页码并定位。页码保存在 URL 中，刷新和浏览器返回可以恢复。
 
 本地 Markdown 同样支持目录推导：`docs/notes/FastAPI/基础/请求与响应/参数校验.md`。显式 frontmatter 可以使用 `series: FastAPI` 和 `group: 基础 / 请求与响应`，或 `groupPath: [基础, 请求与响应]`。`siyuan/` 是同步用的技术目录，不会被识别为专题名；此类文章使用同步导出的目录元信息。
 
@@ -92,7 +86,7 @@ custom-blog-tags = FastAPI,Python,异步
 
 发布后，「知识库」位于 `/knowledge/`，通过多个标签和关键词检索单篇笔记；多标签使用交集，同时满足全部已选标签才显示，标签旁显示匹配数量。筛选会保存到网址，刷新、分享链接及浏览器后退都能恢复条件。
 
-「专题」位于 `/topics/`，集中展示连续学习系列。进入专题后，可按多层目录导航，并从「开始阅读」进入第一篇笔记；带序号的标题按自然顺序组织阅读路径，例如 01、02、10。专题和知识库分别拥有导航入口，引用同一份已发布文章，文章地址保持不变。无需手工新建博客专题页面。
+「专题」位于 `/topics/`，集中展示连续学习系列。进入专题后，可按多层目录导航，并从「开始阅读」进入第一篇笔记；带序号的标题按自然顺序组织阅读路径，例如 01、02、10。专题和知识库分别拥有导航入口，引用同一份已发布文章，文章地址保持不变。知识库、专题文章和随笔列表默认每页 10 篇。无需手工新建博客专题页面。
 
 ## 3. 写完后同步和预览
 

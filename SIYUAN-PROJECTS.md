@@ -48,7 +48,7 @@
 | custom-blog-project-showcase | 对应产品展示的思源文档 ID |
 | custom-blog-project-record | 对应项目记录的思源文档 ID |
 | custom-blog-index | false 表示不进入目录列表；页面仍发布 |
-| custom-blog-series / custom-blog-group | 知识库系列 / 分组 |
+| custom-blog-series / custom-blog-group | 旧属性不再覆盖思源目录；专题与分组按知识库中的实际层级同步 |
 
 项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 16 个项目，其中 PromptLSM 与 RoostAI 属于「持续构建」，标注工具平台属于「已完成作品」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
 
