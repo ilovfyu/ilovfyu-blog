@@ -17,8 +17,11 @@ export function normalizeKnowledgeNotes<T extends KnowledgeNote>(notes: T[]): T[
     return { ...note, series: note.series.trim() || '未分类', group: groupPath.join(' / '), groupPath, tags: distinct(note.tags) }
   })
 }
-export function knowledgeTopics(notes: KnowledgeNote[]): KnowledgeTopic[] {
+export function knowledgeTopics(notes: KnowledgeNote[], configuredNames: string[] = []): KnowledgeTopic[] {
   const topics = new Map<string, KnowledgeTopic>()
+  for (const name of distinct(configuredNames)) {
+    if (name !== '未分类') topics.set(name, { name, count: 0, groups: [] })
+  }
   for (const note of notes) {
     if (note.series === '未分类') continue
     const topic = topics.get(note.series) || { name: note.series, count: 0, groups: [] }

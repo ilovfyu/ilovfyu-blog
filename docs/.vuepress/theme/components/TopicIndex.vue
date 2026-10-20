@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, BookOpen } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
+import { topicAppearance, topicNames } from '../data/topics'
 import { flattenKnowledgeChapters, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
 import ArticlePageSize from './ArticlePageSize.vue'
 import ArticleSearch from './ArticleSearch.vue'
@@ -16,7 +17,7 @@ import TopicGroupNav from './TopicGroupNav.vue'
 import TopicChapter from './TopicChapter.vue'
 
 const articles = normalizeKnowledgeNotes(knowledge)
-const topics = knowledgeTopics(articles)
+const topics = knowledgeTopics(articles, topicNames)
 const route = useRoute()
 const router = useRouter()
 useCatalogScroll()
@@ -108,7 +109,8 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
       </div>
       <CatalogScene kind="topics" />
     </header>
-    <div v-if="topic" class="catalog-body topic-reading-layout">
+    <section v-if="topic && !topic.count" class="catalog-body"><div class="catalog-empty"><h2>文章整理中</h2><p>「{{ topic.name }}」专题已建立，后续将在这里更新学习笔记。</p><a class="catalog-button" :href="overviewPath">返回专题目录</a></div></section>
+    <div v-else-if="topic" class="catalog-body topic-reading-layout">
       <nav :key="topic.name" class="topic-chapter-nav" aria-label="专题目录导航">
         <p class="catalog-kicker">READING / DIRECTORY</p>
         <div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div>
@@ -128,10 +130,11 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
       <header class="topic-section-heading"><div><p class="catalog-kicker">EXPLORE / LEARNING SERIES</p><h2 id="topic-catalog-heading">专题目录</h2></div><span role="status" aria-live="polite">{{ results.length }} 个专题</span></header>
       <div v-if="topics.length" class="article-discovery"><ArticleSearch v-model="query" label="搜索专题" heading="专题检索" fields="专题名称 / 目录" placeholder="选择一个方向，深入阅读…" /></div>
       <div v-if="results.length" class="topic-card-grid">
-        <a v-for="(item, index) in results" :key="item.name" class="topic-card" :data-tone="/博客/.test(item.name) ? 'cyan' : 'violet'" :href="topicPath(item.name)">
+        <a v-for="(item, index) in results" :key="item.name" class="topic-card" :data-tone="topicAppearance(item.name).tone" :href="topicPath(item.name)">
           <div class="topic-card-copy">
             <span class="topic-card-code"><BookOpen aria-hidden="true" />{{ digits(index + 1) }} / SERIES</span>
             <h3>{{ item.name }}</h3>
+            <p v-if="topicAppearance(item.name).description" class="topic-card-description">{{ topicAppearance(item.name).description }}</p>
             <p>{{ item.count }} 篇笔记<span v-if="item.groups.length"> · {{ item.groups.length }} 个目录分组</span></p>
           </div>
           <TopicCardVisual :name="item.name" />

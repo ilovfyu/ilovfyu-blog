@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useSceneMotion } from '../utils/use-scene-motion'
+import { topicAppearance } from '../data/topics'
+import MathTopicVisual from './MathTopicVisual.vue'
 
 const props = defineProps<{ name: string }>()
-const kind = computed(() => /fastapi/i.test(props.name) ? 'api' : /博客/.test(props.name) ? 'publish' : 'library')
+const appearance = computed(() => topicAppearance(props.name))
+const kind = computed(() => appearance.value.kind)
 const stage = ref<HTMLElement | null>(null)
 const running = useSceneMotion(stage)
 </script>
 
 <template>
   <div ref="stage" class="topic-visual" :data-kind="kind" :data-motion="running ? 'running' : 'still'" aria-hidden="true">
-    <svg v-if="kind === 'api'" viewBox="0 0 360 220" fill="none">
+    <MathTopicVisual v-if="kind === 'calculus' || kind === 'algebra' || kind === 'probability'" :kind="kind" :running="running" />
+    <svg v-else-if="kind === 'api'" viewBox="0 0 360 220" fill="none">
       <path class="visual-grid" d="M20 170 180 210 340 170M20 150 180 190 340 150M20 130 180 170 340 130M60 180V32M120 196V16M180 210V4M240 196V16M300 180V32" />
       <path class="visual-wire" d="M34 58H96L132 96M228 96 264 58H326M34 162H96L132 124M228 124 264 162H326" />
       <path class="visual-wire visual-wire-secondary" d="M34 58V162M326 58V162" />
@@ -62,7 +66,7 @@ const running = useSceneMotion(stage)
       </g>
       <text class="visual-label" x="180" y="208" text-anchor="middle">KNOWLEDGE / COLLECTION</text>
     </svg>
-    <span class="topic-visual-caption">{{ kind === 'api' ? 'REQUEST → VALIDATE → RESPONSE' : kind === 'publish' ? '笔记成稿，让内容抵达读者' : '把零散知识，组织成体系' }}</span>
+    <span class="topic-visual-caption">{{ appearance.caption }}</span>
   </div>
 </template>
 

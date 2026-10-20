@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { topicNames } from '../docs/.vuepress/theme/data/topics.ts'
 import { filterKnowledgeNotes, knowledgePage, knowledgeTopicPage, knowledgeNoteId, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
@@ -21,6 +22,16 @@ test('normalization deduplicates tag spelling, keeps unclassified notes and does
 test('topics derive counts and chapter groups from published notes; duplicate titles remain separate', () => {
   assert.deepEqual(knowledgeTopics(notes).map(topic => [topic.name, topic.count, topic.groups]), [['Agent 工程', 2, ['缓存', '工具']], ['前端', 1, ['性能']]])
   assert.equal(filterKnowledgeNotes(notes, { ...all, query: '缓存稳定前缀' }).length, 2)
+})
+test('configured topics exist without articles and merge with their first published note', () => {
+  const emptyTopics = knowledgeTopics([], topicNames)
+  assert.deepEqual(new Set(emptyTopics.map(topic => topic.name)), new Set(['微积分', '线性代数', '概率']))
+  assert.ok(emptyTopics.every(topic => topic.count === 0 && topic.groups.length === 0))
+  const entries = normalizeKnowledgeNotes([{ ...source[0], series: '微积分', group: '极限' }])
+  const topics = knowledgeTopics(entries, topicNames)
+  assert.equal(topics.length, 3)
+  assert.deepEqual(topics.find(topic => topic.name === '微积分'), { name: '微积分', count: 1, groups: ['极限'] })
+  assert.deepEqual(knowledgeTopicChapters(entries, '概率'), [])
 })
 test('topic, tag intersection and search combine; summaries and Unicode tag spelling are searchable', () => {
   assert.deepEqual(filterKnowledgeNotes(notes, { topic: 'Agent 工程', tags: ['python', 'KV Cache'], query: 'Skills 实践' }).map(note => note.path), ['/a/'])

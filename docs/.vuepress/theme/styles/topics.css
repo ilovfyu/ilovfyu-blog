@@ -12,10 +12,12 @@
 .topic-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 20px; }
 .topic-card { --topic-accent: var(--fx-violet); position: relative; display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: center; column-gap: 20px; row-gap: 24px; padding: 28px; text-align: left; border: 1px solid var(--space-line); border-radius: 10px; background: radial-gradient(ellipse at 85% 20%, color-mix(in srgb, var(--topic-accent) 7%, transparent), transparent 65%), var(--space-1); transition: border-color .3s, box-shadow .3s; isolation: isolate; overflow: hidden; }
 .topic-card[data-tone="cyan"] { --topic-accent: var(--fx-cyan); }
+.topic-card[data-tone="amber"] { --topic-accent: var(--cyan); }
 .topic-card::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--topic-accent); opacity: .5; transition: opacity .3s; }
 .topic-card:is(:hover, :focus-visible) { border-color: var(--topic-accent); box-shadow: 0 8px 32px color-mix(in srgb, var(--topic-accent) 8%, transparent); }.topic-card:is(:hover, :focus-visible)::before { opacity: 1; }
 .topic-card-copy { min-width: 0; overflow-wrap: anywhere; }.topic-card-code { display: flex; gap: 8px; align-items: center; color: var(--topic-accent); font: 9px var(--font-code); letter-spacing: .12em; }.topic-card-code svg { width: 14px; height: 14px; }
 .topic-card .topic-card-copy h3 { margin: 13px 0 8px; color: var(--text-1); font: 600 27px/1.4 var(--font-disp); }.topic-card .topic-card-copy p { margin: 0; color: var(--text-2); font: 12px var(--font-sans); }
+.topic-card .topic-card-copy .topic-card-description { margin: 0 0 14px; font-size: 12px; line-height: 1.9; text-wrap: pretty; }
 .topic-card-chapters { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 16px; padding-top: 18px; border-top: 1px solid var(--space-line); }
 .topic-card-chapters > span { display: inline-flex; align-items: baseline; gap: 6px; color: var(--text-2); font: 11px/1.8 var(--font-sans); }.topic-card-chapters small { color: var(--topic-accent); font: 9px var(--font-code); }
 .topic-card-action { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; justify-self: end; color: var(--topic-accent); font: 11px var(--font-sans); }.topic-card-action svg { width: 14px; height: 14px; transition: transform .25s; }.topic-card:hover .topic-card-action svg { transform: translate(3px, -3px); }
