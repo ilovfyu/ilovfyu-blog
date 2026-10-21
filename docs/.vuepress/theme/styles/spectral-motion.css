@@ -1,0 +1,65 @@
+/* Shared light treatment; the subject animations remain specific to each topic. */
+.hero-aurora { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+.hero-aurora i { position: absolute; width: 66%; height: 85%; top: -22%; right: -8%; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--fx-cyan) 18%, transparent), transparent 65%); transform: rotate(-28deg); animation: aurora-drift 16s ease-in-out infinite alternate paused; }
+.hero-aurora i + i { top: 20%; right: -15%; width: 70%; height: 100%; background: radial-gradient(ellipse, color-mix(in srgb, var(--fx-violet) 16%, transparent), transparent 68%); animation-delay: -8s; animation-direction: alternate-reverse; }
+.tech-hero[data-motion="running"] .hero-aurora i { animation-play-state: running; }
+.hero-signal { box-shadow: 0 20px 80px color-mix(in srgb, var(--fx-violet) 9%, transparent), inset 0 1px color-mix(in srgb, var(--fx-cyan) 30%, transparent); transition: box-shadow .4s, border-color .4s; }
+.hero-signal::before, .hero-signal::after { filter: drop-shadow(0 0 6px currentColor); }
+.signal-stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(180deg, transparent 42%, color-mix(in srgb, var(--signal-accent) 9%, transparent) 50%, transparent 58%); transform: translateY(-105%); animation: signal-scan 9s ease-in-out infinite paused; }
+.tech-hero[data-motion="running"] .signal-stage::after { animation-play-state: running; }
+.signal-core { box-shadow: 0 0 34px color-mix(in srgb, var(--signal-accent) 18%, transparent), inset 0 0 24px color-mix(in srgb, var(--signal-accent) 5%, transparent); }
+.signal-controls button { min-height: 44px; }
+.hero-bottom-rail i { position: relative; overflow: hidden; }
+.hero-bottom-rail i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 30%, var(--fx-cyan) 50%, transparent 70%); transform: translateX(-100%); animation: rail-transmit 6s ease-in-out infinite paused; }
+.tech-hero[data-motion="running"] .hero-bottom-rail i::after { animation-play-state: running; }
+
+.catalog-hero { position: relative; }
+.catalog-hero::after { content: ''; position: absolute; inset: auto 0 -1px; height: 1px; pointer-events: none; background: linear-gradient(90deg, var(--fx-cyan), color-mix(in srgb, var(--fx-violet) 65%, transparent) 45%, transparent 90%); }
+.topic-page .catalog-hero::after { background: linear-gradient(90deg, var(--fx-violet), var(--fx-pink), transparent 90%); }
+.catalog-scene, .knowledge-atlas { filter: drop-shadow(0 10px 28px color-mix(in srgb, var(--fx-cyan) 8%, transparent)); }
+
+.topic-card { background: radial-gradient(ellipse at 90% 8%, color-mix(in srgb, var(--topic-accent) 13%, transparent), transparent 66%), var(--space-1); box-shadow: inset 0 1px color-mix(in srgb, var(--topic-accent) 12%, transparent), 0 8px 30px #0000000a; transition: transform .5s cubic-bezier(.2,.75,.25,1), border-color .3s, box-shadow .3s; }
+.topic-card::after { content: ''; position: absolute; inset: 0; padding: 1px; border-radius: inherit; pointer-events: none; background: radial-gradient(ellipse 240px 180px at var(--pointer-x, 75%) var(--pointer-y, 0%), var(--topic-accent), transparent); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .4; transition: opacity .3s; }
+.topic-card:is(:hover, :focus-visible)::after { opacity: 1; }
+.topic-card:is(:hover, :focus-visible) { box-shadow: 0 18px 44px #00000026, 0 0 28px color-mix(in srgb, var(--topic-accent) 12%, transparent); }
+.topic-card:focus-visible { outline: 2px solid var(--topic-accent); outline-offset: 4px; }
+.topic-visual { isolation: isolate; user-select: none; }
+.topic-visual::before { content: ''; position: absolute; inset: 2% 0 15%; z-index: -1; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--topic-accent) 13%, transparent), transparent 70%); animation: topic-radiance 7s ease-in-out infinite paused; }
+.topic-visual::after { content: ''; position: absolute; inset: 0 0 26px; pointer-events: none; background: linear-gradient(115deg, transparent 25%, color-mix(in srgb, var(--topic-accent) 10%, transparent) 47%, transparent 65%); mask-image: radial-gradient(ellipse, #000 25%, transparent 72%); opacity: 0; animation: topic-reflection 8s ease-in-out infinite paused; }
+.topic-visual[data-motion="running"]::before, .topic-visual[data-motion="running"]::after { animation-play-state: running; }
+.topic-visual[data-kind="learning"]::after { animation-delay: -3s; }
+.topic-visual[data-kind="algebra"]::after { animation-delay: -5s; }
+.topic-visual[data-kind="probability"]::after { animation-delay: -1.5s; }
+.topic-visual[data-kind="publish"]::after { animation-delay: -4s; }
+.topic-visual svg { transition: filter .35s; }
+.topic-card:is(:hover, :focus-visible) .topic-visual svg { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--topic-accent) 26%, transparent)); }
+
+.discovery-link { position: relative; }
+.discovery-link::after { content: ''; position: absolute; inset: auto 18px -1px; height: 2px; background: linear-gradient(90deg, var(--fx-cyan), var(--fx-violet), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.2,.75,.25,1); }
+.discovery-link:is(:hover, :focus-visible)::after { transform: scaleX(1); }
+.interaction-motion .discovery-link.motion-tracking { background: radial-gradient(ellipse at var(--pointer-x) var(--pointer-y), color-mix(in srgb, var(--fx-cyan) 9%, transparent), transparent 80%); }
+
+@keyframes aurora-drift { to { transform: translate(-8%, 12%) rotate(-12deg) scale(1.12); opacity: .6; } }
+@keyframes signal-scan { 0%, 30% { transform: translateY(-105%); opacity: 0; } 38%, 70% { opacity: 1; } 80%, 100% { transform: translateY(105%); opacity: 0; } }
+@keyframes rail-transmit { 0%, 15% { transform: translateX(-100%); } 80%, 100% { transform: translateX(100%); } }
+@keyframes topic-radiance { 50% { transform: scale(.82); opacity: .55; } }
+@keyframes topic-reflection { 0%, 35% { transform: translateX(-45%); opacity: 0; } 50% { opacity: .9; } 75%, 100% { transform: translateX(45%); opacity: 0; } }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .interaction-motion .topic-card.motion-tracking { transform: perspective(1200px) rotateX(var(--motion-rx, 0deg)) rotateY(var(--motion-ry, 0deg)) translateY(-5px); transition-duration: .18s; background: radial-gradient(ellipse at var(--pointer-x, 75%) var(--pointer-y, 25%), color-mix(in srgb, var(--topic-accent) 17%, transparent), transparent 70%), var(--space-1); }
+  .interaction-motion .hero-signal.motion-tracking { border-color: color-mix(in srgb, var(--fx-cyan) 50%, var(--space-line)); box-shadow: 0 24px 85px color-mix(in srgb, var(--fx-violet) 16%, transparent), inset 0 0 42px color-mix(in srgb, var(--fx-cyan) 5%, transparent); }
+}
+[data-theme="light"] .hero-aurora { opacity: .55; }
+[data-theme="light"] .topic-card { box-shadow: 0 8px 24px #493a2510; }
+@media (max-width: 760px) {
+  .hero-aurora i { width: 100%; height: 65%; top: 30%; }
+  .hero-aurora i + i { display: none; }
+  .topic-visual::after { display: none; }
+  .topic-card { box-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-aurora i, .signal-stage::after, .hero-bottom-rail i::after, .topic-visual::before, .topic-visual::after { animation: none !important; }
+  .signal-stage::after, .hero-bottom-rail i::after, .topic-visual::after { display: none; }
+  .topic-card, .topic-card::after, .topic-visual svg, .hero-signal, .discovery-link::after { transition: none !important; }
+}
+@media print { .hero-aurora, .signal-stage::after, .topic-visual::before, .topic-visual::after { display: none; } }

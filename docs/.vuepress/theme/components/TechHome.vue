@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vuepress/client'
 import SignalScene from './SignalScene.vue'
 import AnimatedProjectSection from './AnimatedProjectSection.vue'
+import { useSceneMotion } from '../utils/use-scene-motion'
 
 import { notes, knowledge, projects } from '../data/content'
 import { siteFeatures } from '../data/features'
@@ -16,6 +17,8 @@ const discoveryLinks = [
   { path: '/projects/', count: projects.length, title: '项目', caption: '把想法变成作品' },
 ]
 const scrollPct = ref(0)
+const heroSurface = ref<HTMLElement | null>(null)
+const heroMotion = useSceneMotion(heroSurface)
 const now = ref('')
 
 let clockTimer = 0
@@ -82,7 +85,8 @@ onBeforeUnmount(() => {
   <main class="cosmic-home technical-home">
     <div class="scroll-progress" :style="{ transform: `scaleX(${scrollPct / 100})` }" aria-hidden="true" />
 
-    <section class="hero tech-hero">
+    <section ref="heroSurface" class="hero tech-hero" :data-motion="heroMotion ? 'running' : 'still'">
+      <div class="hero-aurora" aria-hidden="true"><i /><i /></div>
       <div class="hero-grid" aria-hidden="true" />
       <div class="hero-content">
         <div class="hero-left">

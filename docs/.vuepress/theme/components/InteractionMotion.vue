@@ -3,8 +3,8 @@ import { onBeforeUnmount, onMounted, watch } from 'vue'
 import { useRoute } from 'vuepress/client'
 
 const route = useRoute()
-const cards = '.featured-article, .article-card, .building-card'
-const rows = '.post-index-row, .knowledge-note-row'
+const cards = '.featured-article, .article-card, .building-card, .topic-card, .hero-signal'
+const rows = '.post-index-row, .knowledge-note-row, .discovery-link'
 const magnets = '.hero-actions .btn-primary, .profile-actions > a'
 const controls = '.catalog-button, .catalog-filters button, .knowledge-tag'
 let active: HTMLElement | null = null

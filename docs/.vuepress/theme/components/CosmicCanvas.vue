@@ -43,17 +43,17 @@ const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, lastX: -9999, lastY:
 
 /* 浅色主题调色板：深色模式用亮色粒子，浅色模式用深色“墨点” */
 const paletteDark = {
-  starCyan: '240,180,90',
-  starViolet: '210,170,120',
+  starCyan: '117,228,241',
+  starViolet: '185,155,255',
   starWhite: '228,208,180',
-  constellation: '150,130,105',
-  glyph: '158,140,118',
-  packet: '224,163,72',
+  constellation: '117,180,210',
+  glyph: '128,157,180',
+  packet: '117,228,241',
   packetCore: '236,220,190',
   packetBit: '214,180,130',
-  violet: '154,126,96',
+  violet: '185,155,255',
   cometHead: '238,224,196',
-  magenta: '196,120,62',
+  magenta: '255,141,179',
 }
 const paletteLight = {
   starCyan: '192,133,44',
@@ -138,7 +138,7 @@ function resize() {
     }
   })
 
-  glyphs = Array.from({ length: mobile ? 8 : 24 }, () => ({
+  glyphs = Array.from({ length: mobile ? 5 : 14 }, () => ({
     x: Math.random() * innerWidth,
     y: Math.random() * innerHeight,
     ch: CHARS[Math.floor(Math.random() * CHARS.length)],
@@ -154,9 +154,9 @@ function drawNebula(time: number, w: number, h: number) {
   if (!ctx || lightMode) return
   if (!nebulaTextures.length) {
     nebulaTextures = [
-      [[0, 'rgba(150,112,80,.15)'], [.42, 'rgba(150,120,80,.065)'], [1, 'rgba(150,120,80,0)']],
-      [[0, 'rgba(224,163,72,.075)'], [.5, 'rgba(120,100,70,.025)'], [1, 'rgba(120,100,70,0)']],
-      [[0, 'rgba(196,120,62,.035)'], [1, 'rgba(196,120,62,0)']],
+      [[0, 'rgba(80,120,195,.16)'], [.42, 'rgba(80,120,195,.055)'], [1, 'rgba(80,120,195,0)']],
+      [[0, 'rgba(141,90,210,.12)'], [.5, 'rgba(141,90,210,.035)'], [1, 'rgba(141,90,210,0)']],
+      [[0, 'rgba(117,228,241,.045)'], [1, 'rgba(117,228,241,0)']],
     ].map(stops => {
       const texture = document.createElement('canvas'); texture.width = texture.height = 256
       const layer = texture.getContext('2d')!
