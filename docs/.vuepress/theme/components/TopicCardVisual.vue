@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useSceneMotion } from '../utils/use-scene-motion'
 import { topicAppearance } from '../data/topics'
 import MathTopicVisual from './MathTopicVisual.vue'
+import LearningTopicVisual from './LearningTopicVisual.vue'
 
 const props = defineProps<{ name: string }>()
 const appearance = computed(() => topicAppearance(props.name))
@@ -14,6 +15,7 @@ const running = useSceneMotion(stage)
 <template>
   <div ref="stage" class="topic-visual" :data-kind="kind" :data-motion="running ? 'running' : 'still'" aria-hidden="true">
     <MathTopicVisual v-if="kind === 'calculus' || kind === 'algebra' || kind === 'probability'" :kind="kind" :running="running" />
+    <LearningTopicVisual v-else-if="kind === 'learning'" :running="running" />
     <svg v-else-if="kind === 'api'" viewBox="0 0 360 220" fill="none">
       <path class="visual-grid" d="M20 170 180 210 340 170M20 150 180 190 340 150M20 130 180 170 340 130M60 180V32M120 196V16M180 210V4M240 196V16M300 180V32" />
       <path class="visual-wire" d="M34 58H96L132 96M228 96 264 58H326M34 162H96L132 124M228 124 264 162H326" />
