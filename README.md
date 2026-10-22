@@ -22,7 +22,7 @@ npm run docs:dev -- --port 8092 --clean-temp --clean-cache
 
 ## 内容目录
 
-旧文章与 mock 内容已清理。已按需从思源恢复 14 个项目、7 个产品展示、2 篇设计文档，并加入知识库使用手册演示；另新增 PromptLSM 与 RoostAI 两个持续构建项目。可以继续在思源里写作后同步，也可以直接使用 Markdown：
+旧文章与 mock 内容已清理。已按需从思源恢复 14 个项目、7 个产品展示、2 篇设计文档；另新增 PromptLSM 与 RoostAI 两个持续构建项目。专题目录预设微积分、线性代数、概率、MLearn 和数据分析，其中数据分析用于整理 NumPy、pandas、Matplotlib 等库的使用，目前不含文章。可以继续在思源里写作后同步，也可以直接使用 Markdown：
 
 | 类型 | 文件位置 | 展示入口 |
 | --- | --- | --- |

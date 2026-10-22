@@ -11,7 +11,7 @@
 - 「项目 / 墨影」等根文档：编辑项目定位、当前记录、系统边界、设计文档链接。
 - 「项目 / 墨影 / 产品展示」等子文档：修改展示标题、简介与表格。
 - 「项目 / 墨影 / 教学视频板书实现方案」等：编辑设计文档正文。
-- 「知识库 / 博客使用手册」：三篇演示知识笔记，已设置系列与分组。
+- 「知识库 / 数据分析」：空专题目录，后续用于整理 NumPy、pandas、Matplotlib 等库的使用笔记。
 
 ### 产品展示模板
 
@@ -101,8 +101,6 @@ npm run blog:publish
 - [PromptLSM](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035206-0mcg3um/)
 - [RoostAI](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035207-l8xx3ew/)
 
-## 知识库演示
+## 知识库专题
 
-- [01 · 写作与内容组织](https://ilovfyu.github.io/ilovfyu-blog/notes/20261012020836-sjietk8/)
-- [02 · 项目展示配置](https://ilovfyu.github.io/ilovfyu-blog/notes/20261012020836-7my80n4/)
-- [03 · 一键发布与部署](https://ilovfyu.github.io/ilovfyu-blog/notes/20261012020836-7jlsg0x/)
+博客专题目录预设微积分、线性代数、概率、MLearn 和数据分析。数据分析在思源中对应「知识库 / 数据分析」，目前仅创建空目录，尚无文章。空专题由 `docs/.vuepress/theme/data/topics.ts` 配置显示；思源中的空文档不会导出为文章。

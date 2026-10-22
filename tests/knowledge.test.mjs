@@ -25,11 +25,11 @@ test('topics derive counts and chapter groups from published notes; duplicate ti
 })
 test('configured topics exist without articles and merge with their first published note', () => {
   const emptyTopics = knowledgeTopics([], topicNames)
-  assert.deepEqual(new Set(emptyTopics.map(topic => topic.name)), new Set(['微积分', '线性代数', '概率', 'MLearn']))
+  assert.deepEqual(new Set(emptyTopics.map(topic => topic.name)), new Set(['微积分', '线性代数', '概率', 'MLearn', '数据分析']))
   assert.ok(emptyTopics.every(topic => topic.count === 0 && topic.groups.length === 0))
   const entries = normalizeKnowledgeNotes([{ ...source[0], series: '微积分', group: '极限' }])
   const topics = knowledgeTopics(entries, topicNames)
-  assert.equal(topics.length, 4)
+  assert.equal(topics.length, 5)
   assert.deepEqual(topics.find(topic => topic.name === '微积分'), { name: '微积分', count: 1, groups: ['极限'] })
   assert.deepEqual(knowledgeTopicChapters(entries, '概率'), [])
 })
