@@ -103,11 +103,12 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
         <a v-if="requested" class="topic-back" :href="overviewPath"><ArrowLeft aria-hidden="true" />全部专题</a>
         <p class="catalog-kicker">{{ topic ? 'SERIES / READING PATH' : 'TOPICS / DEEP EXPLORATION' }}</p>
         <h1>{{ topic?.name || '专题' }}</h1>
-        <p class="catalog-description">{{ topic ? '按目录展开学习路径，从基础到进阶，也可以进入更细的子分组。' : '围绕一个方向，走完一条学习路径。按专题探索，从章节出发，把知识组织成连续的理解。' }}</p>
+        <p class="catalog-description">{{ topic ? topicAppearance(topic.name).description || '按目录展开学习路径，从基础到进阶，也可以进入更细的子分组。' : '围绕一个方向，走完一条学习路径。按专题探索，从章节出发，把知识组织成连续的理解。' }}</p>
         <dl class="topic-metrics"><div v-if="!topic"><dt>学习专题</dt><dd>{{ digits(topics.length) }}</dd></div><div><dt>{{ topic ? '专题笔记' : '收录笔记' }}</dt><dd>{{ digits(topic?.count ?? totalNotes) }}</dd></div><div><dt>目录分组</dt><dd>{{ digits(topic ? allFlatChapters.filter(chapter => chapter.path.length).length : totalChapters) }}</dd></div></dl>
         <a v-if="firstNote" class="catalog-button topic-start" :href="withBase(firstNote.path)">开始阅读 <ArrowUpRight aria-hidden="true" /></a>
       </div>
-      <CatalogScene kind="topics" />
+      <div v-if="topic" class="topic-hero-visual" :data-tone="topicAppearance(topic.name).tone"><TopicCardVisual :key="topic.name" :name="topic.name" /></div>
+      <CatalogScene v-else kind="topics" />
     </header>
     <section v-if="topic && !topic.count" class="catalog-body"><div class="catalog-empty"><h2>文章整理中</h2><p>「{{ topic.name }}」专题已建立，后续将在这里更新学习笔记。</p><a class="catalog-button" :href="overviewPath">返回专题目录</a></div></section>
     <div v-else-if="topic" class="catalog-body topic-reading-layout">

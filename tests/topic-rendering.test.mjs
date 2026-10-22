@@ -6,6 +6,7 @@ import { renderToString } from 'vue/server-renderer'
 import { createServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeNoteId, knowledgeTopicPage } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
+import { topicNames, topicAppearance } from '../docs/.vuepress/theme/data/topics.ts'
 
 // Render the actual recursive SFCs without needing a browser or a VuePress server.
 test('nested topic content and directory navigation render all levels with valid anchors', async t => {
@@ -61,4 +62,35 @@ test('nested topic content and directory navigation render all levels with valid
   const paginatedNav = await renderToString(createSSRApp({ render: () => h('ul', roots.map(chapter => h(Nav, { chapter, activeChapter, destinations }))) }))
   assert.ok(paginatedNav.includes('page=3#'))
   assert.ok(paginatedNav.includes(knowledgeNoteId('/notes/advanced/')))
+})
+
+test('every configured topic renders a distinct subject visual, including a complete static analysis pipeline', async t => {
+  const server = await createServer({
+    configFile: false,
+    root: resolve(import.meta.dirname, '..'),
+    server: { middlewareMode: true },
+    optimizeDeps: { noDiscovery: true },
+    plugins: [vue()],
+  })
+  t.after(() => server.close())
+  const { default: Visual } = await server.ssrLoadModule('/docs/.vuepress/theme/components/TopicCardVisual.vue')
+  const kinds = new Set()
+  for (const name of topicNames) {
+    const { kind } = topicAppearance(name)
+    assert.ok(!kinds.has(kind), `${name} must have its own subject-specific visual`)
+    kinds.add(kind)
+    const html = await renderToString(createSSRApp({ render: () => h(Visual, { name }) }))
+    assert.match(html, /<svg[\s>]/, `${name} needs a visual renderer`)
+    assert.ok(html.includes(`data-kind="${kind}"`))
+    assert.ok(html.includes('aria-hidden="true"'))
+    assert.ok(!html.includes('library-volume'))
+  }
+  const { default: Analysis } = await server.ssrLoadModule('/docs/.vuepress/theme/components/DataAnalysisTopicVisual.vue')
+  const still = await renderToString(createSSRApp({ render: () => h(Analysis, { running: false }) }))
+  for (const label of ['NumPy', 'pandas', 'Matplotlib', 'mean(axis=1)', '3.0', '6.0', '8.0']) assert.ok(still.includes(label))
+  assert.ok(still.includes('class="plot-line"'))
+  assert.ok(!still.includes('<animateMotion'))
+  const running = await renderToString(createSSRApp({ render: () => h(Analysis, { running: true }) }))
+  assert.ok(running.includes('<animateMotion'))
+  assert.ok(running.includes('data-running="true"'))
 })

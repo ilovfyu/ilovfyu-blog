@@ -53,6 +53,7 @@ tags: [工程实践]
 - `docs/.vuepress/config.ts`：站点、导航、部署与评论配置。
 - `docs/.vuepress/client.ts`：博客页面与全局动态组件。
 - `docs/.vuepress/theme/components/`：首页、目录、个人介绍和动态效果。
+- 新增专题时，在 `theme/data/topics.ts` 注册独立 `kind`，并在 `TopicCardVisual.vue` 接入贴合专题内容的专属动效。数据分析以 NumPy 数组、pandas 均值表格与 Matplotlib 绘图串联；所有专题均需定制图形和运动过程，具体约定见 [AGENTS.md](./AGENTS.md)。
 - `docs/.vuepress/theme/styles/theme.css`：博客主题样式，按基础、布局、阅读、动效分段。
 - `docs/.vuepress/public/`：Logo、头像等公共资源。
 
