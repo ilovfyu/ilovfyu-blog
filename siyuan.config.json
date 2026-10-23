@@ -7,7 +7,8 @@
     "/项目/具身智能",
     "/项目/模型客流量去重",
     "/项目/RAG 知识库",
-    "/项目/知识问答工作流"
+    "/项目/知识问答工作流",
+    "/项目/AIRec"
   ],
   "sections": [
     { "path": "/随笔", "collection": "posts", "category": "engineering" },

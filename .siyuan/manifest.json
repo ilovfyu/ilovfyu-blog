@@ -15,12 +15,6 @@
       "route": "/projects/20261012015817-1v5swr7/"
     },
     {
-      "id": "20261012015818-c0wqxhs",
-      "path": "docs/projects/siyuan/20261012015818-c0wqxhs.md",
-      "title": "AIRec",
-      "route": "/projects/20261012015818-c0wqxhs/"
-    },
-    {
       "id": "20261012015819-3osv6ek",
       "path": "docs/projects/siyuan/20261012015819-3osv6ek.md",
       "title": "标注工具平台",
@@ -138,7 +132,6 @@
   "files": {
     "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
     "docs/projects/siyuan/20261012015817-1v5swr7.md": "ecf909844cfa30519a9966aa4925a57000a45cb7c66be629d32dec7c1eb35156",
-    "docs/projects/siyuan/20261012015818-c0wqxhs.md": "96346ce9c8b0039bc0983baf6b1868b5720100e68d0e2300d72984521d6ce725",
     "docs/projects/siyuan/20261012015819-3osv6ek.md": "793a3fef4f03d474992c80c8a645c22dcfc1ff2a4a6589bd75458c4ec293fb99",
     "docs/projects/siyuan/20261012015820-0gg27yz.md": "8a2ed5298b5a7d7400634f184e4f94926fb28903cb2673ee2f5e2bacc574186c",
     "docs/projects/siyuan/20261012015821-9p3tnvg.md": "262fddc4a11a424912d093e5c2242d153a290975b5e63fa38c1ac53838930da0",

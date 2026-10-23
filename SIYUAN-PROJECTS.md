@@ -50,7 +50,7 @@
 | custom-blog-index | false 表示不进入目录列表；页面仍发布 |
 | custom-blog-series / custom-blog-group | 旧属性不再覆盖思源目录；专题与分组按知识库中的实际层级同步 |
 
-项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 11 个项目，其中 SkillCache 与 RoostAI 属于「持续构建」，标注工具平台属于「已完成作品」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
+项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 10 个项目，其中 SkillCache 与 RoostAI 属于「持续构建」，标注工具平台属于「已完成作品」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
 
 「持续构建」文档放在思源「项目 / 持续构建」下，并设置 `custom-blog-project-group` 为 `持续构建`。该属性决定博客中的独立分组；`custom-blog-project-status` 描述项目当前阶段，二者可以分别编辑。
 
@@ -60,7 +60,7 @@
 
 ## 同步与发布
 
-`siyuan.config.json` 的 `excludePaths` 同时列出已从博客移除的五个项目目录，后续同步时会跳过这些目录及其子文档。
+`siyuan.config.json` 的 `excludePaths` 同时列出已从博客移除的六个项目目录，后续同步时会跳过这些目录及其子文档。
 
 保持思源打开。双击「同步思源文章.command」进行本地预览，确认后双击「发布博客.command」。也可以执行：
 
@@ -74,7 +74,6 @@ npm run blog:publish
 | 思源路径 | 在线文档 |
 | --- | --- |
 | /项目/项目总览 | [20261012015817-1v5swr7](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015817-1v5swr7/) |
-| /项目/AIRec | [20261012015818-c0wqxhs](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015818-c0wqxhs/) |
 | /项目/标注工具平台 | [20261012015819-3osv6ek](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015819-3osv6ek/) |
 | /项目/模型微调训练 | [20261012015820-0gg27yz](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015820-0gg27yz/) |
 | /项目/墨影 | [20261012015821-9p3tnvg](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015821-9p3tnvg/) |
