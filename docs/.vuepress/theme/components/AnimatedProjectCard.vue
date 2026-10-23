@@ -5,7 +5,7 @@ import { withBase } from 'vuepress/client'
 import type { ContentEntry } from '../data/content'
 import ProjectScene from './ProjectScene.vue'
 const props = defineProps<{ entry: ContentEntry; index: number }>()
-const isCache = computed(() => props.entry.project?.code === 'promptlsm')
+const isCache = computed(() => props.entry.project?.code === 'skillcache')
 const isAnnotation = computed(() => props.entry.project?.code === 'annotation-tool-platform')
 const completed = computed(() => props.entry.project?.group === '已完成作品')
 </script>

@@ -33,40 +33,16 @@
       "route": "/projects/20261012015820-0gg27yz/"
     },
     {
-      "id": "20261012015820-reo2emp",
-      "path": "docs/projects/siyuan/20261012015820-reo2emp.md",
-      "title": "具身智能",
-      "route": "/projects/20261012015820-reo2emp/"
-    },
-    {
       "id": "20261012015821-9p3tnvg",
       "path": "docs/projects/siyuan/20261012015821-9p3tnvg.md",
       "title": "墨影",
       "route": "/projects/20261012015821-9p3tnvg/"
     },
     {
-      "id": "20261012015821-jzncqz7",
-      "path": "docs/projects/siyuan/20261012015821-jzncqz7.md",
-      "title": "知识问答工作流",
-      "route": "/projects/20261012015821-jzncqz7/"
-    },
-    {
-      "id": "20261012015821-wbtapd5",
-      "path": "docs/projects/siyuan/20261012015821-wbtapd5.md",
-      "title": "多 Agent 管理平台",
-      "route": "/projects/20261012015821-wbtapd5/"
-    },
-    {
       "id": "20261012015822-5qrrote",
       "path": "docs/projects/siyuan/20261012015822-5qrrote.md",
       "title": "中转站",
       "route": "/projects/20261012015822-5qrrote/"
-    },
-    {
-      "id": "20261012015822-yy8ulzm",
-      "path": "docs/projects/siyuan/20261012015822-yy8ulzm.md",
-      "title": "RAG 知识库",
-      "route": "/projects/20261012015822-yy8ulzm/"
     },
     {
       "id": "20261012015823-ayjnw2i",
@@ -79,12 +55,6 @@
       "path": "docs/projects/siyuan/20261012015823-jg6kbfq.md",
       "title": "SRE 智能运维平台",
       "route": "/projects/20261012015823-jg6kbfq/"
-    },
-    {
-      "id": "20261012015823-x5kyp11",
-      "path": "docs/projects/siyuan/20261012015823-x5kyp11.md",
-      "title": "模型客流量去重",
-      "route": "/projects/20261012015823-x5kyp11/"
     },
     {
       "id": "20261012015824-0jxktu6",
@@ -155,7 +125,7 @@
     {
       "id": "20261012035206-0mcg3um",
       "path": "docs/projects/siyuan/20261012035206-0mcg3um.md",
-      "title": "PromptLSM",
+      "title": "SkillCache",
       "route": "/projects/20261012035206-0mcg3um/"
     },
     {
@@ -171,15 +141,10 @@
     "docs/projects/siyuan/20261012015818-c0wqxhs.md": "96346ce9c8b0039bc0983baf6b1868b5720100e68d0e2300d72984521d6ce725",
     "docs/projects/siyuan/20261012015819-3osv6ek.md": "793a3fef4f03d474992c80c8a645c22dcfc1ff2a4a6589bd75458c4ec293fb99",
     "docs/projects/siyuan/20261012015820-0gg27yz.md": "8a2ed5298b5a7d7400634f184e4f94926fb28903cb2673ee2f5e2bacc574186c",
-    "docs/projects/siyuan/20261012015820-reo2emp.md": "2bb499bd027c2346afe06c22c5b1d4df1cc56fad189c14a3bfea7cc7c49dc12a",
     "docs/projects/siyuan/20261012015821-9p3tnvg.md": "262fddc4a11a424912d093e5c2242d153a290975b5e63fa38c1ac53838930da0",
-    "docs/projects/siyuan/20261012015821-jzncqz7.md": "7257c88efb87c60bbe08865c45b143c91b8326ea8e6618f99934f727431c87ed",
-    "docs/projects/siyuan/20261012015821-wbtapd5.md": "dbf530247e200bfcc161dc5ac0ff690652a2b05114730eeade70b67d32d4e524",
     "docs/projects/siyuan/20261012015822-5qrrote.md": "f219cb8b45a1dcee5da4d770778f2a9c5a9141e17cf936923c11e4d673e5893a",
-    "docs/projects/siyuan/20261012015822-yy8ulzm.md": "e5e51721e96873752b77629592cea71e3f6240ef9cd6d3ebab52a0fcf97189d5",
     "docs/projects/siyuan/20261012015823-ayjnw2i.md": "1d44a5a1818a25f3e6ffad241a0669130d3cf13ce4118bf140e46bfa0e412b6a",
     "docs/projects/siyuan/20261012015823-jg6kbfq.md": "7805c4ef208b76ec2c55db396f79e75cce6607f404bf10a13c65eca3a8745c35",
-    "docs/projects/siyuan/20261012015823-x5kyp11.md": "2da19427af770dba34c2326c7fe2cea16bfeecf4f459581276630865ece63b0d",
     "docs/projects/siyuan/20261012015824-0jxktu6.md": "2d2a10dfaf99f81eb62dde07b35518d7bc3efc019cff1d931010546fac3c7534",
     "docs/projects/siyuan/20261012015824-5gfhvr3.md": "09110bf95909ceec6bdf5aa6bf4e01f5722db4963ec7d11661379db29d39e8cb",
     "docs/projects/siyuan/20261012015824-e453njb.md": "efd455b39b7cd98a6d18a9ec45d37f8352af57d701ecae4ea935d088b5831887",

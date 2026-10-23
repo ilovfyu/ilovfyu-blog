@@ -50,15 +50,17 @@
 | custom-blog-index | false 表示不进入目录列表；页面仍发布 |
 | custom-blog-series / custom-blog-group | 旧属性不再覆盖思源目录；专题与分组按知识库中的实际层级同步 |
 
-项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 16 个项目，其中 PromptLSM 与 RoostAI 属于「持续构建」，标注工具平台属于「已完成作品」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
+项目记录进入项目目录，产品展示、总览和设计子文档不额外成为项目卡片。当前目录含 11 个项目，其中 SkillCache 与 RoostAI 属于「持续构建」，标注工具平台属于「已完成作品」。未完成文档放入「草稿」，或设置 custom-blog-status 为 draft。
 
 「持续构建」文档放在思源「项目 / 持续构建」下，并设置 `custom-blog-project-group` 为 `持续构建`。该属性决定博客中的独立分组；`custom-blog-project-status` 描述项目当前阶段，二者可以分别编辑。
 
 标注工具平台设置 `custom-blog-project-group` 为 `已完成作品`，`custom-blog-project-status` 为 `已完成`；保留产品展示关联。完成作品使用与持续构建统一的动态卡片，并提供产品展示与项目记录入口。
 
-首页和项目页优先展示 PromptLSM 与 RoostAI。动态封面使用三维投影场景：悬浮缓存矩阵、智能体轨道网络和标注扫描面板，并支持鼠标视角偏移。这些是项目概念示意，不代表性能数据；动效默认播放，离开可见区域或开启系统减少动态效果后停止，无暂停按钮。
+首页和项目页优先展示 SkillCache 与 RoostAI。动态封面使用三维投影场景：悬浮缓存矩阵、智能体轨道网络和标注扫描面板，并支持鼠标视角偏移。这些是项目概念示意，不代表性能数据；动效默认播放，离开可见区域或开启系统减少动态效果后停止，无暂停按钮。
 
 ## 同步与发布
+
+`siyuan.config.json` 的 `excludePaths` 同时列出已从博客移除的五个项目目录，后续同步时会跳过这些目录及其子文档。
 
 保持思源打开。双击「同步思源文章.command」进行本地预览，确认后双击「发布博客.command」。也可以执行：
 
@@ -74,15 +76,10 @@ npm run blog:publish
 | /项目/项目总览 | [20261012015817-1v5swr7](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015817-1v5swr7/) |
 | /项目/AIRec | [20261012015818-c0wqxhs](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015818-c0wqxhs/) |
 | /项目/标注工具平台 | [20261012015819-3osv6ek](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015819-3osv6ek/) |
-| /项目/具身智能 | [20261012015820-reo2emp](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015820-reo2emp/) |
 | /项目/模型微调训练 | [20261012015820-0gg27yz](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015820-0gg27yz/) |
 | /项目/墨影 | [20261012015821-9p3tnvg](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015821-9p3tnvg/) |
-| /项目/多 Agent 管理平台 | [20261012015821-wbtapd5](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015821-wbtapd5/) |
-| /项目/知识问答工作流 | [20261012015821-jzncqz7](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015821-jzncqz7/) |
-| /项目/RAG 知识库 | [20261012015822-yy8ulzm](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015822-yy8ulzm/) |
 | /项目/中转站 | [20261012015822-5qrrote](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015822-5qrrote/) |
 | /项目/SRE 智能运维平台 | [20261012015823-jg6kbfq](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015823-jg6kbfq/) |
-| /项目/模型客流量去重 | [20261012015823-x5kyp11](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015823-x5kyp11/) |
 | /项目/虾壳 | [20261012015823-ayjnw2i](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015823-ayjnw2i/) |
 | /项目/弈机 | [20261012015824-5gfhvr3](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015824-5gfhvr3/) |
 | /项目/愈语 | [20261012015824-e453njb](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012015824-e453njb/) |
@@ -98,7 +95,7 @@ npm run blog:publish
 
 ## 持续构建项目
 
-- [PromptLSM](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035206-0mcg3um/)
+- [SkillCache](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035206-0mcg3um/)
 - [RoostAI](https://ilovfyu.github.io/ilovfyu-blog/projects/20261012035207-l8xx3ew/)
 
 ## 知识库专题
