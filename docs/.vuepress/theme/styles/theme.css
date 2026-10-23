@@ -2395,12 +2395,13 @@ html { scroll-padding-top: 90px; }
 .blog-custom-page .vp-footer { border-color: var(--space-line); color: var(--text-3); background: var(--space-0); }
 .blog-custom-page:has(.cosmic-footer, .profile-footer) .vp-footer { display: none; }
 .catalog-page { position: relative; isolation: isolate; color: var(--text-1); }
+/* Keep the ambient glow full-width so it does not end at the hero's content gutter. */
+.catalog-page::before { content: ''; position: absolute; inset: 0 0 auto; height: 420px; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 80% 10%, color-mix(in srgb, var(--fx-cyan) 8%, transparent), transparent 65%); }
 .catalog-hero { width: min(var(--site-width), calc(100% - var(--site-gutter) * 2)); margin: auto; padding: 44px 0 28px; border-bottom: 1px solid var(--space-line); }
 .catalog-hero > * { animation: catalog-arrive 560ms cubic-bezier(.2,.75,.25,1) both; }
 .catalog-hero > :nth-child(2) { animation-delay: 70ms; }
 .catalog-hero > :nth-child(3) { animation-delay: 140ms; }
 .catalog-hero > :nth-child(4) { animation-delay: 210ms; }
-.catalog-hero::before { content: ''; position: absolute; inset: 0 0 auto; height: 420px; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 80% 10%, color-mix(in srgb, var(--fx-cyan) 8%, transparent), transparent 65%); }
 .catalog-page .catalog-kicker, .home-study .catalog-kicker { margin: 0 0 14px; color: var(--fx-cyan); font: 500 11px/1.6 var(--font-code); letter-spacing: .15em; }
 .catalog-page h1 { font-size: clamp(44px,5vw,64px); margin: 0; color: var(--text-1); }
 .catalog-page .catalog-description { max-width: 760px; margin: 14px 0 12px; color: var(--text-2); font-size: 15px; line-height: 1.75; }
