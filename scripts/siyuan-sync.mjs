@@ -7,6 +7,7 @@ import { gfm } from 'micromark-extension-gfm'
 import { gfmFromMarkdown } from 'mdast-util-gfm'
 import { projectMetadata } from './project-metadata.mjs'
 import { knowledgeStructure } from '../docs/.vuepress/theme/utils/knowledge-path.ts'
+import { topicNames } from '../docs/.vuepress/theme/data/topics.ts'
 
 export const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const managedPath = path => /^(?:docs\/(?:posts|notes|projects)\/siyuan\/\d{14}-[a-z0-9]{7}\.md|docs\/\.vuepress\/public\/siyuan\/[a-f0-9]{64}(?:\.[a-z0-9]+)?|\.siyuan\/manifest\.json)$/.test(path)
@@ -74,14 +75,15 @@ function frontmatter(doc, attrs, section, body, permalink, project, structure) {
   const firstParagraph = tree.children.find(node => node.type === 'paragraph')
   const data = {
     title, date, permalink,
-    description: attrs['custom-blog-description'] || (firstParagraph ? text(firstParagraph).replace(/\s+/g, ' ').slice(0, 140) : ''),
+    description: attrs['custom-blog-description'] || (firstParagraph ? text(firstParagraph).replace(/\s+/g, ' ').slice(0, 140) : body ? '' : '正文待补充。'),
     category: attrs['custom-blog-category'] || section.category || 'engineering',
     tags: (attrs['custom-blog-tags'] || '').split(/[,，]/).map(tag => tag.trim()).filter(Boolean),
     ...(section.collection === 'notes' ? structure : {}),
     ...(attrs['custom-blog-index'] === 'false' ? { index: false } : {}),
     ...(project ? { project, ...(project.view === 'showcase' ? { pageLayout: 'home', config: [{ type: 'custom' }], comments: false, index: false } : { pageClass: 'project-record-page' }) } : {}),
   }
-  const rendered = project?.view === 'showcase' ? '<project-showcase />' : project ? `<project-record-hero />\n\n${body.trim()}` : body.trim()
+  const articleBody = body.trim() || '> 正文待补充。'
+  const rendered = project?.view === 'showcase' ? '<project-showcase />' : project ? `<project-record-hero />\n\n${articleBody}` : articleBody
   return `---\n${Object.entries(data).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n\n${rendered}\n`
 }
 
@@ -107,16 +109,58 @@ function localAsset(url) {
 export async function rewriteMarkdown(body, resolveUrl) {
   const tree = fromMarkdown(body, { extensions: [gfm()], mdastExtensions: [gfmFromMarkdown()] })
   const edits = []
+  const definitions = new Map()
+  const targets = new Map()
   const title = value => value ? ` ${JSON.stringify(value)}` : ''
+  function collectDefinitions(node) {
+    if (node.type === 'definition' && !definitions.has(node.identifier)) definitions.set(node.identifier, node.url)
+    for (const child of node.children || []) collectDefinitions(child)
+  }
+  collectDefinitions(tree)
+  function targetFor(url) {
+    if (!targets.has(url)) targets.set(url, Promise.resolve().then(() => resolveUrl(url)))
+    return targets.get(url)
+  }
+  async function labelFor(node) {
+    if (node.type === 'image' || node.type === 'imageReference') return node.alt.replace(/([\\[\]*_<>])/g, '\\$1')
+    const label = node.children.length ? body.slice(node.children[0].position.start.offset, node.children.at(-1).position.end.offset) : ''
+    return rewriteMarkdown(label, resolveUrl)
+  }
   async function visit(node) {
+    // A standalone catalog entry should disappear with its excluded destination.
+    // Inline mentions keep their label instead, so surrounding prose is preserved.
+    if (node.type === 'listItem' && node.children.length === 1 && node.children[0].type === 'paragraph') {
+      const children = node.children[0].children
+      const link = children.length === 1 ? children[0] : null
+      const url = link?.type === 'link' ? link.url : link?.type === 'linkReference' ? definitions.get(link.identifier) : null
+      if (url && await targetFor(url) === null) {
+        let end = node.position.end.offset
+        if (body.slice(end, end + 2) === '\r\n') end += 2
+        else if (body[end] === '\n') end++
+        edits.push({ start: node.position.start.offset, end, text: '' })
+        return
+      }
+    }
+    if (['linkReference', 'imageReference'].includes(node.type)) {
+      const url = definitions.get(node.identifier)
+      if (url && await targetFor(url) === null) {
+        edits.push({ start: node.position.start.offset, end: node.position.end.offset, text: await labelFor(node) })
+        return
+      }
+    }
     if (['link', 'image', 'definition'].includes(node.type)) {
-      const target = await resolveUrl(node.url)
+      const target = await targetFor(node.url)
+      // null removes the destination while preserving the authored label.
+      if (target === null) {
+        edits.push({ start: node.position.start.offset, end: node.position.end.offset, text: node.type === 'definition' ? '' : await labelFor(node) })
+        return
+      }
       if (target !== node.url) {
         const start = node.position.start.offset, end = node.position.end.offset
         if (node.type === 'image') edits.push({ start, end, text: `![${node.alt.replace(/[\\\[\]]/g, '\\$&')}](<${target}>${title(node.title)})` })
         else if (node.type === 'definition') edits.push({ start, end, text: `[${node.label}]: <${target}>${title(node.title)}` })
         else {
-          const label = await rewriteMarkdown(node.children.length ? body.slice(node.children[0].position.start.offset, node.children.at(-1).position.end.offset) : '', resolveUrl)
+          const label = await labelFor(node)
           edits.push({ start, end, text: `[${label}](<${target}>${title(node.title)})` })
         }
         return
@@ -126,8 +170,10 @@ export async function rewriteMarkdown(body, resolveUrl) {
       let value = node.value
       const replacements = []
       for (const match of value.matchAll(/\b(?:src|href|poster)\s*=\s*(["'])(.*?)\1/gi)) {
-        const next = await resolveUrl(match[2].replace(/&amp;/g, '&'))
-        if (next !== match[2]) {
+        const next = await targetFor(match[2].replace(/&amp;/g, '&'))
+        if (next === null) {
+          replacements.push({ start: match.index, end: match.index + match[0].length, text: '' })
+        } else if (next !== match[2]) {
           const offset = match.index + match[0].indexOf(match[1]) + 1
           replacements.push({ start: offset, end: offset + match[2].length, text: next.replace(/&/g, '&amp;').replace(/"/g, '&quot;') })
         }
@@ -186,9 +232,12 @@ async function performSync({ root, config, client, dryRun }) {
     const exported = await client.request('/api/export/exportMdContent', { id: candidate.doc.id, refMode: 2, yfm: false })
     if (typeof exported?.content !== 'string') throw new Error(`文档 ${candidate.doc.id} 导出失败。`)
     const body = exportedBody(exported.content, candidate.doc)
-    if (body) selected.push({ ...candidate, body })
+    selected.push({ ...candidate, body })
   }
   const routes = new Map(selected.map(({ doc, section }) => [doc.id, `/${section.collection}/${doc.id}/`]))
+  const excludedDocuments = new Set(docs.filter(doc => config.excludePaths.some(path => under(doc.hpath, path))).map(doc => doc.id))
+  const blockRoots = new Map(docs.map(doc => [doc.id, doc.id]))
+  const unlinkedReferences = new Map()
   const files = new Map()
   const documents = []
   const assetCache = new Map()
@@ -214,10 +263,18 @@ async function performSync({ root, config, client, dryRun }) {
       if (block) {
         let route = routes.get(block[1])
         if (!route) {
-          const rows = await client.request('/api/query/sql', { stmt: `SELECT root_id FROM blocks WHERE id='${block[1]}' LIMIT 1` })
-          route = routes.get(rows?.[0]?.root_id)
+          if (!blockRoots.has(block[1])) {
+            const rows = await client.request('/api/query/sql', { stmt: `SELECT root_id FROM blocks WHERE id='${block[1]}' LIMIT 1` })
+            blockRoots.set(block[1], rows?.[0]?.root_id)
+          }
+          const rootId = blockRoots.get(block[1])
+          route = routes.get(rootId)
+          if (!route && excludedDocuments.has(rootId)) {
+            unlinkedReferences.set(`${doc.id}/${block[1]}`, { source: doc.id, target: block[1] })
+            return null
+          }
         }
-        if (!route) throw new Error(`文档 ${doc.id} 引用了未发布的思源块 ${block[1]}，请改为普通文字、公开链接，或把被引用文档放进发布目录。`)
+        if (!route) throw new Error(`文档 ${doc.hpath}（${doc.id}）引用了未发布的思源块 ${block[1]}，请改为普通文字、公开链接，或把被引用文档放进发布目录。`)
         return route
       }
       if (/^(?:file:|siyuan:|https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?(?:\/|$))/i.test(url)) throw new Error(`文档 ${doc.id} 包含无法用于静态博客的本地链接，请改为思源 assets 附件或公开链接。`)
@@ -226,7 +283,9 @@ async function performSync({ root, config, client, dryRun }) {
     const path = `docs/${section.collection}/siyuan/${doc.id}.md`
     const project = section.collection === 'projects' ? projectMetadata(attrs, content, id => routes.get(id)) : null
     const folders = doc.hpath.slice(section.path?.length || 0).split('/').filter(Boolean)
-    if (!directoryPaths.has(doc.hpath)) folders.pop()
+    // A configured topic can exist before it has any child documents.
+    const topicRoot = section.collection === 'notes' && !section.series && folders.length === 1 && topicNames.includes(folders[0])
+    if (!directoryPaths.has(doc.hpath) && !topicRoot) folders.pop()
     // Published hierarchy follows the notebook tree. Legacy article attributes must not create phantom folders.
     const structure = section.collection === 'notes'
       ? knowledgeStructure(folders, section.series, undefined, '知识笔记', !!section.series)
@@ -260,7 +319,7 @@ async function performSync({ root, config, client, dryRun }) {
     const manifestFile = writes.find(file => file.path === manifestPath)
     if (manifestFile) { await mkdir(dirname(manifestFile.absolute), { recursive: true }); await writeFile(manifestFile.absolute, manifestFile.bytes) }
   }
-  return { notebook: notebook.name, documents, updated: writes.map(file => file.path), removed: removals.map(file => file.path), dryRun }
+  return { notebook: notebook.name, documents, updated: writes.map(file => file.path), removed: removals.map(file => file.path), unlinkedReferences: [...unlinkedReferences.values()], dryRun }
 }
 
 export async function sync(options = {}) {
@@ -291,6 +350,7 @@ async function main() {
   }
   const result = await sync({ dryRun: args.includes('--dry-run') })
   console.log(`${result.dryRun ? '预览同步' : '同步完成'}：${result.notebook}，${result.documents.length} 篇文章，更新 ${result.updated.length} 个文件，移除 ${result.removed.length} 个文件。`)
+  if (result.unlinkedReferences.length) console.log(`已处理 ${result.unlinkedReferences.length} 个排除目录引用：独立目录项省略，正文提及保留文字；引用目标仍不发布。`)
   if (result.documents.length) console.table(result.documents.map(({ title, route }) => ({ title, route })))
 }
 

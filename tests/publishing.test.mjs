@@ -16,7 +16,7 @@ const runGit = (root, ...args) => execFileSync('git', args, { cwd: root, encodin
 
 async function fixture(t, docs = []) {
   const root = await mkdtemp(resolve(tmpdir(), 'blog-publishing-'))
-  const state = { docs, assets: new Map([['/data/assets/image.png', Buffer.from('image fixture')]]), unavailable: false, brokenExport: false }
+  const state = { docs, assets: new Map([['/data/assets/image.png', Buffer.from('image fixture')]]), blockRoots: new Map(), exportedIds: [], unavailable: false, brokenExport: false }
   const server = createServer(async (request, response) => {
     let raw = ''
     for await (const part of request) raw += part
@@ -30,7 +30,11 @@ async function fixture(t, docs = []) {
     }
     if (request.url === '/api/notebook/lsNotebooks') return send({ notebooks: state.unavailable ? [] : [{ id: notebookId, name: '发布笔记本', closed: false }] })
     if (request.url === '/api/query/sql') {
-      if (data.stmt.startsWith('SELECT root_id')) return send([{ root_id: second }])
+      if (data.stmt.startsWith('SELECT root_id')) {
+        const id = /WHERE id='([^']+)'/.exec(data.stmt)?.[1]
+        const rootId = state.blockRoots.get(id) || state.docs.find(doc => doc.id === id)?.id
+        return send(rootId ? [{ root_id: rootId }] : [])
+      }
       const offset = Number(/OFFSET (\d+)/.exec(data.stmt)?.[1] || 0)
       return send(state.docs.slice(offset, offset + 200).map(({ body, attrs, ...doc }) => doc))
     }
@@ -38,6 +42,7 @@ async function fixture(t, docs = []) {
     if (request.url === '/api/attr/getBlockAttrs') return send(doc.attrs)
     if (request.url === '/api/export/exportMdContent') {
       state.exportOptions = data
+      state.exportedIds.push(data.id)
       return send(state.brokenExport ? null : { content: doc.body, hPath: doc.hpath })
     }
     response.statusCode = 404; response.end('{}')
@@ -58,6 +63,98 @@ test('Markdown assets and references survive nested formatting; code examples re
   assert.match(output, /<img src="\/siyuan\/image\.png">/)
   assert.match(output, /`!\[code\]\(assets\/image\.png\)`/)
   assert.match(output, /```md\n!\[code\]\(assets\/image\.png\)/)
+})
+
+test('removed destinations preserve formatted labels, reference labels and nested public assets', async () => {
+  const hidden = 'siyuan://blocks/20261012020000-bbbbbbb'
+  const source = [
+    `[**隐藏项目**](${hidden})`,
+    `[![截图](assets/image.png)](${hidden})`,
+    '[引用式][hidden]',
+    '[shortcut]',
+    '![图片替代文字][hidden]',
+    `[hidden]: ${hidden}`,
+    `[shortcut]: ${hidden}`,
+    `<a class="project" href="${hidden}">HTML 项目</a>`,
+    `${String.fromCharCode(96)}[代码示例](${hidden})${String.fromCharCode(96)}`,
+  ].join('\n\n')
+  const output = await rewriteMarkdown(source, async url => url === hidden ? null : url === 'assets/image.png' ? '/siyuan/image.png' : url)
+  assert.match(output, /^\*\*隐藏项目\*\*/)
+  assert.ok(output.includes('![截图](</siyuan/image.png>)'))
+  assert.ok(output.includes('\n\n引用式\n\nshortcut\n\n图片替代文字'))
+  assert.ok(output.includes('<a class="project" >HTML 项目</a>'))
+  assert.ok(output.includes(`${String.fromCharCode(96)}[代码示例](${hidden})${String.fromCharCode(96)}`))
+  assert.equal(output.replace(/\x60[^\x60]*\x60/g, '').includes(hidden), false)
+  assert.equal(output.includes('(null)'), false)
+})
+
+test('excluded document and child-block links become text without exporting excluded content', async t => {
+  const child = '20261012030000-ccccccc'
+  const publicId = '20261012040000-ddddddd'
+  const nestedId = '20261012050000-eeeeeee'
+  const { root, options, state } = await fixture(t, [
+    document(first, '/项目/项目总览', `[**RAG 知识库**](siyuan://blocks/${second})\n\n[内部块](siyuan://blocks/${child})\n\n[公开项目](siyuan://blocks/${publicId})`),
+    document(second, '/项目/RAG 知识库', '不应导出或发布的正文'),
+    document(nestedId, '/项目/RAG 知识库/设计', '不应发布的子文档'),
+    document(publicId, '/项目/RAG 知识库公开版', '公开内容'),
+  ])
+  state.blockRoots.set(child, second)
+  const result = await sync({ ...options, config: { ...config, excludePaths: [...config.excludePaths, '/项目/RAG 知识库'] } })
+  assert.deepEqual(result.documents.map(doc => doc.id).sort(), [first, publicId].sort())
+  assert.equal(result.unlinkedReferences.length, 2)
+  assert.equal(state.exportedIds.includes(second), false)
+  assert.equal(state.exportedIds.includes(nestedId), false)
+  const content = await readFile(resolve(root, `docs/projects/siyuan/${first}.md`), 'utf8')
+  assert.match(content, /\*\*RAG 知识库\*\*\n\n内部块/)
+  assert.ok(content.includes(`[公开项目](</projects/${publicId}/>)`))
+  assert.equal(content.includes('siyuan://'), false)
+  assert.equal(content.includes('不应'), false)
+  await assert.rejects(readFile(resolve(root, `docs/projects/siyuan/${second}.md`)), { code: 'ENOENT' })
+})
+
+test('standalone excluded catalog entries disappear while inline prose and other entries survive', async () => {
+  const hidden = 'siyuan://blocks/20261012020000-bbbbbbb'
+  const source = [
+    `- [**隐藏项目**](${hidden})`,
+    '- [公开项目](https://example.com/project)',
+    `- 正文提及 [隐藏项目](${hidden})，保留说明。`,
+    '- [引用式条目][hidden]',
+    '',
+    `[hidden]: ${hidden}`,
+  ].join('\n')
+  const output = await rewriteMarkdown(source, async url => url === hidden ? null : url)
+  assert.equal(output.includes('**隐藏项目**'), false)
+  assert.equal(output.includes('引用式条目'), false)
+  assert.ok(output.includes('- [公开项目](https://example.com/project)\n- 正文提及 隐藏项目，保留说明。'))
+  assert.equal(output.includes('siyuan://'), false)
+})
+
+test('draft, private and missing targets still reject sync even when excluded targets exist', async t => {
+  const privateId = '20261012030000-ccccccc'
+  const draftId = '20261012040000-ddddddd'
+  const missingId = '20261012050000-eeeeeee'
+  const { options, state } = await fixture(t, [
+    document(first, '/文章', '正文'),
+    document(second, '/草稿/排除文档', '未发布'),
+    document(privateId, '/私有文档', '私有正文', { 'custom-blog-status': 'private' }),
+    document(draftId, '/待完成文档', '草稿正文', { 'custom-blog-status': 'draft' }),
+  ])
+  for (const target of [privateId, draftId, missingId]) {
+    state.docs[0].body = `[不可发布](siyuan://blocks/${target})`
+    await assert.rejects(sync(options), /未发布的思源块/)
+  }
+})
+
+test('a child block in a published document resolves to its public route', async t => {
+  const child = '20261012030000-ccccccc'
+  const { root, options, state } = await fixture(t, [
+    document(first, '/文章', `[章节](siyuan://blocks/${child})`),
+    document(second, '/知识库/已发布文章', '正文'),
+  ])
+  state.blockRoots.set(child, second)
+  await sync(options)
+  const content = await readFile(resolve(root, `docs/posts/siyuan/${first}.md`), 'utf8')
+  assert.ok(content.includes(`[章节](</notes/${second}/>)`))
 })
 
 test('HTTP export produces stable article routes, metadata, shared images and public document links', async t => {
@@ -97,17 +194,49 @@ test('full pagination imports more than the default SiYuan search limit', async 
   assert.equal((await sync({ ...options, dryRun: true })).documents.length, 205)
 })
 
-test('real desktop export metadata and duplicate title are removed; empty new documents stay unpublished', async t => {
-  const { root, options } = await fixture(t, [
+test('real desktop export metadata and duplicate title are removed; empty documents publish a placeholder', async t => {
+  const { root, options, state } = await fixture(t, [
     document(first, '/文章', '---\ntitle: 文章\ndate: 2026-10-12T01:23:27+08:00\n---\n\n# 文章\n\n正文内容'),
     document(second, '/未命名文档', '---\ntitle: 未命名文档\ndate: 2026-10-12\n---\n\n# 未命名文档\n\n\u200d\n'),
   ])
   const result = await sync(options)
-  assert.equal(result.documents.length, 1)
+  assert.equal(result.documents.length, 2)
   const content = await readFile(resolve(root, `docs/posts/siyuan/${first}.md`), 'utf8')
   assert.equal((content.match(/^---$/gm) || []).length, 2)
   assert.equal(content.includes('# 文章'), false)
   assert.match(content, /description: "正文内容"/)
+  const placeholder = await readFile(resolve(root, `docs/posts/siyuan/${second}.md`), 'utf8')
+  assert.match(placeholder, /description: "正文待补充。"/)
+  assert.match(placeholder, /> 正文待补充。/)
+  assert.doesNotMatch(placeholder, /# 未命名文档|\u200d/)
+  assert.equal((await sync(options)).updated.length, 0)
+  state.docs[1].body = '# 未命名文档\n\n补充后的真实正文。'
+  const updated = await sync(options)
+  const completed = await readFile(resolve(root, `docs/posts/siyuan/${second}.md`), 'utf8')
+  assert.equal(updated.documents.find(doc => doc.id === second).route, result.documents.find(doc => doc.id === second).route)
+  assert.match(completed, /补充后的真实正文。/)
+  assert.doesNotMatch(completed, /正文待补充/)
+})
+
+test('empty configured topics and nested notes retain their series and resolvable document links', async t => {
+  const nested = '20261012030000-ccccccc'
+  const { root, options } = await fixture(t, [
+    document(first, '/知识库/GBDT', '# GBDT\n\n\u200d\n'),
+    document(second, '/知识库/Python', ''),
+    document(nested, '/知识库/Python/fastapi', `# fastapi\n\n[GBDT](siyuan://blocks/${first})`),
+    document('20261012040000-ddddddd', '/知识库', ''),
+    document('20261012050000-eeeeeee', '/草稿/空草稿', ''),
+    document('20261012060000-fffffff', '/私有空文档', '', { 'custom-blog-status': 'private' }),
+  ])
+  const automatic = { ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes' }] } }
+  const result = await sync(automatic)
+  assert.deepEqual(result.documents.map(doc => doc.id), [first, second, nested])
+  const topic = await readFile(resolve(root, `docs/notes/siyuan/${first}.md`), 'utf8')
+  assert.match(topic, /series: "GBDT"\ngroup: ""\ngroupPath: \[\]/)
+  assert.match(topic, /> 正文待补充。/)
+  const child = await readFile(resolve(root, `docs/notes/siyuan/${nested}.md`), 'utf8')
+  assert.match(child, /series: "Python"/)
+  assert.ok(child.includes(`[GBDT](</notes/${first}/>)`))
 })
 
 test('SiYuan project tables select a real showcase template and resolve record links, without duplicating catalog entries', async t => {
@@ -294,7 +423,7 @@ test('SiYuan directory nesting and moves update topic metadata while retaining a
   ])
   const automatic = { ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes' }] } }
   const result = await sync(automatic)
-  assert.equal(result.documents.length, 4)
+  assert.equal(result.documents.length, 5)
   const content = id => readFile(resolve(root, `docs/notes/siyuan/${id}.md`), 'utf8')
   assert.match(await content(first), /series: "FastAPI"\ngroup: "基础 \/ 请求"\ngroupPath: \["基础","请求"\]/)
   assert.match(await content('20261012030000-ccccccc'), /groupPath: \["基础"\]/)

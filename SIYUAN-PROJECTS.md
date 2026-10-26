@@ -99,4 +99,4 @@ npm run blog:publish
 
 ## 知识库专题
 
-博客专题目录预设微积分、线性代数、概率、MLearn 和数据分析。数据分析在思源中对应「知识库 / 数据分析」，目前仅创建空目录，尚无文章。空专题由 `docs/.vuepress/theme/data/topics.ts` 配置显示；思源中的空文档不会导出为文章。
+博客专题目录预设微积分、线性代数、概率、MLearn、数据分析、Python、Go、TS 和 GBDT。预设专题由 `docs/.vuepress/theme/data/topics.ts` 配置显示；思源「知识库」下的专题及子文档会同步发布，只有标题的空文档也会生成文章页并显示「正文待补充」，后续补写正文时保留原有地址。
