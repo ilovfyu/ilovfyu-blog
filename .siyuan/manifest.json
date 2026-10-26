@@ -135,12 +135,6 @@
       "route": "/projects/20261012035207-l8xx3ew/"
     },
     {
-      "id": "20261026220436-t2wugqc",
-      "path": "docs/notes/siyuan/20261026220436-t2wugqc.md",
-      "title": "线性代数",
-      "route": "/notes/20261026220436-t2wugqc/"
-    },
-    {
       "id": "20261026220601-v6hdvcb",
       "path": "docs/notes/siyuan/20261026220601-v6hdvcb.md",
       "title": "Python 环境准备",
@@ -195,12 +189,6 @@
       "route": "/notes/20261026221120-gmyuh1b/"
     },
     {
-      "id": "20261026221346-298othd",
-      "path": "docs/notes/siyuan/20261026221346-298othd.md",
-      "title": "读书笔记",
-      "route": "/notes/20261026221346-298othd/"
-    },
-    {
       "id": "20261026221352-ay0vpbh",
       "path": "docs/notes/siyuan/20261026221352-ay0vpbh.md",
       "title": "数据科学实践与Python应用",
@@ -223,42 +211,6 @@
       "path": "docs/notes/siyuan/20261026221611-ogr91c9.md",
       "title": "矩阵力量",
       "route": "/notes/20261026221611-ogr91c9/"
-    },
-    {
-      "id": "20261026221629-wfh6659",
-      "path": "docs/notes/siyuan/20261026221629-wfh6659.md",
-      "title": "Python",
-      "route": "/notes/20261026221629-wfh6659/"
-    },
-    {
-      "id": "20261026221641-5dpkl59",
-      "path": "docs/notes/siyuan/20261026221641-5dpkl59.md",
-      "title": "Go",
-      "route": "/notes/20261026221641-5dpkl59/"
-    },
-    {
-      "id": "20261026221828-sk9ybf5",
-      "path": "docs/notes/siyuan/20261026221828-sk9ybf5.md",
-      "title": "概率",
-      "route": "/notes/20261026221828-sk9ybf5/"
-    },
-    {
-      "id": "20261026221834-tglixza",
-      "path": "docs/notes/siyuan/20261026221834-tglixza.md",
-      "title": "微积分",
-      "route": "/notes/20261026221834-tglixza/"
-    },
-    {
-      "id": "20261026221846-zcaxmau",
-      "path": "docs/notes/siyuan/20261026221846-zcaxmau.md",
-      "title": "MLearn",
-      "route": "/notes/20261026221846-zcaxmau/"
-    },
-    {
-      "id": "20261026221913-j9g4wrj",
-      "path": "docs/notes/siyuan/20261026221913-j9g4wrj.md",
-      "title": "数据分析",
-      "route": "/notes/20261026221913-j9g4wrj/"
     },
     {
       "id": "20261026222016-gbiecz3",
@@ -301,12 +253,6 @@
       "path": "docs/notes/siyuan/20261026222114-k0wpaw7.md",
       "title": "fastapi",
       "route": "/notes/20261026222114-k0wpaw7/"
-    },
-    {
-      "id": "20261026222242-xo4wpdq",
-      "path": "docs/notes/siyuan/20261026222242-xo4wpdq.md",
-      "title": "GBDT",
-      "route": "/notes/20261026222242-xo4wpdq/"
     },
     {
       "id": "20261026222940-ted3hna",
@@ -364,7 +310,6 @@
     }
   ],
   "files": {
-    "docs/notes/siyuan/20261026220436-t2wugqc.md": "c57de3e314a859cfd8d6c03eedcb98053c3e54638f6b7c43534dc49f2ada80d7",
     "docs/notes/siyuan/20261026220601-v6hdvcb.md": "4660e974ff9569d0842a72d2cfd1b298285c1d810de4fe9d396e2f9837c94b61",
     "docs/notes/siyuan/20261026220613-5epjfhs.md": "d962befabbd21b75037ac5783f367b1b60212b29dcd03bcd72a5f21d791c9a8a",
     "docs/notes/siyuan/20261026220922-d59w9ae.md": "f71aafba92cb98a722dd1d2606d2e2d924c7c826480ff9be4d7608cbe4042cfc",
@@ -374,17 +319,10 @@
     "docs/notes/siyuan/20261026221010-a8ea3gv.md": "c305246620f9ad171fa4030c241327c08c7f1a94b8779c1272a5feab488a7e85",
     "docs/notes/siyuan/20261026221103-mu4s8hn.md": "58e774ef4ce411e4476daf2d93267b882997bc3844c3fd75a46bf5cbc2d55a6e",
     "docs/notes/siyuan/20261026221120-gmyuh1b.md": "248c34a078df6d165cad84acf45a81002134d0dc18d5bb7d8386be4d7b4a761f",
-    "docs/notes/siyuan/20261026221346-298othd.md": "37688f581cb5856f87afa870255389c51ddcb38f3fc06b723bae0815d185ad30",
     "docs/notes/siyuan/20261026221352-ay0vpbh.md": "1b343be8e24e5c820927cbd25416292cad1ff021f04117fdd4be9a32d8a897b5",
     "docs/notes/siyuan/20261026221409-6mx5ulh.md": "29503fb6af9a8c9ec72509e9523a8cd3889456638a6250ffab6abade10b687e4",
     "docs/notes/siyuan/20261026221448-8d869dx.md": "a97728cef89a048d83e05bcd43c77006c472bb12e260a9bc5e79cd975623ec21",
     "docs/notes/siyuan/20261026221611-ogr91c9.md": "e0d0b3f47932766f80ba13e971411ac54c7c7bbce3ec1ddc9836196b6870b8b9",
-    "docs/notes/siyuan/20261026221629-wfh6659.md": "eec7e2745362590374031b4a4b65b715d82126818e0d99e52240f07e5637a3b9",
-    "docs/notes/siyuan/20261026221641-5dpkl59.md": "0faa76f627d804d040b451e60c9ee7d5d13370c0f969fd4422630254932e60f1",
-    "docs/notes/siyuan/20261026221828-sk9ybf5.md": "069de28319d2e8c1c20fd67a4c2964777fc249fb81a0299d6ccfe3e60004e3a2",
-    "docs/notes/siyuan/20261026221834-tglixza.md": "68492751e91be4d0c993f5e6551b563dd07714cb47fe4a6b6e04a4fd96618103",
-    "docs/notes/siyuan/20261026221846-zcaxmau.md": "af73c5aefd9498eca204034b4f24d943293811d16f849c183e47c8dcb575f9ad",
-    "docs/notes/siyuan/20261026221913-j9g4wrj.md": "24da12d4f8c4971ec9e1f5c1cbaa83685172bb7e0d0ef53320d85c31916b2c94",
     "docs/notes/siyuan/20261026222016-gbiecz3.md": "a3f8d68e249061ee4b80cf5a37791356dcf610dd91133ff42f712578a0e062e5",
     "docs/notes/siyuan/20261026222020-4sz93d8.md": "b41f36f8b784bd71a31dd5414b7e44011c3dd2b15660c5416f2d4e5970b554e3",
     "docs/notes/siyuan/20261026222025-94xv6j7.md": "9fa75e87b53ea86dc3c07660a2ffe28393b46f204ffee6b3d1d1048b85506522",
@@ -392,7 +330,6 @@
     "docs/notes/siyuan/20261026222038-45wafva.md": "feec35eb46f15a6391504e354e0df6cdf4abe3777d3bc22ff33e20a40fb4e303",
     "docs/notes/siyuan/20261026222104-8lctuwh.md": "5df282c691d45aafe3d4ea82a1b123e011a2d944c8c553bde0709152ed7d1c8a",
     "docs/notes/siyuan/20261026222114-k0wpaw7.md": "5e1a9c170c582f3c987fd7c0e4430c1278dde4e264df1a128cd1a029c4bef7eb",
-    "docs/notes/siyuan/20261026222242-xo4wpdq.md": "0c781a12e1b0a049f424777a12920d65c93c6e4827dcbb63c877e26c64569936",
     "docs/notes/siyuan/20261026222940-ted3hna.md": "f184ce2d5e46b53a4495f24ac24aabf6e2968f518815828d926107be4385f300",
     "docs/notes/siyuan/20261026222949-x0n23q9.md": "8aba58bda308ad4fcd700d2f6494b782f0131dc79154f70998aad68a0cf41d4b",
     "docs/notes/siyuan/20261026222955-awhgw9v.md": "b85ded2e0f6d31965cbc68ffbe8634c480378029ec34b0ef60312f6f075d0fbe",
