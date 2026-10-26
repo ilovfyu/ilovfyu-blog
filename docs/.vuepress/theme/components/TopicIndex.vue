@@ -9,7 +9,7 @@ import ArticlePageSize from './ArticlePageSize.vue'
 import ArticleSearch from './ArticleSearch.vue'
 import ArticlePagination from './ArticlePagination.vue'
 import { searchArticles } from '../utils/article-search'
-import { useArticlePageSize } from '../utils/article-page-size'
+import { readArticlePageSize, useArticlePageSize } from '../utils/article-page-size'
 import { useCatalogScroll } from '../utils/catalog-navigation'
 import CatalogScene from './CatalogScene.vue'
 import TopicCardVisual from './TopicCardVisual.vue'
@@ -20,7 +20,10 @@ const articles = normalizeKnowledgeNotes(knowledge)
 const topics = knowledgeTopics(articles, topicNames)
 const route = useRoute()
 const router = useRouter()
-useCatalogScroll()
+useCatalogScroll((to, from) => {
+  if (!to.hash || to.query.q !== from.query.q || readArticlePageSize(to.query.size, pageSize.value) !== readArticlePageSize(from.query.size, pageSize.value)) return false
+  return topicScrollPosition(to.hash)
+})
 const { pageSize, rememberPageSize } = useArticlePageSize(() => route.query.size)
 const query = ref('')
 const hydrated = ref(false)
@@ -32,6 +35,13 @@ const allFlatChapters = computed(() => flattenKnowledgeChapters(allChapters.valu
 const chapters = computed(() => topic.value ? knowledgeTopicChapters(searchArticles(articles.filter(note => note.series === topic.value!.name), query.value), topic.value.name) : [])
 const flatChapters = computed(() => flattenKnowledgeChapters(chapters.value))
 const page = computed(() => knowledgeTopicPage(chapters.value, query.value === readKnowledgeFilters(route.query, [], []).query ? readKnowledgeFilters(route.query, [], []).page : 1, pageSize.value))
+const readingContent = ref<HTMLElement | null>(null)
+const readingHeight = ref(0)
+const readingContext = computed(() => JSON.stringify([topic.value?.name, query.value, pageSize.value]))
+watch([page, readingContext], (current, previous) => {
+  // Keep the document and sticky directory stable when the final page has fewer rows.
+  readingHeight.value = current[1] === previous[1] ? Math.max(readingHeight.value, readingContent.value?.getBoundingClientRect().height || 0) : 0
+}, { flush: 'pre' })
 const pageChapters = computed(() => flattenKnowledgeChapters(page.value.chapters))
 const destinations = computed(() => Object.fromEntries(Object.entries(page.value.destinations).map(([id, pageNumber]) => {
   const next = { ...route.query, q: query.value.trim() ? query.value : undefined, size: String(pageSize.value), page: pageNumber > 1 ? String(pageNumber) : undefined }
@@ -45,6 +55,15 @@ const results = computed(() => searchArticles(topicSearch, query.value))
 const activeChapter = ref('')
 const readProgress = computed(() => { const index = flatChapters.value.findIndex(chapter => chapter.id === activeChapter.value); return index < 0 ? 0 : (index + 1) / flatChapters.value.length * 100 })
 let scrollFrame = 0
+function topicScrollPosition(hash: string) {
+  let id = hash.slice(1)
+  try { id = decodeURIComponent(id) } catch { return false as const }
+  const target = document.getElementById(id)
+  if (!target) return false as const
+  const inset = Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 112
+  const top = Math.max(0, window.scrollY + target.getBoundingClientRect().top - inset)
+  return { top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' as const : 'smooth' as const }
+}
 function updateChapter() {
   scrollFrame = 0
   const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4
@@ -53,24 +72,27 @@ function updateChapter() {
 }
 function queueChapter() { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateChapter) }
 watch(page, async () => { await nextTick(); updateChapter() })
-watch([() => route.query.page, () => route.hash, () => route.query.q, () => route.query.size, hydrated], async (current, previous) => {
-  await nextTick()
-  if (previous[4] && (current[2] !== previous[2] || current[3] !== previous[3])) return
-  if (route.hash) {
-    let id = route.hash.slice(1)
-    try { id = decodeURIComponent(id) } catch { /* Invalid fragments stay inert. */ }
-    document.getElementById(id)?.scrollIntoView({ block: 'start' })
-  }
-  updateChapter()
-})
-async function goPage(target: number) {
+async function goPage(target: number, hash = '#topic-articles') {
   const current = knowledgeTopicPage(chapters.value, target, pageSize.value).currentPage
   const next = { ...route.query, size: String(pageSize.value) }
   if (current > 1) next.page = String(current); else delete next.page
   if (query.value.trim()) next.q = query.value; else delete next.q
   clearTimeout(timer)
-  await router.push({ path: route.path, query: next, hash: '#topic-articles' }); await nextTick()
-  document.getElementById('topic-articles')?.scrollIntoView({ block: 'start' })
+  const destination = { path: route.path, query: next, hash }
+  await router.push(destination)
+}
+function followDirectory(event: MouseEvent) {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !(event.target instanceof Element)) return
+  const link = event.target.closest<HTMLAnchorElement>('a[href]')
+  if (!link || link.hasAttribute('download') || link.target && link.target !== '_self') return
+  const url = new URL(link.href, location.href)
+  if (url.origin !== location.origin || url.pathname !== location.pathname) return
+  let id = url.hash.slice(1)
+  try { id = decodeURIComponent(id) } catch { return }
+  const targetPage = page.value.destinations[id]
+  if (!targetPage) return
+  event.preventDefault()
+  void goPage(targetPage, url.hash)
 }
 function changePageSize(value: number) {
   clearTimeout(timer); rememberPageSize(value)
@@ -112,13 +134,13 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
     </header>
     <section v-if="topic && !topic.count" class="catalog-body"><div class="catalog-empty"><h2>文章整理中</h2><p>「{{ topic.name }}」专题已建立，后续将在这里更新学习笔记。</p><a class="catalog-button" :href="overviewPath">返回专题目录</a></div></section>
     <div v-else-if="topic" class="catalog-body topic-reading-layout">
-      <nav :key="topic.name" class="topic-chapter-nav" aria-label="专题目录导航">
+      <nav :key="topic.name" class="topic-chapter-nav" aria-label="专题目录导航" @click="followDirectory">
         <p class="catalog-kicker">READING / DIRECTORY</p>
         <div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div>
         <p v-if="!chapters.length" class="article-search-hint">没有匹配目录</p>
         <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" :destinations="destinations" /></ul>
       </nav>
-      <div id="topic-articles" class="topic-reading-content">
+      <div id="topic-articles" ref="readingContent" class="topic-reading-content" :style="{ minHeight: readingHeight ? `${readingHeight}px` : undefined }">
         <div class="article-list-controls article-discovery"><ArticleSearch v-model="query" label="搜索专题文章" placeholder="在这个专题里，找点什么…" /><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /></div>
         <header class="topic-page-summary"><span role="status" aria-live="polite">{{ query.trim() ? '匹配' : '共' }} {{ page.total }} 篇<template v-if="query.trim()"> / 共 {{ topic.count }} 篇</template> · 每页 {{ pageSize }} 篇</span><span>第 {{ page.currentPage }} / {{ page.totalPages }} 页</span></header>
         <div v-if="!page.total" class="catalog-empty"><h2>暂时没有匹配的文章</h2><p>换一个片段或更短的关键词，或查看专题全部文章。</p><button type="button" class="catalog-button" @click="query = ''">清除搜索</button></div>

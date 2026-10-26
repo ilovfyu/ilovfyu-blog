@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { topicNames } from '../docs/.vuepress/theme/data/topics.ts'
+import { catalogOwnsScroll } from '../docs/.vuepress/theme/utils/catalog-scroll-policy.ts'
 import { filterKnowledgeNotes, knowledgePage, knowledgeTopicPage, knowledgeNoteId, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
@@ -11,6 +12,17 @@ const source = [
 ]
 const notes = normalizeKnowledgeNotes(source)
 const all = { topic: null, tags: [], query: '' }
+
+test('topic pagination and directory anchors use one catalog scroll owner without taking over topic changes', () => {
+  const first = { path: '/topics/', query: { series: '线性代数', page: '1' }, hash: '#topic-articles' }
+  assert.equal(catalogOwnsScroll({ ...first, query: { ...first.query, page: '2' }, hash: '#topic-note-book' }, first), true)
+  assert.equal(catalogOwnsScroll({ ...first, hash: '#topic-note-vector' }, first), true)
+  assert.equal(catalogOwnsScroll({ ...first, query: { ...first.query, q: '矩阵' }, hash: '' }, first), true)
+  assert.equal(catalogOwnsScroll({ ...first, query: { series: 'Python' }, hash: '' }, first), false)
+  assert.equal(catalogOwnsScroll({ ...first, path: '/notes/vector/' }, first), false)
+  assert.equal(catalogOwnsScroll(first, first), false)
+  assert.equal(catalogOwnsScroll({ path: '/posts/', query: {}, hash: '#heading' }, { path: '/posts/', query: {}, hash: '' }), false)
+})
 
 test('normalization deduplicates tag spelling, keeps unclassified notes and does not mutate the source', () => {
   assert.deepEqual(notes[0].tags, ['PYTHON', 'KV Cache'])

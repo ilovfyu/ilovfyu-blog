@@ -1,6 +1,6 @@
 /* Standalone topics: chapter routes and a sculptural hero beside the introduction. */
 .topic-hero-copy { min-width: 0; }
-.topic-hero-visual { --topic-accent: var(--fx-violet); display: grid; place-items: center; min-width: 0; min-height: 300px; background: radial-gradient(ellipse, color-mix(in srgb, var(--topic-accent) 6%, transparent), transparent 70%); }
+.topic-hero-visual { --topic-accent: var(--fx-violet); display: grid; place-items: center; min-width: 0; min-height: 300px; overflow: clip; background: radial-gradient(ellipse, color-mix(in srgb, var(--topic-accent) 6%, transparent), transparent 70%); }
 .topic-hero-visual > .topic-visual { max-width: 420px; justify-self: center; }
 .topic-page .topic-hero h1 { background: linear-gradient(115deg, var(--text-1) 25%, var(--fx-violet) 75%, var(--fx-cyan)); background-clip: text; color: transparent; overflow-wrap: anywhere; }
 .topic-metrics { display: flex; gap: clamp(24px, 4vw, 56px); margin: 30px 0 0; }
@@ -32,7 +32,7 @@
 .topic-card-chapters { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 16px; padding-top: 18px; border-top: 1px solid var(--space-line); }
 .topic-card-chapters > span { display: inline-flex; align-items: baseline; gap: 6px; color: var(--text-2); font: 11px/1.8 var(--font-sans); }.topic-card-chapters small { color: var(--topic-accent); font: 9px var(--font-code); }
 .topic-card-action { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; justify-self: end; color: var(--topic-accent); font: 11px var(--font-sans); }.topic-card-action svg { width: 14px; height: 14px; transition: transform .25s; }.topic-card:hover .topic-card-action svg { transform: translate(3px, -3px); }
-.topic-reading-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 44px; }
+.topic-reading-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 44px; overflow-anchor: none; }
 .topic-chapter-nav { position: sticky; top: 96px; align-self: start; display: flex; flex-direction: column; gap: 8px; }
 .topic-navigation-progress { height: 2px; background: var(--space-line); margin-bottom: 12px; overflow: hidden; }.topic-navigation-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--fx-violet), var(--fx-cyan)); transition: width .5s; }
 .topic-chapter-nav .topic-nav-tree, .topic-chapter-nav .topic-nav-children { list-style: none; padding: 0; margin: 0; }
