@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { topicNames } from '../docs/.vuepress/theme/data/topics.ts'
 import { catalogOwnsScroll } from '../docs/.vuepress/theme/utils/catalog-scroll-policy.ts'
+import { topicReadingPosition } from '../docs/.vuepress/theme/utils/topic-reading-position.ts'
 import { filterKnowledgeNotes, knowledgePage, knowledgeTopicPage, knowledgeNoteId, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
@@ -22,6 +23,24 @@ test('topic pagination and directory anchors use one catalog scroll owner withou
   assert.equal(catalogOwnsScroll({ ...first, path: '/notes/vector/' }, first), false)
   assert.equal(catalogOwnsScroll(first, first), false)
   assert.equal(catalogOwnsScroll({ path: '/posts/', query: {}, hash: '#heading' }, { path: '/posts/', query: {}, hash: '' }), false)
+})
+
+test('the reading line selects the current article or folder heading, never an unreached last chapter', () => {
+  const markers = [
+    { id: 'root', chapter: 'root', kind: 'chapter', top: -900 },
+    { id: 'quadratic', chapter: 'root', kind: 'note', top: -700 },
+    { id: 'gpu', chapter: 'root', kind: 'note', top: 24 },
+    { id: 'python', chapter: 'root', kind: 'note', top: 220 },
+    { id: 'books', chapter: 'books', kind: 'chapter', top: 500 },
+    { id: 'matrix', chapter: 'books', kind: 'note', top: 600 },
+  ]
+  assert.deepEqual(topicReadingPosition(markers), { chapter: 'root', note: 'gpu' })
+  assert.deepEqual(topicReadingPosition(markers, 580), { chapter: 'books', note: '' })
+  assert.deepEqual(topicReadingPosition(markers, 868), { chapter: 'books', note: 'matrix' })
+  assert.deepEqual(topicReadingPosition(markers.map(marker => ({ ...marker, top: marker.top - 400 }))), { chapter: 'books', note: '' })
+  assert.deepEqual(topicReadingPosition(markers.map(marker => ({ ...marker, top: marker.top - 500 }))), { chapter: 'books', note: 'matrix' })
+  assert.deepEqual(topicReadingPosition([{ id: 'root', chapter: 'root', kind: 'chapter', top: 100 }, { id: 'first', chapter: 'root', kind: 'note', top: 100 }]), { chapter: 'root', note: 'first' })
+  assert.deepEqual(topicReadingPosition(markers.map(marker => ({ ...marker, top: marker.top + 2000 }))), { chapter: '', note: '' })
 })
 
 test('normalization deduplicates tag spelling, keeps unclassified notes and does not mutate the source', () => {

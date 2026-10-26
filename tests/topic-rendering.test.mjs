@@ -62,6 +62,14 @@ test('nested topic content and directory navigation render all levels with valid
   const paginatedNav = await renderToString(createSSRApp({ render: () => h('ul', roots.map(chapter => h(Nav, { chapter, activeChapter, destinations }))) }))
   assert.ok(paginatedNav.includes('page=3#'))
   assert.ok(paginatedNav.includes(knowledgeNoteId('/notes/advanced/')))
+  const activeNote = knowledgeNoteId('/notes/advanced/')
+  const selectedNav = await renderToString(createSSRApp({ render: () => h('ul', roots.map(chapter => h(Nav, { chapter, activeChapter, activeNote }))) }))
+  assert.equal((selectedNav.match(/aria-current="location"/g) || []).length, 1)
+  assert.ok(selectedNav.includes(`href="#${activeNote}" aria-current="location"`))
+  assert.ok(selectedNav.includes('topic-nav-ancestor'))
+  const selectedRoot = await renderToString(createSSRApp({ render: () => h('ul', [h(Nav, { chapter: root, activeChapter: root.id, activeNote: knowledgeNoteId(rootNote.path) })]) }))
+  assert.equal((selectedRoot.match(/aria-current="location"/g) || []).length, 1)
+  assert.ok(selectedRoot.includes(`href="#${knowledgeNoteId(rootNote.path)}" aria-current="location"`))
 })
 
 test('every configured topic renders a distinct subject visual with a complete static state', async t => {

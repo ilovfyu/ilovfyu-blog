@@ -4,13 +4,14 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
 import { knowledge } from '../data/content'
 import { topicAppearance, topicNames } from '../data/topics'
-import { flattenKnowledgeChapters, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
+import { flattenKnowledgeChapters, knowledgeNoteId, knowledgeTopicPage, readKnowledgeFilters, knowledgeTopicChapters, knowledgeTopicPath, knowledgeTopics, normalizeKnowledgeNotes } from '../utils/knowledge-index'
 import ArticlePageSize from './ArticlePageSize.vue'
 import ArticleSearch from './ArticleSearch.vue'
 import ArticlePagination from './ArticlePagination.vue'
 import { searchArticles } from '../utils/article-search'
 import { readArticlePageSize, useArticlePageSize } from '../utils/article-page-size'
 import { useCatalogScroll } from '../utils/catalog-navigation'
+import { topicReadingPosition, type TopicReadingMarker } from '../utils/topic-reading-position'
 import CatalogScene from './CatalogScene.vue'
 import TopicCardVisual from './TopicCardVisual.vue'
 import TopicGroupNav from './TopicGroupNav.vue'
@@ -53,7 +54,17 @@ const totalNotes = topics.reduce((count, item) => count + item.count, 0)
 const topicSearch = topics.map(item => ({ ...item, title: item.name, summary: item.groups.join(' ') }))
 const results = computed(() => searchArticles(topicSearch, query.value))
 const activeChapter = ref('')
-const readProgress = computed(() => { const index = flatChapters.value.findIndex(chapter => chapter.id === activeChapter.value); return index < 0 ? 0 : (index + 1) / flatChapters.value.length * 100 })
+const activeNote = ref('')
+const reveal = computed(() => { try { return decodeURIComponent(route.hash.slice(1)) } catch { return '' } })
+const orderedNotes = computed(() => flatChapters.value.flatMap(chapter => chapter.entries))
+const readProgress = computed(() => {
+  const index = orderedNotes.value.findIndex(note => knowledgeNoteId(note.path) === activeNote.value)
+  if (index >= 0) return (index + 1) / orderedNotes.value.length * 100
+  const chapter = flatChapters.value.find(chapter => chapter.id === activeChapter.value)
+  const first = chapter ? flattenKnowledgeChapters([chapter]).flatMap(item => item.entries)[0] : undefined
+  const start = first ? orderedNotes.value.findIndex(note => note.path === first.path) : -1
+  return start < 0 ? 0 : start / orderedNotes.value.length * 100
+})
 let scrollFrame = 0
 function topicScrollPosition(hash: string) {
   let id = hash.slice(1)
@@ -66,12 +77,22 @@ function topicScrollPosition(hash: string) {
 }
 function updateChapter() {
   scrollFrame = 0
-  const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4
-  const current = atEnd ? pageChapters.value.at(-1) : pageChapters.value.filter(chapter => (document.getElementById(chapter.id)?.getBoundingClientRect().top ?? Infinity) <= 180).at(-1) || page.value.chapters[0]
-  activeChapter.value = current?.id || ''
+  const markers: TopicReadingMarker[] = pageChapters.value.flatMap(chapter => [
+    { id: chapter.id, chapter: chapter.id, kind: 'chapter' as const, top: document.getElementById(chapter.id)?.getBoundingClientRect().top ?? Infinity },
+    ...chapter.entries.map(note => {
+      const id = knowledgeNoteId(note.path)
+      return { id, chapter: chapter.id, kind: 'note' as const, top: document.getElementById(id)?.getBoundingClientRect().top ?? Infinity }
+    }),
+  ])
+  // Honor an explicitly selected anchor if the document ends before it can reach the reading line.
+  const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 3
+  const visibleTarget = atEnd ? markers.find(marker => marker.id === reveal.value && marker.top > 180 && marker.top < window.innerHeight - 32) : undefined
+  const current = topicReadingPosition(markers, visibleTarget?.top ?? 180)
+  activeChapter.value = current.chapter
+  activeNote.value = current.note
 }
 function queueChapter() { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateChapter) }
-watch(page, async () => { await nextTick(); updateChapter() })
+watch([page, reveal], async () => { await nextTick(); updateChapter() })
 async function goPage(target: number, hash = '#topic-articles') {
   const current = knowledgeTopicPage(chapters.value, target, pageSize.value).currentPage
   const next = { ...route.query, size: String(pageSize.value) }
@@ -138,7 +159,7 @@ onBeforeUnmount(() => { clearTimeout(timer); cancelAnimationFrame(scrollFrame); 
         <p class="catalog-kicker">READING / DIRECTORY</p>
         <div class="topic-navigation-progress" aria-hidden="true"><i :style="{ width: `${readProgress}%` }" /></div>
         <p v-if="!chapters.length" class="article-search-hint">没有匹配目录</p>
-        <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" :destinations="destinations" /></ul>
+        <ul class="topic-nav-tree"><TopicGroupNav v-for="chapter in chapters" :key="chapter.id" :chapter="chapter" :active-chapter="activeChapter" :active-note="activeNote" :reveal="reveal" :destinations="destinations" /></ul>
       </nav>
       <div id="topic-articles" ref="readingContent" class="topic-reading-content" :style="{ minHeight: readingHeight ? `${readingHeight}px` : undefined }">
         <div class="article-list-controls article-discovery"><ArticleSearch v-model="query" label="搜索专题文章" placeholder="在这个专题里，找点什么…" /><ArticlePageSize :model-value="pageSize" @update:model-value="changePageSize" /></div>
