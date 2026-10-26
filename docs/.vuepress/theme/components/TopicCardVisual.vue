@@ -5,6 +5,10 @@ import { topicAppearance } from '../data/topics'
 import MathTopicVisual from './MathTopicVisual.vue'
 import LearningTopicVisual from './LearningTopicVisual.vue'
 import DataAnalysisTopicVisual from './DataAnalysisTopicVisual.vue'
+import PythonTopicVisual from './PythonTopicVisual.vue'
+import GoTopicVisual from './GoTopicVisual.vue'
+import TypeScriptTopicVisual from './TypeScriptTopicVisual.vue'
+import BoostingTopicVisual from './BoostingTopicVisual.vue'
 
 const props = defineProps<{ name: string }>()
 const appearance = computed(() => topicAppearance(props.name))
@@ -18,6 +22,10 @@ const running = useSceneMotion(stage)
     <MathTopicVisual v-if="kind === 'calculus' || kind === 'algebra' || kind === 'probability'" :kind="kind" :running="running" />
     <LearningTopicVisual v-else-if="kind === 'learning'" :running="running" />
     <DataAnalysisTopicVisual v-else-if="kind === 'analysis'" :running="running" />
+    <PythonTopicVisual v-else-if="kind === 'python'" :running="running" />
+    <GoTopicVisual v-else-if="kind === 'go'" :running="running" />
+    <TypeScriptTopicVisual v-else-if="kind === 'typescript'" :running="running" />
+    <BoostingTopicVisual v-else-if="kind === 'boosting'" :running="running" />
     <span v-if="appearance.caption" class="topic-visual-caption">{{ appearance.caption }}</span>
   </div>
 </template>

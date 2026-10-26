@@ -64,7 +64,7 @@ test('nested topic content and directory navigation render all levels with valid
   assert.ok(paginatedNav.includes(knowledgeNoteId('/notes/advanced/')))
 })
 
-test('every configured topic renders a distinct subject visual, including a complete static analysis pipeline', async t => {
+test('every configured topic renders a distinct subject visual with a complete static state', async t => {
   const server = await createServer({
     configFile: false,
     root: resolve(import.meta.dirname, '..'),
@@ -83,6 +83,8 @@ test('every configured topic renders a distinct subject visual, including a comp
     assert.match(html, /<svg[\s>]/, `${name} needs a visual renderer`)
     assert.ok(html.includes(`data-kind="${kind}"`))
     assert.ok(html.includes('aria-hidden="true"'))
+    assert.ok(html.includes('data-motion="still"'))
+    assert.ok(!html.includes('<animateMotion') && !html.includes('<animate '), `${name} must stop computing animation in its static state`)
     assert.ok(!html.includes('library-volume'))
   }
   const { default: Analysis } = await server.ssrLoadModule('/docs/.vuepress/theme/components/DataAnalysisTopicVisual.vue')
@@ -93,4 +95,30 @@ test('every configured topic renders a distinct subject visual, including a comp
   const running = await renderToString(createSSRApp({ render: () => h(Analysis, { running: true }) }))
   assert.ok(running.includes('<animateMotion'))
   assert.ok(running.includes('data-running="true"'))
+
+  const boosting = await renderToString(createSSRApp({ render: () => h(Visual, { name: 'GBDT' }) }))
+  for (const label of ['XGBoost', 'LightGBM', 'CatBoost', 'GRADIENT BOOSTING', 'SQUARED LOSS', 'ROUND 1', 'ROUND 2', 'ROUND 3']) assert.ok(boosting.includes(label), `GBDT must show ${label} without animation`)
+  assert.ok(boosting.includes('class="boosting-visual"'))
+  assert.equal((boosting.match(/class="boosting-root"/g) || []).length, 3)
+  assert.equal((boosting.match(/class="boosting-residual-bars"/g) || []).length, 3)
+
+  const languageVisuals = [
+    { name: 'Python', file: 'PythonTopicVisual', graphic: 'python-visual', labels: ['LIST COMPREHENSION', 'range(1, 5)', 'ITERATE', 'COLLECT'], shapes: ['python-input', 'python-operation', 'python-output'], motion: false },
+    { name: 'Go', file: 'GoTopicVisual', graphic: 'go-visual', labels: ['go fetch()', 'go parse()', 'go save()', 'chan Result', 'receive'], shapes: ['go-worker', 'go-channel', 'go-consumer'], motion: true },
+    { name: 'TS', file: 'TypeScriptTopicVisual', graphic: 'typescript-visual', labels: ['TYPE NARROWING', 'string', 'number', 'toUpperCase()', 'toFixed(2)', 'true', 'false'], shapes: ['ts-union', 'ts-guard', 'ts-type'], motion: false },
+  ]
+  for (const { name, file, graphic, labels, shapes, motion } of languageVisuals) {
+    const card = await renderToString(createSSRApp({ render: () => h(Visual, { name }) }))
+    assert.ok(card.includes(`class="${graphic}"`), `${name} must select its dedicated renderer`)
+    const { default: Subject } = await server.ssrLoadModule(`/docs/.vuepress/theme/components/${file}.vue`)
+    const still = await renderToString(createSSRApp({ render: () => h(Subject, { running: false }) }))
+    for (const label of labels) assert.ok(still.includes(label), `${name} needs ${label} even when motion is disabled`)
+    for (const shape of shapes) assert.ok(still.includes(`class="${shape}"`), `${name} needs its own ${shape} graphic`)
+    if (name === 'Python') {
+      for (const value of [1, 4, 9, 16]) assert.ok(still.includes(`>${value}</text>`))
+    }
+    const active = await renderToString(createSSRApp({ render: () => h(Subject, { running: true }) }))
+    assert.ok(active.includes('data-running="true"'))
+    assert.equal(active.includes('<animateMotion'), motion)
+  }
 })
