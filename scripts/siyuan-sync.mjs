@@ -7,6 +7,7 @@ import { gfm } from 'micromark-extension-gfm'
 import { gfmFromMarkdown } from 'mdast-util-gfm'
 import { projectMetadata } from './project-metadata.mjs'
 import { knowledgeStructure } from '../docs/.vuepress/theme/utils/knowledge-path.ts'
+import { knowledgeTopicPath } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 import { topicNames } from '../docs/.vuepress/theme/data/topics.ts'
 
 export const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -226,15 +227,26 @@ async function performSync({ root, config, client, dryRun }) {
     return parts.slice(0, -1).map((_, index) => '/' + parts.slice(0, index + 1).join('/'))
   }))
   const selected = []
+  const directoryRoutes = new Map()
   for (const candidate of candidates.filter(({ doc }) => !draftPaths.some(path => under(doc.hpath, path)))) {
     // Export block references as links, regardless of the user's desktop export settings.
     // Footnote mode otherwise embeds entire referenced documents in every article.
     const exported = await client.request('/api/export/exportMdContent', { id: candidate.doc.id, refMode: 2, yfm: false })
     if (typeof exported?.content !== 'string') throw new Error(`文档 ${candidate.doc.id} 导出失败。`)
     const body = exportedBody(exported.content, candidate.doc)
+    const { doc, section } = candidate
+    const folders = doc.hpath.slice(section.path?.length || 0).split('/').filter(Boolean)
+    const hasChildren = directoryPaths.has(doc.hpath)
+    const topicRoot = section.collection === 'notes' && !section.series && folders.length === 1 && (hasChildren || topicNames.includes(folders[0]))
+    // Topic roots organize notes; empty intermediate folders only carry hierarchy.
+    // Empty leaf documents remain publishable articles.
+    if (topicRoot || section.collection === 'notes' && hasChildren && !body) {
+      directoryRoutes.set(doc.id, knowledgeTopicPath(section.series || folders[0]))
+      continue
+    }
     selected.push({ ...candidate, body })
   }
-  const routes = new Map(selected.map(({ doc, section }) => [doc.id, `/${section.collection}/${doc.id}/`]))
+  const routes = new Map([...directoryRoutes, ...selected.map(({ doc, section }) => [doc.id, `/${section.collection}/${doc.id}/`])])
   const excludedDocuments = new Set(docs.filter(doc => config.excludePaths.some(path => under(doc.hpath, path))).map(doc => doc.id))
   const blockRoots = new Map(docs.map(doc => [doc.id, doc.id]))
   const unlinkedReferences = new Map()
@@ -283,9 +295,7 @@ async function performSync({ root, config, client, dryRun }) {
     const path = `docs/${section.collection}/siyuan/${doc.id}.md`
     const project = section.collection === 'projects' ? projectMetadata(attrs, content, id => routes.get(id)) : null
     const folders = doc.hpath.slice(section.path?.length || 0).split('/').filter(Boolean)
-    // A configured topic can exist before it has any child documents.
-    const topicRoot = section.collection === 'notes' && !section.series && folders.length === 1 && topicNames.includes(folders[0])
-    if (!directoryPaths.has(doc.hpath) && !topicRoot) folders.pop()
+    if (!directoryPaths.has(doc.hpath)) folders.pop()
     // Published hierarchy follows the notebook tree. Legacy article attributes must not create phantom folders.
     const structure = section.collection === 'notes'
       ? knowledgeStructure(folders, section.series, undefined, '知识笔记', !!section.series)

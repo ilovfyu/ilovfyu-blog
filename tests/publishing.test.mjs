@@ -218,7 +218,7 @@ test('real desktop export metadata and duplicate title are removed; empty docume
   assert.doesNotMatch(completed, /正文待补充/)
 })
 
-test('empty configured topics and nested notes retain their series and resolvable document links', async t => {
+test('topic roots stay out of articles and their document links resolve to topic pages', async t => {
   const nested = '20261012030000-ccccccc'
   const { root, options } = await fixture(t, [
     document(first, '/知识库/GBDT', '# GBDT\n\n\u200d\n'),
@@ -230,13 +230,40 @@ test('empty configured topics and nested notes retain their series and resolvabl
   ])
   const automatic = { ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes' }] } }
   const result = await sync(automatic)
-  assert.deepEqual(result.documents.map(doc => doc.id), [first, second, nested])
-  const topic = await readFile(resolve(root, `docs/notes/siyuan/${first}.md`), 'utf8')
-  assert.match(topic, /series: "GBDT"\ngroup: ""\ngroupPath: \[\]/)
-  assert.match(topic, /> 正文待补充。/)
+  assert.deepEqual(result.documents.map(doc => doc.id), [nested])
+  for (const id of [first, second]) await assert.rejects(readFile(resolve(root, `docs/notes/siyuan/${id}.md`)), { code: 'ENOENT' })
   const child = await readFile(resolve(root, `docs/notes/siyuan/${nested}.md`), 'utf8')
   assert.match(child, /series: "Python"/)
-  assert.ok(child.includes(`[GBDT](</notes/${first}/>)`))
+  assert.ok(child.includes('[GBDT](</topics/?series=GBDT>)'))
+})
+
+test('resync removes directory articles, preserves empty leaves and resolves child-block references to directories', async t => {
+  const folder = '20261012030000-ccccccc', book = '20261012040000-ddddddd', block = '20261012050000-eeeeeee'
+  const { root, options, state } = await fixture(t, [
+    document(first, '/知识库/线性代数/旧文章', '目录介绍'),
+    document(second, '/知识库/线性代数/向量', ''),
+    document(folder, '/知识库/线性代数/读书笔记', '原导读'),
+    document(book, '/知识库/线性代数/读书笔记/矩阵力量', ''),
+  ])
+  const automatic = { ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes' }] } }
+  await sync(automatic)
+  state.docs[0].hpath = '/知识库/线性代数'
+  state.docs[0].content = '线性代数'
+  state.docs[2].body = ''
+  state.docs[3].body = `[专题](siyuan://blocks/${first})\n\n[读书目录中的块](siyuan://blocks/${block})`
+  state.blockRoots.set(block, folder)
+  const result = await sync(automatic)
+  assert.deepEqual(result.documents.map(doc => doc.id), [second, book])
+  for (const id of [first, folder]) {
+    const path = `docs/notes/siyuan/${id}.md`
+    assert.ok(result.removed.includes(path))
+    await assert.rejects(readFile(resolve(root, path)), { code: 'ENOENT' })
+  }
+  assert.match(await readFile(resolve(root, `docs/notes/siyuan/${second}.md`), 'utf8'), /> 正文待补充。/)
+  const article = await readFile(resolve(root, `docs/notes/siyuan/${book}.md`), 'utf8')
+  assert.match(article, /series: "线性代数"\ngroup: "读书笔记"/)
+  assert.equal(article.split('</topics/?series=%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0>').length - 1, 2)
+  assert.equal((await sync(automatic)).updated.length, 0)
 })
 
 test('SiYuan project tables select a real showcase template and resolve record links, without duplicating catalog entries', async t => {
@@ -423,11 +450,11 @@ test('SiYuan directory nesting and moves update topic metadata while retaining a
   ])
   const automatic = { ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes' }] } }
   const result = await sync(automatic)
-  assert.equal(result.documents.length, 5)
+  assert.equal(result.documents.length, 4)
   const content = id => readFile(resolve(root, `docs/notes/siyuan/${id}.md`), 'utf8')
   assert.match(await content(first), /series: "FastAPI"\ngroup: "基础 \/ 请求"\ngroupPath: \["基础","请求"\]/)
   assert.match(await content('20261012030000-ccccccc'), /groupPath: \["基础"\]/)
-  assert.match(await content('20261012040000-ddddddd'), /series: "FastAPI"\ngroup: ""\ngroupPath: \[\]/)
+  await assert.rejects(content('20261012040000-ddddddd'), { code: 'ENOENT' })
   state.docs[0].hpath = '/知识库/FastAPI/高级/请求/01 · 参数'
   const moved = await sync(automatic)
   assert.match(await content(first), /groupPath: \["高级","请求"\]/)
