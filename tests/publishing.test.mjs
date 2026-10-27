@@ -431,6 +431,11 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
     assert.ok(projectHtml.includes('FROZEN ATTENTION'))
     assert.ok(!projectHtml.includes('<animateMotion'))
   }
+  const projectIndex = await readFile(resolve(root, 'docs/.vuepress/dist/projects/index.html'), 'utf8')
+  assert.equal((projectIndex.match(/class="building-card"/g) || []).length, projects.length)
+  assert.ok(projectIndex.includes('id="project-planned-title"'))
+  assert.ok(projectIndex.includes('data-kind="fine-tuning"'))
+  assert.ok(projectIndex.includes('PLANNED'))
   const html = await readFile(resolve(root, `docs/.vuepress/dist/posts/${first}/index.html`), 'utf8')
   assert.match(html, /<table>/)
   assert.match(html, /src="\/ilovfyu-blog\/siyuan\/[a-f0-9]{64}\.png"/)

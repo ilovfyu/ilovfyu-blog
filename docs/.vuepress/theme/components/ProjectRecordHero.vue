@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { usePageData, withBase } from 'vuepress/client'
 import type { ProjectMeta } from '../data/content'
 import WyvernProjectVisual from './WyvernProjectVisual.vue'
+import FineTuningProjectVisual from './FineTuningProjectVisual.vue'
 const page = usePageData()
 const project = computed(() => page.value.frontmatter.project as ProjectMeta)
 </script>
@@ -15,5 +16,6 @@ const project = computed(() => page.value.frontmatter.project as ProjectMeta)
     <dl v-if="project.progress.length"><div v-for="item in project.progress" :key="item.label"><dt>{{ item.label }}</dt><dd>{{ item.value }}</dd></div></dl>
     <div class="project-record-stack"><span v-for="tech in project.stack" :key="tech">{{ tech }}</span></div>
     <WyvernProjectVisual v-if="project.code === 'wyvern'" />
+    <FineTuningProjectVisual v-else-if="project.code === 'model-fine-tuning'" />
   </header>
 </template>

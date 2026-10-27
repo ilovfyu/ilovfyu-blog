@@ -14,7 +14,7 @@ const cells = Array.from({ length: 64 }, (_, index) => ({
 </script>
 
 <template>
-  <div ref="surface" class="wyvern-visual" :data-motion="running ? 'running' : 'still'" data-kind="delta-memory" aria-hidden="true">
+  <div ref="surface" class="wyvern-visual project-process-visual" :data-motion="running ? 'running' : 'still'" data-kind="delta-memory" aria-hidden="true">
     <svg viewBox="0 0 560 320" fill="none">
       <path class="wyvern-backbone" d="M52 47H508" />
       <rect class="wyvern-panel" x="156" y="30" width="248" height="34" rx="8" />
@@ -53,7 +53,7 @@ const cells = Array.from({ length: 64 }, (_, index) => ({
 <style scoped>
 .wyvern-visual { --wyvern-accent: #087b77; --wyvern-secondary: #8c5b2a; position: relative; width: 100%; color: var(--text-1); background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--wyvern-accent) 8%, transparent), transparent 70%); }
 :global([data-theme="dark"] .wyvern-visual) { --wyvern-accent: #79ded1; --wyvern-secondary: #e9bd7c; }
-.wyvern-visual svg { display: block; width: 100%; height: 100%; max-height: 360px; }
+.wyvern-visual svg { display: block; width: 100%; height: var(--project-visual-height, 100%); max-height: 360px; }
 .wyvern-backbone { stroke: var(--text-3); stroke-width: 2; stroke-dasharray: 4 5; }
 .wyvern-wire, .wyvern-arrow { stroke: var(--wyvern-accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .wyvern-wire { opacity: .55; }

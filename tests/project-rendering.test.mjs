@@ -9,12 +9,16 @@ import ts from 'typescript'
 import { createServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-test('Wyvern keeps its full memory diagram while stopping all motion offscreen, in background and with reduced motion', async t => {
+for (const scene of [
+  { name: 'Wyvern', file: 'WyvernProjectVisual', cellClass: 'wyvern-cell', count: 64, transforms: 1, labels: ['FROZEN ATTENTION', '02 / δ WRITE', '03 / READ', 'M ← M + β (v − Mk) kᵀ'] },
+  { name: 'Fine-tuning', file: 'FineTuningProjectVisual', cellClass: 'training-weight', count: 25, transforms: 0, labels: ['FORWARD → LOSS → BACKWARD', '02 / WEIGHTS θ', '03 / LOSS', 'θ ← θ − η ∇θ L'] },
+]) {
+test(`${scene.name} keeps its full diagram while stopping all motion offscreen, in background and with reduced motion`, async t => {
   const server = await createServer({ configFile: false, root: resolve(import.meta.dirname, '..'), server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true }, plugins: [vue()] })
   t.after(() => server.close())
   const { useSceneMotion } = await server.ssrLoadModule('/docs/.vuepress/theme/utils/use-scene-motion.ts')
   // Compile the real client template so lifecycle and SVG animation nodes are exercised together.
-  const source = await readFile(resolve('docs/.vuepress/theme/components/WyvernProjectVisual.vue'), 'utf8')
+  const source = await readFile(resolve(`docs/.vuepress/theme/components/${scene.file}.vue`), 'utf8')
   const { descriptor } = parse(source)
   const compiled = compileScript(descriptor, { id: 'wyvern-test', inlineTemplate: true, templateOptions: { compilerOptions: { hoistStatic: false } } }).content
   const javascript = ts.transpileModule(compiled, { compilerOptions: { target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.ESNext } }).outputText
@@ -54,10 +58,10 @@ test('Wyvern keeps its full memory diagram while stopping all motion offscreen, 
   function verify(running) {
     const nodes = all()
     assert.equal(root.children[0].props['data-motion'], running ? 'running' : 'still')
-    assert.equal(nodes.filter(el => el.props.class === 'wyvern-cell').length, 64)
-    for (const label of ['FROZEN ATTENTION', '02 / δ WRITE', '03 / READ', 'M ← M + β (v − Mk) kᵀ']) assert.ok(nodes.some(el => el.text === label))
+    assert.equal(nodes.filter(el => el.props.class === scene.cellClass).length, scene.count)
+    for (const label of scene.labels) assert.ok(nodes.some(el => el.text === label))
     assert.equal(nodes.filter(el => el.type === 'animateMotion').length, running ? 2 : 0)
-    assert.equal(nodes.filter(el => el.type === 'animateTransform').length, running ? 1 : 0)
+    assert.equal(nodes.filter(el => el.type === 'animateTransform').length, running ? scene.transforms : 0)
   }
   verify(false)
   assert.ok(observer.surface)
@@ -75,3 +79,4 @@ test('Wyvern keeps its full memory diagram while stopping all motion offscreen, 
   assert.equal(mediaListeners.size, 0)
   assert.equal(documentListeners.size, 0)
 })
+}
