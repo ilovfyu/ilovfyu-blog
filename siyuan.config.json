@@ -8,11 +8,28 @@
     "/项目/模型客流量去重",
     "/项目/RAG 知识库",
     "/项目/知识问答工作流",
-    "/项目/AIRec"
+    "/项目/AIRec",
+    "/项目/墨影",
+    "/项目/虾壳",
+    "/项目/愈语",
+    "/项目/弈机",
+    "/项目/中转站",
+    "/项目/SRE 智能运维平台",
+    "/项目/项目总览"
   ],
   "sections": [
-    { "path": "/随笔", "collection": "posts", "category": "engineering" },
-    { "path": "/知识库", "collection": "notes" },
-    { "path": "/项目", "collection": "projects" }
+    {
+      "path": "/随笔",
+      "collection": "posts",
+      "category": "engineering"
+    },
+    {
+      "path": "/知识库",
+      "collection": "notes"
+    },
+    {
+      "path": "/项目",
+      "collection": "projects"
+    }
   ]
 }

@@ -11,6 +11,11 @@
 .project-motion-section .building-section-head h2 { color: var(--text-1); font: 600 30px var(--font-disp); margin: 0; padding: 0; border: 0; }
 .building-section-head h2 span { margin-left: 20px; font: 12px var(--font-sans); color: var(--text-2); }
 .building-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.building-card[data-project="wyvern"] { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+.building-card[data-project="wyvern"] .building-cover { display: flex; align-items: center; height: 100%; min-height: 360px; padding-top: 32px; border-bottom: 0; border-right: 1px solid var(--space-line); }
+.building-card[data-project="wyvern"] .building-copy { display: flex; flex-direction: column; justify-content: center; }
+.project-record-hero > .wyvern-visual { margin-top: 32px; border: 1px solid var(--space-line); border-radius: 10px; }
+@media (max-width: 760px) { .building-card[data-project="wyvern"] { grid-template-columns: 1fr; }.building-card[data-project="wyvern"] .building-cover { height: auto; min-height: 0; border-right: 0; border-bottom: 1px solid var(--space-line); } }
 .building-card { --build-accent: #08778a; --build-secondary: #987039; position: relative; isolation: isolate; min-width: 0; overflow: hidden; border: 1px solid color-mix(in srgb, var(--build-accent) 30%, var(--space-line)); border-radius: 10px; background: var(--space-1); color: var(--text-1); transition: transform .35s ease, box-shadow .35s, border-color .35s; }
 .building-card[data-tone="violet"] { --build-accent: #7755a0; --build-secondary: #08778a; }
 [data-theme="dark"] .building-card { --build-accent: #6ad7e5; --build-secondary: #e8b65b; }

@@ -14,6 +14,8 @@ async function writeCatalog(app: App) {
     const collection = /^(posts|notes|projects)\/(?!README\.md$).+\.md$/i.exec(source)?.[1]
     const fm = page.frontmatter
     if (!collection || fm.draft === true || fm.index === false || /(?:^|\/)README\.md$/i.test(source)) continue
+    // Project folders and supporting documents need metadata to become project cards.
+    if (collection === 'projects' && !fm.project) continue
     const category = typeof fm.category === 'string' && fm.category in categoryLabels ? fm.category : 'engineering'
     const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : typeof fm.date === 'string' ? fm.date.slice(0, 10) : ''
     const folders = source.split('/').slice(1, -1)

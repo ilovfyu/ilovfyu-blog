@@ -421,6 +421,16 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   assert.equal(result.status, 0, result.stdout + result.stderr)
   const catalog = await readFile(resolve(root, 'docs/.vuepress/.temp/build/blog-content.js'), 'utf8')
   assert.match(catalog, /"title":"目录分组测试"[^\n]+?"series":"目录测试","group":"基础 \/ 请求与响应","groupPath":\["基础","请求与响应"\]/)
+  const projects = JSON.parse(catalog.match(/export const projects = (.+);/)[1])
+  assert.deepEqual(projects.filter(entry => !['持续构建', '已完成作品'].includes(entry.project?.group)).map(entry => entry.title), ['模型微调训练'])
+  assert.equal(projects.length, 5)
+  assert.equal(projects.find(entry => entry.title === 'Wyvern')?.project.group, '持续构建')
+  for (const path of ['projects', 'projects/wyvern']) {
+    const projectHtml = await readFile(resolve(root, `docs/.vuepress/dist/${path}/index.html`), 'utf8')
+    assert.ok(projectHtml.includes('data-kind="delta-memory"'))
+    assert.ok(projectHtml.includes('FROZEN ATTENTION'))
+    assert.ok(!projectHtml.includes('<animateMotion'))
+  }
   const html = await readFile(resolve(root, `docs/.vuepress/dist/posts/${first}/index.html`), 'utf8')
   assert.match(html, /<table>/)
   assert.match(html, /src="\/ilovfyu-blog\/siyuan\/[a-f0-9]{64}\.png"/)
