@@ -36,6 +36,8 @@ jobs:
         run: npm run test:reading
       - name: Verify rendering regressions
         run: npm run test:rendering
+      - name: Verify knowledge assistant
+        run: npm run test:assistant
       - name: Build VuePress
         run: npm run docs:build
         env:
@@ -45,6 +47,7 @@ jobs:
           GISCUS_REPO_ID: ${{ secrets.GISCUS_REPO_ID }}
           GISCUS_CATEGORY_ID: ${{ secrets.GISCUS_CATEGORY_ID }}
           GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
+          BLOG_AI_ENDPOINT: ${{ vars.BLOG_AI_ENDPOINT }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

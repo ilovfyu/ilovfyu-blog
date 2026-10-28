@@ -12,6 +12,8 @@ import InteractionMotion from './theme/components/InteractionMotion.vue'
 import PageGate from './theme/components/PageGate.vue'
 import ArticleAtmosphere from './theme/components/ArticleAtmosphere.vue'
 import ArticleBookTransition from './theme/components/ArticleBookTransition.vue'
+import BlogLayout from './theme/components/BlogLayout.vue'
+import AIChatDrawer from './theme/components/AIChatDrawer.vue'
 
 import './theme/styles/theme.css'
 import './theme/styles/moyin-landing.css'
@@ -30,8 +32,10 @@ import './theme/styles/motion-polish.css'
 import './theme/styles/editorial.css'
 import './theme/styles/article-controls.css'
 import './theme/styles/spectral-motion.css'
+import './theme/styles/assistant.css'
 
 export default defineClientConfig({
+  layouts: { Layout: BlogLayout },
   enhance({ app }) {
     app.component('tech-home', TechHome)
     app.component('post-index', PostIndex)
@@ -42,5 +46,5 @@ export default defineClientConfig({
     app.component('project-showcase', ProjectShowcase)
     app.component('project-record-hero', ProjectRecordHero)
   },
-  rootComponents: [CosmicCanvas, InteractionMotion, ArticleBookTransition, PageGate, ArticleAtmosphere],
+  rootComponents: [CosmicCanvas, InteractionMotion, ArticleBookTransition, PageGate, ArticleAtmosphere, AIChatDrawer],
 })

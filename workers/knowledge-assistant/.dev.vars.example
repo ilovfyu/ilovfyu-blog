@@ -1,0 +1,4 @@
+# Local Worker development only. Copy to .dev.vars; never commit real values.
+DEEPSEEK_API_KEY=
+IP_HASH_SECRET=
+ALLOWED_ORIGINS=http://127.0.0.1:8092,http://localhost:8092

@@ -79,6 +79,10 @@ npm run blog:publish                # 同步、构建、提交文章并推送 Gi
 - [博客网站](https://ilovfyu.github.io/ilovfyu-blog/)
 - [真实思源演示文章](https://ilovfyu.github.io/ilovfyu-blog/posts/20261012014354-eo3fzz7/)
 
+## AI 知识库助手
+
+导航 GitHub 图标旁的 AI 入口打开对话抽屉，支持公开知识库全文检索与来源引用。AI 回答通过 Cloudflare Workers 免费方案调用 DeepSeek，key 仅保存在 Worker Secret；未接入函数时明确展示本地检索摘录。部署、额度与安全边界见 [AI-ASSISTANT.md](./AI-ASSISTANT.md)。
+
 ## 评论
 
 使用 Giscus。启用仓库 Discussions 并安装 Giscus App 后配置：

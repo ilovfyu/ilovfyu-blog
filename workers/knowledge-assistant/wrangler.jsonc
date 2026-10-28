@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "ilovfyu-knowledge-assistant",
+  "main": "index.ts",
+  "compatibility_date": "2026-10-28",
+  "workers_dev": true,
+  "observability": { "enabled": false },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://ilovfyu.github.io",
+    "KNOWLEDGE_URL": "https://ilovfyu.github.io/ilovfyu-blog/assistant/knowledge.json",
+    "GLOBAL_DAILY_LIMIT": "50",
+    "IP_DAILY_LIMIT": "5"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "QUOTA", "class_name": "UsageQuota" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["UsageQuota"] }]
+}

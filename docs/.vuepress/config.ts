@@ -22,6 +22,7 @@ export default defineUserConfig({
   title: 'ILOVFYU',
   description: '记录 AI、前端、系统架构与开发实践的个人技术博客。',
   base: siteBase,
+  alias: { '@theme/VPSocialLinks.vue': resolve('docs/.vuepress/theme/components/BlogSocialLinks.vue') },
   pagePatterns: ['**/*.md', '!.vuepress', ...(siteFeatures.about ? [] : ['!about/**'])],
   bundler: viteBundler({
     // Absolute public URLs already include the deployment base; keep them out of Vue asset imports.

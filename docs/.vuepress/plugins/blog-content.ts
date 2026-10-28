@@ -1,6 +1,10 @@
 import type { App, Plugin } from 'vuepress/core'
 import { articlePreview } from './article-preview'
 import { knowledgeStructure } from '../theme/utils/knowledge-path'
+import { assistantCorpus } from './assistant-corpus'
+import { validatedAssistantEndpoint } from '../theme/utils/assistant-client'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { assistantEndpoint } from '../theme/data/assistant'
 
 const categoryLabels: Record<string, string> = {
   ai: 'AI 与数据', frontend: '前端体验', engineering: '工程架构', thinking: '产品与生活',
@@ -41,6 +45,9 @@ async function writeCatalog(app: App) {
     (entries as { date: string; title: string; project?: { order: number } }[]).sort((a, b) => (a.project?.order ?? 99) - (b.project?.order ?? 99) || b.date.localeCompare(a.date) || a.title.localeCompare(b.title, 'zh-CN'))
   }
   await app.writeTemp('blog-content.js', Object.entries(catalogs).map(([key, entries]) => `export const ${key} = ${JSON.stringify(entries)};`).join('\n'))
+  // This file contains public knowledge text only; credentials are never read here.
+  await app.writeTemp('assistant-knowledge.js', `export const chunks = ${JSON.stringify(assistantCorpus(app.pages))};`)
+  await app.writeTemp('assistant-config.js', `export const endpoint = ${JSON.stringify(validatedAssistantEndpoint(process.env.BLOG_AI_ENDPOINT || assistantEndpoint))};`)
 }
 
 export const blogContentPlugin = (): Plugin => ({
@@ -58,5 +65,9 @@ export const blogContentPlugin = (): Plugin => ({
     }
   },
   onPrepared: writeCatalog,
+  async onGenerated(app) {
+    await mkdir(app.dir.dest('assistant'), { recursive: true })
+    await writeFile(app.dir.dest('assistant/knowledge.json'), JSON.stringify(assistantCorpus(app.pages)))
+  },
   onPageUpdated: (app, ..._change) => writeCatalog(app),
 })

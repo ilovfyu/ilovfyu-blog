@@ -17,3 +17,9 @@ docs/.vuepress/dist/
 *.log
 coverage/
 .siyuan/*.lock
+
+# Cloudflare local credentials and generated state
+**/.dev.vars
+**/.dev.vars.*
+!**/.dev.vars.example
+**/.wrangler/
