@@ -7,7 +7,6 @@ const configuredTopics = {
   数据分析: { kind: 'analysis', tone: 'cyan', caption: 'NumPy · pandas · Matplotlib', description: '学习 Python 数据分析常用库，整理数值计算、数据处理与可视化的方法。' },
   Python: { kind: 'python', tone: 'python', caption: 'Python · 语法 · 迭代 · 自动化', description: '从清晰的语法与迭代思维出发，用 Python 把想法写成可运行的程序。' },
   Go: { kind: 'go', tone: 'go', caption: 'goroutine · channel · 并发协作', description: '理解 goroutine 与 channel，让并发任务有序协作，构建简洁可靠的服务。' },
-  TS: { kind: 'typescript', tone: 'typescript', caption: 'TypeScript · 类型守卫 · 类型收窄', description: '用类型描述数据与约束，在分支与推断中建立更可靠的 TypeScript 程序。' },
   GBDT: { kind: 'boosting', tone: 'boosting', caption: 'XGBoost · LightGBM · CatBoost', description: '从梯度提升树的原理出发，学习 XGBoost、LightGBM 与 CatBoost，梳理特征处理、模型训练与调参实践。' },
 }
 

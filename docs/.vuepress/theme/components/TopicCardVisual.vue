@@ -7,7 +7,6 @@ import LearningTopicVisual from './LearningTopicVisual.vue'
 import DataAnalysisTopicVisual from './DataAnalysisTopicVisual.vue'
 import PythonTopicVisual from './PythonTopicVisual.vue'
 import GoTopicVisual from './GoTopicVisual.vue'
-import TypeScriptTopicVisual from './TypeScriptTopicVisual.vue'
 import BoostingTopicVisual from './BoostingTopicVisual.vue'
 
 const props = defineProps<{ name: string }>()
@@ -24,7 +23,6 @@ const running = useSceneMotion(stage)
     <DataAnalysisTopicVisual v-else-if="kind === 'analysis'" :running="running" />
     <PythonTopicVisual v-else-if="kind === 'python'" :running="running" />
     <GoTopicVisual v-else-if="kind === 'go'" :running="running" />
-    <TypeScriptTopicVisual v-else-if="kind === 'typescript'" :running="running" />
     <BoostingTopicVisual v-else-if="kind === 'boosting'" :running="running" />
     <span v-if="appearance.caption" class="topic-visual-caption">{{ appearance.caption }}</span>
   </div>

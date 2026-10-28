@@ -38,6 +38,8 @@ jobs:
         run: npm run test:rendering
       - name: Verify knowledge assistant
         run: npm run test:assistant
+      - name: Verify publication boundaries
+        run: npm run test:publishing
       - name: Build VuePress
         run: npm run docs:build
         env:

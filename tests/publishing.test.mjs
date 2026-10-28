@@ -10,7 +10,7 @@ import { publish, publicationStatus } from '../scripts/blog-publish.mjs'
 
 const notebookId = '20261012010624-w61rh3f'
 const first = '20261012010000-aaaaaaa', second = '20261012020000-bbbbbbb'
-const config = { notebookId, defaultCollection: 'posts', excludePaths: ['/草稿'], sections: [{ path: '/知识库', collection: 'notes', series: '工程知识' }, { path: '/项目', collection: 'projects' }] }
+const config = { projectDocumentIds: [first, second, '20261012040000-ddddddd'], notebookId, defaultCollection: 'posts', excludePaths: ['/草稿'], sections: [{ path: '/知识库', collection: 'notes', series: '工程知识' }, { path: '/项目', collection: 'projects' }] }
 const document = (id, hpath, body, attrs = {}) => ({ id, box: notebookId, hpath, content: hpath.split('/').pop(), body, attrs })
 const runGit = (root, ...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
 
@@ -127,6 +127,25 @@ test('standalone excluded catalog entries disappear while inline prose and other
   assert.equal(output.includes('引用式条目'), false)
   assert.ok(output.includes('- [公开项目](https://example.com/project)\n- 正文提及 隐藏项目，保留说明。'))
   assert.equal(output.includes('siyuan://'), false)
+})
+
+test('project publication requires exact IDs, never inherits to children, and removes old snapshots', async t => {
+  const nested = '20261012030000-ccccccc'
+  const { root, options, state } = await fixture(t, [
+    document(first, '/项目/公开项目', `[内部设计](siyuan://blocks/${nested})`),
+    document(second, '/项目/另一个项目', 'PRIVATE_PROJECT_BODY'),
+    document(nested, '/项目/公开项目/内部设计', 'PRIVATE_CHILD_BODY'),
+  ])
+  await sync({ ...options, config: { ...config, projectDocumentIds: [first, second, nested] } })
+  state.exportedIds = []
+  const result = await sync({ ...options, config: { ...config, projectDocumentIds: [first] } })
+  assert.deepEqual(result.documents.map(doc => doc.id), [first])
+  assert.deepEqual(state.exportedIds, [first])
+  const published = await readFile(resolve(root, `docs/projects/siyuan/${first}.md`), 'utf8')
+  assert.doesNotMatch(published, /siyuan:\/\/|PRIVATE_/)
+  await assert.rejects(readFile(resolve(root, `docs/projects/siyuan/${nested}.md`)), { code: 'ENOENT' })
+  const closed = await sync({ ...options, config: { ...config, projectDocumentIds: [] } })
+  assert.equal(closed.documents.length, 0)
 })
 
 test('draft, private and missing targets still reject sync even when excluded targets exist', async t => {
@@ -415,7 +434,9 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   await cp(resolve(projectRoot, 'docs'), resolve(root, 'docs'), { recursive: true, filter: path => !/(?:^|\/)\.(?:temp|cache)(?:\/|$)|(?:^|\/)dist(?:\/|$)/.test(path) })
   await symlink(resolve(projectRoot, 'node_modules'), resolve(root, 'node_modules'))
   await cp(resolve(projectRoot, 'package.json'), resolve(root, 'package.json'))
+  await cp(resolve(projectRoot, 'siyuan.config.json'), resolve(root, 'siyuan.config.json'))
   await sync(options)
+  await writeFile(resolve(root, 'docs/projects/private-fixture.md'), '---\ntitle: PRIVATE_PROJECT_SENTINEL\npermalink: /projects/private-fixture/\n---\n\nNEVER_PUBLISH_THIS_BODY')
   const manualDirectory = resolve(root, 'docs/notes/目录测试/基础/请求与响应')
   await mkdir(manualDirectory, { recursive: true })
   await writeFile(resolve(manualDirectory, '参数校验.md'), '---\ntitle: 目录分组测试\npermalink: /notes/directory-fixture/\n---\n\n目录推导正文。')
@@ -426,6 +447,8 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   const projects = JSON.parse(catalog.match(/export const projects = (.+);/)[1])
   assert.deepEqual(projects.filter(entry => !['持续构建', '已完成作品'].includes(entry.project?.group)).map(entry => entry.title), ['模型微调训练'])
   assert.equal(projects.length, 5)
+  assert.doesNotMatch(catalog, /PRIVATE_PROJECT_SENTINEL/)
+  await assert.rejects(readFile(resolve(root, 'docs/.vuepress/dist/projects/private-fixture/index.html')), { code: 'ENOENT' })
   assert.equal(projects.find(entry => entry.title === 'Wyvern')?.project.group, '持续构建')
   for (const path of ['projects', 'projects/wyvern']) {
     const projectHtml = await readFile(resolve(root, `docs/.vuepress/dist/${path}/index.html`), 'utf8')

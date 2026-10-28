@@ -15,7 +15,9 @@
     "/项目/弈机",
     "/项目/中转站",
     "/项目/SRE 智能运维平台",
-    "/项目/项目总览"
+    "/项目/项目总览",
+    "/知识库/TS",
+    "/知识库/TypeScript"
   ],
   "sections": [
     {
@@ -31,5 +33,15 @@
       "path": "/项目",
       "collection": "projects"
     }
+  ],
+  "projectDocumentIds": [
+    "20261012035206-0mcg3um",
+    "20261012035207-l8xx3ew",
+    "20261012015819-3osv6ek",
+    "20261012020110-1qune8h",
+    "20261012015820-0gg27yz"
+  ],
+  "projectManualFiles": [
+    "wyvern.md"
   ]
 }

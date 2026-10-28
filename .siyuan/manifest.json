@@ -33,12 +33,6 @@
       "route": "/projects/20261012035206-0mcg3um/"
     },
     {
-      "id": "20261012035207-ces0p29",
-      "path": "docs/projects/siyuan/20261012035207-ces0p29.md",
-      "title": "持续构建",
-      "route": "/projects/20261012035207-ces0p29/"
-    },
-    {
       "id": "20261012035207-l8xx3ew",
       "path": "docs/projects/siyuan/20261012035207-l8xx3ew.md",
       "title": "RoostAI",
@@ -492,7 +486,6 @@
     "docs/projects/siyuan/20261012015820-0gg27yz.md": "8a2ed5298b5a7d7400634f184e4f94926fb28903cb2673ee2f5e2bacc574186c",
     "docs/projects/siyuan/20261012020110-1qune8h.md": "1281d97a46d2c8ec1fc7d5f68ba50ebaf00aeb632f928fd58594d528bb1a80a5",
     "docs/projects/siyuan/20261012035206-0mcg3um.md": "99cc9f0fa56a5a77f58645e8f9e56c163d23ff20d62f4b531b3eaaa5c9905ec6",
-    "docs/projects/siyuan/20261012035207-ces0p29.md": "e0255783c885bc9cdd5094db1bcce31a64704923060fab1706fad666d5f7fde7",
     "docs/projects/siyuan/20261012035207-l8xx3ew.md": "7e6c72b67dc5062df66830fdedabd40afaca030be627179c13bb2cafcd49ed6f"
   }
 }

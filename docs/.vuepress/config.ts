@@ -3,10 +3,12 @@ import { defineUserConfig } from 'vuepress'
 import { plumeTheme } from 'vuepress-theme-plume'
 import { blogContentPlugin } from './plugins/blog-content'
 import { siteFeatures } from './theme/data/features'
+import { projectPagePatterns } from './plugins/project-publication'
 import { resolve } from 'node:path'
 
-const giscusRepoId = process.env.GISCUS_REPO_ID
-const giscusCategoryId = process.env.GISCUS_CATEGORY_ID
+// Public repository/category identifiers, not credentials. Environment overrides remain optional.
+const giscusRepoId = process.env.GISCUS_REPO_ID || 'R_kgDOVFFAaA'
+const giscusCategoryId = process.env.GISCUS_CATEGORY_ID || 'DIC_kwDOVFFAaM4DJ1NM'
 const portOption = process.argv.findIndex(argument => argument === '--port' || argument === '-p')
 const devPort = process.argv.find(argument => argument.startsWith('--port='))?.slice('--port='.length)
   || (portOption >= 0 ? process.argv[portOption + 1] : '8080')
@@ -22,8 +24,11 @@ export default defineUserConfig({
   title: 'ILOVFYU',
   description: '记录 AI、前端、系统架构与开发实践的个人技术博客。',
   base: siteBase,
-  alias: { '@theme/VPSocialLinks.vue': resolve('docs/.vuepress/theme/components/BlogSocialLinks.vue') },
-  pagePatterns: ['**/*.md', '!.vuepress', ...(siteFeatures.about ? [] : ['!about/**'])],
+  alias: {
+    '@theme/VPSocialLinks.vue': resolve('docs/.vuepress/theme/components/BlogSocialLinks.vue'),
+    '@theme/VPComment.vue': resolve('docs/.vuepress/theme/components/ArticleComments.vue'),
+  },
+  pagePatterns: ['*.md', '!(projects)/**/*.md', '!.vuepress', ...projectPagePatterns(), ...(siteFeatures.about ? [] : ['!about/**'])],
   bundler: viteBundler({
     // Absolute public URLs already include the deployment base; keep them out of Vue asset imports.
     vuePluginOptions: { template: { transformAssetUrls: { includeAbsolute: false } } },

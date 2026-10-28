@@ -4,6 +4,7 @@ import { assistantCorpus } from '../docs/.vuepress/plugins/assistant-corpus.ts'
 import { retrieveKnowledge, safeKnowledgePath } from '../docs/.vuepress/theme/utils/assistant-knowledge.ts'
 import { askKnowledgeAssistant, validatedAssistantEndpoint } from '../docs/.vuepress/theme/utils/assistant-client.ts'
 import worker, { handleRequest, UsageQuota } from '../workers/knowledge-assistant/index.ts'
+import { serverEvents } from '../docs/.vuepress/theme/utils/assistant-stream.ts'
 import { renderAssistantMarkdown } from '../docs/.vuepress/theme/utils/assistant-markdown.ts'
 import { createSSRApp, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
@@ -16,8 +17,11 @@ const env = {
   QUOTA: { idFromName: name => name, get: () => ({ fetch: async () => Response.json({ allowed: true }) }) },
 }
 const request = (body = { message: 'Python 3.14 有什么新特性？', history: [] }, headers = {}) => new Request('https://assistant.example/chat', {
-  method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json', 'CF-Connecting-IP': '192.0.2.10', ...headers }, body: JSON.stringify(body),
+  method: 'POST', headers: { Origin: origin, Accept: 'text/event-stream', 'Content-Type': 'application/json', 'CF-Connecting-IP': '192.0.2.10', ...headers }, body: JSON.stringify(body),
 })
+
+const provider = (parts, complete = true) => new Response(parts.map(text => `data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n\n`).join('') + (complete ? 'data: [DONE]\n\n' : ''), { headers: { 'Content-Type': 'text/event-stream' } })
+const consume = response => askKnowledgeAssistant('https://assistant.example/chat', 'question', [], new AbortController().signal, async () => response)
 
 test('model Markdown renders code and lists while HTML, scripts and untrusted links stay inert', async () => {
   const content = '## 回答\n\n**概念**\n\n- 基础\n\n```js\nalert("code only")\n```\n\n<script>alert(1)</script>\n\n[x](javascript:alert(1))\n\n![track](https://tracker.invalid/image)'
@@ -63,7 +67,7 @@ test('browser sends only bounded conversation to a credential-free Worker endpoi
   })
   assert.equal(sent.credentials, 'omit')
   assert.equal(sent.headers.Authorization, undefined)
-  assert.deepEqual(Object.keys(JSON.parse(sent.body)), ['message', 'history'])
+  assert.deepEqual(Object.keys(JSON.parse(sent.body)), ['message', 'useKnowledge', 'history'])
   assert.deepEqual(result.sources, [source])
   await assert.rejects(askKnowledgeAssistant('https://assistant.example/chat', 'GIL?', [], new AbortController().signal, async () => new Response('upstream-secret', { status: 502 })), /暂时不可用/)
 })
@@ -85,7 +89,7 @@ test('Worker fixes model/output settings, uses its own public corpus, sends cred
   const result = await handleRequest(request(), env, async (url, init = {}) => {
     calls.push({ url: String(url), ...init })
     if (String(url) === env.KNOWLEDGE_URL) return Response.json([source])
-    return Response.json({ choices: [{ message: { content: `回答 [1] ${env.DEEPSEEK_API_KEY}` } }] })
+    return provider(['回答 [1] ', env.DEEPSEEK_API_KEY.slice(0, 8), env.DEEPSEEK_API_KEY.slice(8)])
   })
   assert.equal(result.status, 200)
   assert.equal(calls.length, 2)
@@ -97,26 +101,37 @@ test('Worker fixes model/output settings, uses its own public corpus, sends cred
   const payload = JSON.parse(calls[1].body)
   assert.equal(payload.model, 'deepseek-flash')
   assert.equal(payload.max_tokens, 768)
+  assert.equal(payload.stream, true)
   assert.deepEqual(payload.thinking, { type: 'disabled' })
   assert.doesNotMatch(calls[1].body, /test-only-provider-secret/)
-  const body = await result.text()
+  const body = JSON.stringify(await consume(result))
   assert.doesNotMatch(body, /test-only-provider-secret|test-only-ip-hashing-secret/)
   assert.match(body, /已隐藏凭证/)
-  assert.equal(result.headers.get('Cache-Control'), 'no-store')
+  assert.equal(result.headers.get('Cache-Control'), 'no-store, no-transform')
 })
 
-test('provider failures and exhausted budgets are closed safely; placeholder-only retrieval never calls the provider', async () => {
+test('native conversation reaches DeepSeek without blog matches, with optional corpus disabled or unavailable', async () => {
   const exhausted = { ...env, QUOTA: { idFromName: n => n, get: () => ({ fetch: async () => Response.json({}, { status: 429 }) }) } }
   assert.equal((await handleRequest(request(), exhausted, () => { throw new Error('must not fetch') })).status, 429)
-  const placeholder = await handleRequest(request(), env, async url => {
-    assert.equal(String(url), env.KNOWLEDGE_URL)
-    return Response.json([{ ...source, ready: false, text: '' }])
+  for (const useKnowledge of [true, false]) {
+    const calls = []
+    const result = await handleRequest(request({ message: '你好，给我一个周末建议', history: [], useKnowledge }), env, async url => {
+      calls.push(String(url))
+      return String(url) === env.KNOWLEDGE_URL ? Response.json([{ ...source, ready: false, text: '' }]) : provider(['你好，可以去公园。'])
+    })
+    const answer = await consume(result)
+    assert.equal(answer.answer, '你好，可以去公园。')
+    assert.deepEqual(answer.sources, [])
+    assert.equal(calls.length, useKnowledge ? 2 : 1)
+  }
+  const unavailable = await handleRequest(request(), env, async url => {
+    if (String(url) === env.KNOWLEDGE_URL) throw new Error('corpus offline')
+    return provider(['通用回答'])
   })
-  assert.match((await placeholder.json()).answer, /正文还在整理/)
+  assert.equal((await consume(unavailable)).knowledgeAvailable, false)
   const failure = await handleRequest(request(), env, async url => String(url) === env.KNOWLEDGE_URL ? Response.json([source]) : new Response('secret-provider-debug', { status: 401 }))
   assert.equal(failure.status, 502)
   assert.doesNotMatch(await failure.text(), /secret-provider-debug/)
-  // Regression: runtime context must not be mistaken for the injected fetcher.
   const health = await worker.fetch(new Request('https://assistant.example/health'), env, { waitUntil() {} })
   assert.equal((await health.json()).configured, true)
 })
@@ -135,7 +150,7 @@ test('edge-compatible fetch rejects upstream redirects without forwarding creden
   const exception = await handleRequest(request(), env, async () => { throw new Error(`private diagnostic ${env.DEEPSEEK_API_KEY}`) })
   const text = await exception.text()
   assert.doesNotMatch(text, /private diagnostic|test-only-provider-secret/)
-  assert.equal(JSON.parse(text).stage, 'knowledge-fetch')
+  assert.equal(JSON.parse(text).stage, 'provider')
 })
 
 function atomicStore() {
@@ -161,10 +176,55 @@ test('persistent budget limits concurrent requests globally and per visitor, inc
   const perVisitorStore = atomicStore()
   const limited = new UsageQuota({ storage: perVisitorStore }, quotaEnv)
   const visitor = 'a'.repeat(64)
-  const current = new Date().toISOString().slice(0, 10)
+  const current = new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10)
   await perVisitorStore.put('budget', { day: current, total: 2, visitors: { [visitor]: { count: 2, last: 0 } } })
   assert.equal((await reserve(limited, visitor)).status, 429)
   await perVisitorStore.put('budget', { day: '2000-01-01', total: 999, visitors: {} })
   assert.equal((await reserve(limited, visitor)).status, 200)
   assert.equal((await reserve(limited, visitor)).status, 429)
+})
+
+test('SSE decodes split UTF-8 and CRLF frames, reports deltas before completion and rejects truncated streams', async () => {
+  const encoded = new TextEncoder().encode('event: meta\r\ndata: {"sources":[],"remaining":49}\r\n\r\nevent: delta\r\ndata: {"text":"你好"}\r\n\r\nevent: delta\ndata: {"text":"，世界"}\n\nevent: done\ndata: {}\n\n')
+  const bytes = new ReadableStream({ start(sink) { for (const byte of encoded) sink.enqueue(new Uint8Array([byte])); sink.close() } })
+  const updates = []
+  const answer = await askKnowledgeAssistant('https://assistant.example/chat', '你好', [], new AbortController().signal, async () => new Response(bytes, { headers: { 'Content-Type': 'text/event-stream' } }), { onUpdate: result => updates.push(result.answer) })
+  assert.deepEqual(updates, ['', '你好', '你好，世界'])
+  assert.equal(answer.answer, '你好，世界')
+  assert.equal(answer.remaining, 49)
+  let partial = ''
+  const result = await handleRequest(request(), env, async url => String(url) === env.KNOWLEDGE_URL ? Response.json([source]) : provider(['已收到的内容'], false))
+  await assert.rejects(askKnowledgeAssistant('https://assistant.example/chat', '问题', [], new AbortController().signal, async () => result, { onUpdate: value => { partial = value.answer } }), /中断/)
+  assert.equal(partial, '已收到的内容')
+})
+
+test('canceling the browser stream aborts upstream work and the provider failure never leaks diagnostics', async () => {
+  let upstreamSignal
+  const result = await handleRequest(request(), env, async (url, init) => {
+    if (String(url) === env.KNOWLEDGE_URL) return Response.json([source])
+    upstreamSignal = init.signal
+    return provider(['answer'])
+  })
+  await result.body.cancel()
+  assert.equal(upstreamSignal.aborted, true)
+  const failure = await handleRequest(request(), env, async url => String(url) === env.KNOWLEDGE_URL ? Response.json([source]) : new Response(`data: ${JSON.stringify({ error: { message: env.DEEPSEEK_API_KEY } })}\n\n`, { headers: { 'Content-Type': 'text/event-stream' } }))
+  const frames = await failure.text()
+  assert.doesNotMatch(frames, /test-only-provider-secret/)
+  assert.match(frames, /stream-interrupted/)
+})
+
+test('default budget is a persistent global 50 requests with Shanghai midnight reset', async () => {
+  const storage = atomicStore()
+  const quota = new UsageQuota({ storage }, {})
+  const responses = await Promise.all(Array.from({ length: 55 }, (_, i) => quota.fetch(new Request('https://internal/', { method: 'POST', body: JSON.stringify({ visitor: i.toString(16).padStart(64, '0') }) }))))
+  assert.equal(responses.filter(result => result.ok).length, 50)
+  const last = await responses[49].json()
+  assert.equal(last.remaining, 0)
+  assert.equal(new Date(last.resetsAt).toISOString().slice(11, 16), '16:00')
+})
+
+test('older browser tabs can still request the previous JSON response contract', async () => {
+  const result = await handleRequest(request({ message: '你好', useKnowledge: false }, { Accept: 'application/json' }), env, async () => provider(['你好！']))
+  assert.equal(result.headers.get('Content-Type'), 'application/json; charset=utf-8')
+  assert.equal((await result.json()).answer, '你好！')
 })

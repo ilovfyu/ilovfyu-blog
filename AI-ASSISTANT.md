@@ -1,4 +1,4 @@
-# 博客知识库助手
+# 博客 AI 助手
 
 导航中的 AI 图标与 GitHub 相邻，点击打开对话抽屉。窄屏导航保留独立入口。模型固定为 DeepSeek Flash，不提供模型选择。
 
@@ -6,13 +6,15 @@
 
 ```text
 GitHub Pages：博客与公开知识库索引
-     ↓ 浏览器只发送问题和近期对话
+     ↓ 浏览器发送问题、近期对话与参考博客开关
 Cloudflare Worker：检查来源、请求格式、每日限额
-     ↓ 服务端检索公开索引、携带服务端 Secret
-DeepSeek：根据检索资料回答
-     ↓ 文本与经过校验的文章来源
+     ↓ 按需检索公开索引、携带服务端 Secret
+DeepSeek：通用对话，可参考相关笔记
+     ↓ SSE 流式文本与经过校验的文章来源
 博客抽屉：显示回答、引用与文章链接
 ```
+
+默认可用模型知识进行通用对话。开启“参考博客”时，服务端按需检索；没有命中或索引暂时不可用时，仍可正常进行通用对话。不会将占位目录作为资料发给模型。回复逐段流式显示，停止或网络中断时保留已收到的内容；停止会取消上游请求。
 
 未配置 Worker 地址时，抽屉直接展示本地全文检索摘录，并明确标记为“知识库检索”；不会把摘录伪装成模型回答。没有正文的占位文章只作为目录入口，不能作为回答证据。当前检索为中文分词与关键词召回，不是向量检索。
 
@@ -22,9 +24,9 @@ DeepSeek：根据检索资料回答
 
 采用 Workers Free 和 SQLite-backed Durable Object；不需要付费版、独立服务器、向量数据库或自定义域名。Workers 和计数存储有各自的免费额度，超出免费限制会导致服务不可用，不应依赖它们提供无限访问。DeepSeek 的模型 token 费用独立产生。
 
-默认限制：全站每天 50 次有效请求、单个 IP 每天 10 次、两次请求至少间隔 10 秒。使用一个持久化 Durable Object 原子扣减，重启、多实例和并发不会重置额度；每天 UTC 00:00（北京时间 08:00）重置。
+默认限制：全站共享每天 50 次请求，单 IP 上限同为 50 次，两次请求至少间隔 3 秒。使用一个持久化 Durable Object 原子扣减，重启、多实例和并发不会重置额度；按上海时间每天 00:00 重置。界面显示本次扣减后的全站剩余额度。
 
-模型输出最多 768 tokens，并关闭思考模式。问题最多 600 字符，近期历史最多 6 条、每条 800 字符；只取最多 4 段公开资料，每段最多 1080 字符。失败请求也可能消耗本地调用额度，采用保守计数。请求次数上限不是精确货币预算；建议使用独立低余额的 DeepSeek 账户/凭证，并留意供应商账单。
+模型输出最多 768 tokens，并关闭思考模式。问题最多 600 字符，浏览器总等待最多 65 秒，Worker 最多 60 秒。近期历史最多 6 条、每条 800 字符；只取最多 4 段公开资料，每段最多 1080 字符。失败请求也可能消耗本地调用额度，采用保守计数。请求次数上限不是精确货币预算；建议使用独立低余额的 DeepSeek 账户/凭证，并留意供应商账单。
 
 ## 首次启用
 
@@ -75,5 +77,7 @@ BLOG_AI_ENDPOINT=http://127.0.0.1:8787/chat npm run docs:dev -- --host 127.0.0.1
 ```
 
 本地 Worker 默认仍检索线上公开知识索引。`.dev.vars` 与 `.wrangler/` 已忽略；不要把 Secret 放在可提交配置、前端环境变量、查询参数或聊天中。
+
+协议参考：[DeepSeek 流式输出](https://api-docs.deepseek.com/api/create-chat-completion/)。
 
 参考：[Workers 免费额度](https://developers.cloudflare.com/workers/platform/limits/)、[Durable Objects 免费版与 SQLite](https://developers.cloudflare.com/durable-objects/platform/pricing/)、[Worker Secrets](https://developers.cloudflare.com/workers/configuration/secrets/)、[DeepSeek 鉴权](https://api-docs.deepseek.com/api/deepseek-api/)、[DeepSeek 模型与计费](https://api-docs.deepseek.com/quick_start/pricing/)。

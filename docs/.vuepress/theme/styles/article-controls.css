@@ -90,3 +90,19 @@
 @media (prefers-reduced-motion: reduce) {
   .article-discovery, .article-discovery *, .article-discovery::before, .article-pagination *, .article-pagination { transition: none !important; }
 }
+
+/* Small reading actions stay in the article flow on every screen size. */
+.article-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 18px 0 26px; }
+.article-tools button, .article-tools a { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 13px; border: 1px solid var(--vp-c-divider); border-radius: 9px; background: var(--vp-c-bg-soft); color: var(--vp-c-text-2); font-size: 12px; text-decoration: none; cursor: pointer; }
+.article-tools svg { width: 15px; height: 15px; }
+.article-tools button:hover, .article-tools a:hover { color: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); }
+.article-tools :focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 3px; }
+.article-tools-status { font-size: 11px; color: var(--vp-c-text-2); }
+.article-comments { scroll-margin-top: 100px; margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--vp-c-divider); }
+.article-comments > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.article-comments > header span { font: 10px/1.8 var(--font-code); letter-spacing: .12em; color: var(--vp-c-text-3); }
+.article-comments h2 { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 23px; }
+.article-comments h2 svg { width: 22px; height: 22px; color: var(--vp-c-brand-1); }
+.article-comments > header a { font-size: 12px; color: var(--vp-c-brand-1); padding: 10px 0; }
+.article-comments > p { color: var(--vp-c-text-2); font-size: 13px; line-height: 1.9; margin: 10px 0 20px; }
+.article-comments .article-comments-help { font-size: 11px; color: var(--vp-c-text-3); }

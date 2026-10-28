@@ -113,7 +113,6 @@ test('every configured topic renders a distinct subject visual with a complete s
   const languageVisuals = [
     { name: 'Python', file: 'PythonTopicVisual', graphic: 'python-visual', labels: ['LIST COMPREHENSION', 'range(1, 5)', 'ITERATE', 'COLLECT'], shapes: ['python-input', 'python-operation', 'python-output'], motion: false },
     { name: 'Go', file: 'GoTopicVisual', graphic: 'go-visual', labels: ['go fetch()', 'go parse()', 'go save()', 'chan Result', 'receive'], shapes: ['go-worker', 'go-channel', 'go-consumer'], motion: true },
-    { name: 'TS', file: 'TypeScriptTopicVisual', graphic: 'typescript-visual', labels: ['TYPE NARROWING', 'string', 'number', 'toUpperCase()', 'toFixed(2)', 'true', 'false'], shapes: ['ts-union', 'ts-guard', 'ts-type'], motion: false },
   ]
   for (const { name, file, graphic, labels, shapes, motion } of languageVisuals) {
     const card = await renderToString(createSSRApp({ render: () => h(Visual, { name }) }))

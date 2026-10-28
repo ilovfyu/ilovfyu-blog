@@ -48,17 +48,21 @@ function selectSection(doc, config) {
   if (config.excludePaths.some(path => under(doc.hpath, path))) return null
   const section = config.sections.filter(item => under(doc.hpath, item.path)).sort((a, b) => b.path.length - a.path.length)[0]
   if (section?.path === doc.hpath) return null // Section documents are folders in the publishing layout.
-  return section || { collection: config.defaultCollection }
+  const selected = section || { collection: config.defaultCollection }
+  // Project publishing is opt-in by exact document ID; children never inherit access.
+  if ((selected.collection === 'projects' || under(doc.hpath, '/项目')) && !config.projectDocumentIds.includes(doc.id)) return null
+  return selected
 }
 
 function readConfig(input) {
-  const config = { defaultCollection: 'posts', excludePaths: ['/草稿'], sections: [], ...input }
+  const config = { defaultCollection: 'posts', excludePaths: ['/草稿'], sections: [], projectDocumentIds: [], ...input }
   if (!idPattern.test(config.notebookId)) throw new Error('请在 siyuan.config.json 中配置实际笔记本 ID；blog:doctor 会列出可用笔记本。')
   if (!collections.has(config.defaultCollection) || !Array.isArray(config.sections) || !Array.isArray(config.excludePaths)) throw new Error('思源目录配置不正确。')
   for (const prefix of [...config.excludePaths, ...config.sections.map(section => section.path)]) {
     if (typeof prefix !== 'string' || !prefix.startsWith('/') || prefix.endsWith('/')) throw new Error('目录路径须以 / 开头且不以 / 结尾。')
   }
   for (const section of config.sections) if (!collections.has(section.collection)) throw new Error('collection 只能是 posts、notes 或 projects。')
+  if (!Array.isArray(config.projectDocumentIds) || !config.projectDocumentIds.every(id => typeof id === 'string' && idPattern.test(id))) throw new Error('projectDocumentIds 须为明确允许发布的文档 ID 数组。')
   return config
 }
 
@@ -248,7 +252,7 @@ async function performSync({ root, config, client, dryRun }) {
     selected.push({ ...candidate, body })
   }
   const routes = new Map([...directoryRoutes, ...selected.map(({ doc, section }) => [doc.id, `/${section.collection}/${doc.id}/`])])
-  const excludedDocuments = new Set(docs.filter(doc => config.excludePaths.some(path => under(doc.hpath, path))).map(doc => doc.id))
+  const excludedDocuments = new Set(docs.filter(doc => !selectSection(doc, config)).map(doc => doc.id))
   const blockRoots = new Map(docs.map(doc => [doc.id, doc.id]))
   const unlinkedReferences = new Map()
   const files = new Map()
