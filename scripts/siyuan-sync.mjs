@@ -95,7 +95,8 @@ function exportedBody(content, doc) {
   const text = node => node.value || (node.children || []).map(text).join('')
   if (first?.type === 'heading' && first.depth === 1 && text(first) === doc.content) body = body.slice(first.position.end.offset).trim()
   if (!body.replace(/[\s\u200b-\u200d\ufeff\u00ad\u2060]/g, '')) return ''
-  return body
+  // SiYuan wraps inline code in zero-width spaces; they are not article content.
+  return body.replace(/[\u200b-\u200d\ufeff]/g, '')
 }
 
 function localAsset(url) {

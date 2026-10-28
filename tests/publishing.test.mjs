@@ -196,7 +196,7 @@ test('full pagination imports more than the default SiYuan search limit', async 
 
 test('real desktop export metadata and duplicate title are removed; empty documents publish a placeholder', async t => {
   const { root, options, state } = await fixture(t, [
-    document(first, '/文章', '---\ntitle: 文章\ndate: 2026-10-12T01:23:27+08:00\n---\n\n# 文章\n\n正文内容'),
+    document(first, '/文章', '---\ntitle: 文章\ndate: 2026-10-12T01:23:27+08:00\n---\n\n# 文章\n\n正文内容\n\n敲 \u200b`python`\u200b 进入'),
     document(second, '/未命名文档', '---\ntitle: 未命名文档\ndate: 2026-10-12\n---\n\n# 未命名文档\n\n\u200d\n'),
   ])
   const result = await sync(options)
@@ -205,6 +205,8 @@ test('real desktop export metadata and duplicate title are removed; empty docume
   assert.equal((content.match(/^---$/gm) || []).length, 2)
   assert.equal(content.includes('# 文章'), false)
   assert.match(content, /description: "正文内容"/)
+  assert.match(content, /敲 `python` 进入/)
+  assert.doesNotMatch(content, /[\u200b-\u200d\ufeff]/)
   const placeholder = await readFile(resolve(root, `docs/posts/siyuan/${second}.md`), 'utf8')
   assert.match(placeholder, /description: "正文待补充。"/)
   assert.match(placeholder, /> 正文待补充。/)
