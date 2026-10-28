@@ -105,22 +105,10 @@
       "route": "/notes/20261026221352-ay0vpbh/"
     },
     {
-      "id": "20261026221409-6mx5ulh",
-      "path": "docs/notes/siyuan/20261026221409-6mx5ulh.md",
-      "title": "线性代数与Python解法",
-      "route": "/notes/20261026221409-6mx5ulh/"
-    },
-    {
       "id": "20261026221448-8d869dx",
       "path": "docs/notes/siyuan/20261026221448-8d869dx.md",
       "title": "高性能计算算法引擎: 线性代数与异构计算融合",
       "route": "/notes/20261026221448-8d869dx/"
-    },
-    {
-      "id": "20261026221611-ogr91c9",
-      "path": "docs/notes/siyuan/20261026221611-ogr91c9.md",
-      "title": "矩阵力量",
-      "route": "/notes/20261026221611-ogr91c9/"
     },
     {
       "id": "20261026222016-gbiecz3",
@@ -153,70 +141,286 @@
       "route": "/notes/20261026222038-45wafva/"
     },
     {
-      "id": "20261026222104-8lctuwh",
-      "path": "docs/notes/siyuan/20261026222104-8lctuwh.md",
-      "title": "asyncio",
-      "route": "/notes/20261026222104-8lctuwh/"
-    },
-    {
-      "id": "20261026222114-k0wpaw7",
-      "path": "docs/notes/siyuan/20261026222114-k0wpaw7.md",
-      "title": "fastapi",
-      "route": "/notes/20261026222114-k0wpaw7/"
-    },
-    {
-      "id": "20261026222940-ted3hna",
-      "path": "docs/notes/siyuan/20261026222940-ted3hna.md",
-      "title": "sanic",
-      "route": "/notes/20261026222940-ted3hna/"
-    },
-    {
-      "id": "20261026222949-x0n23q9",
-      "path": "docs/notes/siyuan/20261026222949-x0n23q9.md",
-      "title": "litestar",
-      "route": "/notes/20261026222949-x0n23q9/"
-    },
-    {
       "id": "20261026222955-awhgw9v",
       "path": "docs/notes/siyuan/20261026222955-awhgw9v.md",
-      "title": "pydantic",
+      "title": "Pydantic",
       "route": "/notes/20261026222955-awhgw9v/"
     },
     {
       "id": "20261026223004-0c1ilrz",
       "path": "docs/notes/siyuan/20261026223004-0c1ilrz.md",
-      "title": "starlette",
+      "title": "Starlette",
       "route": "/notes/20261026223004-0c1ilrz/"
     },
     {
-      "id": "20261026223102-6pnso1j",
-      "path": "docs/notes/siyuan/20261026223102-6pnso1j.md",
-      "title": "核心语法",
-      "route": "/notes/20261026223102-6pnso1j/"
+      "id": "20261026235536-n00alwi",
+      "path": "docs/posts/siyuan/20261026235536-n00alwi.md",
+      "title": "δ-mem 论文解读",
+      "route": "/posts/20261026235536-n00alwi/"
     },
     {
-      "id": "20261026223120-26ko5om",
-      "path": "docs/notes/siyuan/20261026223120-26ko5om.md",
-      "title": "新特性",
-      "route": "/notes/20261026223120-26ko5om/"
+      "id": "20261027000244-jdhoppu",
+      "path": "docs/posts/siyuan/20261027000244-jdhoppu.md",
+      "title": "手写autogard",
+      "route": "/posts/20261027000244-jdhoppu/"
     },
     {
-      "id": "20261026223133-eabn4wb",
-      "path": "docs/notes/siyuan/20261026223133-eabn4wb.md",
-      "title": "标准库",
-      "route": "/notes/20261026223133-eabn4wb/"
+      "id": "20261027000339-h08mapt",
+      "path": "docs/posts/siyuan/20261027000339-h08mapt.md",
+      "title": "不确定性量化",
+      "route": "/posts/20261027000339-h08mapt/"
     },
     {
-      "id": "20261026223137-8z8d3gm",
-      "path": "docs/notes/siyuan/20261026223137-8z8d3gm.md",
-      "title": "三方库",
-      "route": "/notes/20261026223137-8z8d3gm/"
+      "id": "20261027000346-fseebt2",
+      "path": "docs/posts/siyuan/20261027000346-fseebt2.md",
+      "title": "特征工程与 leakage",
+      "route": "/posts/20261027000346-fseebt2/"
     },
     {
-      "id": "20261026223512-vktb0ch",
-      "path": "docs/notes/siyuan/20261026223512-vktb0ch.md",
-      "title": "技巧优化",
-      "route": "/notes/20261026223512-vktb0ch/"
+      "id": "20261027000356-hsh9uul",
+      "path": "docs/posts/siyuan/20261027000356-hsh9uul.md",
+      "title": "矩阵求导与链式法则",
+      "route": "/posts/20261027000356-hsh9uul/"
+    },
+    {
+      "id": "20261027000401-s47038a",
+      "path": "docs/posts/siyuan/20261027000401-s47038a.md",
+      "title": "python环境搭建",
+      "route": "/posts/20261027000401-s47038a/"
+    },
+    {
+      "id": "20261027000422-bffw7wf",
+      "path": "docs/posts/siyuan/20261027000422-bffw7wf.md",
+      "title": "向量化思维深入",
+      "route": "/posts/20261027000422-bffw7wf/"
+    },
+    {
+      "id": "20261027000456-s61rs3n",
+      "path": "docs/posts/siyuan/20261027000456-s61rs3n.md",
+      "title": "用 sklearn+LightGBM 完成 Kaggle 一个表格赛",
+      "route": "/posts/20261027000456-s61rs3n/"
+    },
+    {
+      "id": "20261027000505-t52dvd5",
+      "path": "docs/posts/siyuan/20261027000505-t52dvd5.md",
+      "title": "手推线性回归闭式解",
+      "route": "/posts/20261027000505-t52dvd5/"
+    },
+    {
+      "id": "20261027000512-rwdlheq",
+      "path": "docs/posts/siyuan/20261027000512-rwdlheq.md",
+      "title": "手写交叉熵对 softmax 的梯度",
+      "route": "/posts/20261027000512-rwdlheq/"
+    },
+    {
+      "id": "20261027000523-i52mtlk",
+      "path": "docs/posts/siyuan/20261027000523-i52mtlk.md",
+      "title": "bias-variance 权衡",
+      "route": "/posts/20261027000523-i52mtlk/"
+    },
+    {
+      "id": "20261028202609-3h60gne",
+      "path": "docs/notes/siyuan/20261028202609-3h60gne.md",
+      "title": "asyncio基本使用",
+      "route": "/notes/20261028202609-3h60gne/"
+    },
+    {
+      "id": "20261028202641-t2frt8u",
+      "path": "docs/notes/siyuan/20261028202641-t2frt8u.md",
+      "title": "并发网络请求",
+      "route": "/notes/20261028202641-t2frt8u/"
+    },
+    {
+      "id": "20261028202835-1s6t89k",
+      "path": "docs/notes/siyuan/20261028202835-1s6t89k.md",
+      "title": "处理阻塞代码与线程池",
+      "route": "/notes/20261028202835-1s6t89k/"
+    },
+    {
+      "id": "20261028202901-dv35wwi",
+      "path": "docs/notes/siyuan/20261028202901-dv35wwi.md",
+      "title": "多进程与CPU密集型任务",
+      "route": "/notes/20261028202901-dv35wwi/"
+    },
+    {
+      "id": "20261028202945-vkt7awq",
+      "path": "docs/notes/siyuan/20261028202945-vkt7awq.md",
+      "title": "同步基元",
+      "route": "/notes/20261028202945-vkt7awq/"
+    },
+    {
+      "id": "20261028202953-rnesi2e",
+      "path": "docs/notes/siyuan/20261028202953-rnesi2e.md",
+      "title": "流",
+      "route": "/notes/20261028202953-rnesi2e/"
+    },
+    {
+      "id": "20261028203010-znq6ijm",
+      "path": "docs/notes/siyuan/20261028203010-znq6ijm.md",
+      "title": "异步队列",
+      "route": "/notes/20261028203010-znq6ijm/"
+    },
+    {
+      "id": "20261028203012-ssccngl",
+      "path": "docs/notes/siyuan/20261028203012-ssccngl.md",
+      "title": "子进程",
+      "route": "/notes/20261028203012-ssccngl/"
+    },
+    {
+      "id": "20261028203317-wmlpo60",
+      "path": "docs/notes/siyuan/20261028203317-wmlpo60.md",
+      "title": "python 3.13 新特性",
+      "route": "/notes/20261028203317-wmlpo60/"
+    },
+    {
+      "id": "20261028203340-5nf4csc",
+      "path": "docs/notes/siyuan/20261028203340-5nf4csc.md",
+      "title": "python 3.14 新特性",
+      "route": "/notes/20261028203340-5nf4csc/"
+    },
+    {
+      "id": "20261028203347-9xbfkke",
+      "path": "docs/notes/siyuan/20261028203347-9xbfkke.md",
+      "title": "python 3.15 新特性",
+      "route": "/notes/20261028203347-9xbfkke/"
+    },
+    {
+      "id": "20261028203810-ys46xz9",
+      "path": "docs/notes/siyuan/20261028203810-ys46xz9.md",
+      "title": "请求与响应",
+      "route": "/notes/20261028203810-ys46xz9/"
+    },
+    {
+      "id": "20261028203933-dxc4hii",
+      "path": "docs/notes/siyuan/20261028203933-dxc4hii.md",
+      "title": "SQLAlchemy",
+      "route": "/notes/20261028203933-dxc4hii/"
+    },
+    {
+      "id": "20261028203952-y6ezqjp",
+      "path": "docs/notes/siyuan/20261028203952-y6ezqjp.md",
+      "title": "SQLModel",
+      "route": "/notes/20261028203952-y6ezqjp/"
+    },
+    {
+      "id": "20261028204332-ses6iod",
+      "path": "docs/notes/siyuan/20261028204332-ses6iod.md",
+      "title": "核心原理",
+      "route": "/notes/20261028204332-ses6iod/"
+    },
+    {
+      "id": "20261028204607-foa2kns",
+      "path": "docs/notes/siyuan/20261028204607-foa2kns.md",
+      "title": "Gin",
+      "route": "/notes/20261028204607-foa2kns/"
+    },
+    {
+      "id": "20261028204610-djoa9j7",
+      "path": "docs/notes/siyuan/20261028204610-djoa9j7.md",
+      "title": "Gozero",
+      "route": "/notes/20261028204610-djoa9j7/"
+    },
+    {
+      "id": "20261028204616-schicj2",
+      "path": "docs/notes/siyuan/20261028204616-schicj2.md",
+      "title": "gorm",
+      "route": "/notes/20261028204616-schicj2/"
+    },
+    {
+      "id": "20261028204623-2vu6wic",
+      "path": "docs/notes/siyuan/20261028204623-2vu6wic.md",
+      "title": "Goframe",
+      "route": "/notes/20261028204623-2vu6wic/"
+    },
+    {
+      "id": "20261028204641-viw5ott",
+      "path": "docs/notes/siyuan/20261028204641-viw5ott.md",
+      "title": "Hertz",
+      "route": "/notes/20261028204641-viw5ott/"
+    },
+    {
+      "id": "20261028204648-aljbird",
+      "path": "docs/notes/siyuan/20261028204648-aljbird.md",
+      "title": "Kitex",
+      "route": "/notes/20261028204648-aljbird/"
+    },
+    {
+      "id": "20261028204810-9ragjod",
+      "path": "docs/notes/siyuan/20261028204810-9ragjod.md",
+      "title": "Eino",
+      "route": "/notes/20261028204810-9ragjod/"
+    },
+    {
+      "id": "20261028205825-sfjysf5",
+      "path": "docs/notes/siyuan/20261028205825-sfjysf5.md",
+      "title": "条件概率与贝叶斯",
+      "route": "/notes/20261028205825-sfjysf5/"
+    },
+    {
+      "id": "20261028205834-paeb6dk",
+      "path": "docs/notes/siyuan/20261028205834-paeb6dk.md",
+      "title": "随机变量与常用分布",
+      "route": "/notes/20261028205834-paeb6dk/"
+    },
+    {
+      "id": "20261028205839-uflx7v0",
+      "path": "docs/notes/siyuan/20261028205839-uflx7v0.md",
+      "title": "联合分布与概率建模",
+      "route": "/notes/20261028205839-uflx7v0/"
+    },
+    {
+      "id": "20261028205844-y4xcszy",
+      "path": "docs/notes/siyuan/20261028205844-y4xcszy.md",
+      "title": "期望方差与随机梯度",
+      "route": "/notes/20261028205844-y4xcszy/"
+    },
+    {
+      "id": "20261028205852-ne16bgf",
+      "path": "docs/notes/siyuan/20261028205852-ne16bgf.md",
+      "title": "最大似然与损失函数",
+      "route": "/notes/20261028205852-ne16bgf/"
+    },
+    {
+      "id": "20261028205857-jy8yfzp",
+      "path": "docs/notes/siyuan/20261028205857-jy8yfzp.md",
+      "title": "信息论与语言模型",
+      "route": "/notes/20261028205857-jy8yfzp/"
+    },
+    {
+      "id": "20261028205905-48pys4a",
+      "path": "docs/notes/siyuan/20261028205905-48pys4a.md",
+      "title": "采样估计与模型评估",
+      "route": "/notes/20261028205905-48pys4a/"
+    },
+    {
+      "id": "20261028210701-myu0uop",
+      "path": "docs/notes/siyuan/20261028210701-myu0uop.md",
+      "title": "Polars",
+      "route": "/notes/20261028210701-myu0uop/"
+    },
+    {
+      "id": "20261028210743-pyx8d0d",
+      "path": "docs/notes/siyuan/20261028210743-pyx8d0d.md",
+      "title": "Dash",
+      "route": "/notes/20261028210743-pyx8d0d/"
+    },
+    {
+      "id": "20261028210749-y1nfc44",
+      "path": "docs/notes/siyuan/20261028210749-y1nfc44.md",
+      "title": "未命名文档",
+      "route": "/notes/20261028210749-y1nfc44/"
+    },
+    {
+      "id": "20261028210755-it83sux",
+      "path": "docs/notes/siyuan/20261028210755-it83sux.md",
+      "title": "Textual",
+      "route": "/notes/20261028210755-it83sux/"
+    },
+    {
+      "id": "20261028210810-fzoiqiq",
+      "path": "docs/notes/siyuan/20261028210810-fzoiqiq.md",
+      "title": "未命名文档",
+      "route": "/notes/20261028210810-fzoiqiq/"
     }
   ],
   "files": {
@@ -230,26 +434,60 @@
     "docs/notes/siyuan/20261026221103-mu4s8hn.md": "58e774ef4ce411e4476daf2d93267b882997bc3844c3fd75a46bf5cbc2d55a6e",
     "docs/notes/siyuan/20261026221120-gmyuh1b.md": "248c34a078df6d165cad84acf45a81002134d0dc18d5bb7d8386be4d7b4a761f",
     "docs/notes/siyuan/20261026221352-ay0vpbh.md": "1b343be8e24e5c820927cbd25416292cad1ff021f04117fdd4be9a32d8a897b5",
-    "docs/notes/siyuan/20261026221409-6mx5ulh.md": "29503fb6af9a8c9ec72509e9523a8cd3889456638a6250ffab6abade10b687e4",
     "docs/notes/siyuan/20261026221448-8d869dx.md": "a97728cef89a048d83e05bcd43c77006c472bb12e260a9bc5e79cd975623ec21",
-    "docs/notes/siyuan/20261026221611-ogr91c9.md": "e0d0b3f47932766f80ba13e971411ac54c7c7bbce3ec1ddc9836196b6870b8b9",
     "docs/notes/siyuan/20261026222016-gbiecz3.md": "a3f8d68e249061ee4b80cf5a37791356dcf610dd91133ff42f712578a0e062e5",
     "docs/notes/siyuan/20261026222020-4sz93d8.md": "b41f36f8b784bd71a31dd5414b7e44011c3dd2b15660c5416f2d4e5970b554e3",
     "docs/notes/siyuan/20261026222025-94xv6j7.md": "9fa75e87b53ea86dc3c07660a2ffe28393b46f204ffee6b3d1d1048b85506522",
     "docs/notes/siyuan/20261026222034-y6d5a1z.md": "226bcb41b667cbde417b42be668eb4c89123fafcf455408f79078b85805ede27",
     "docs/notes/siyuan/20261026222038-45wafva.md": "feec35eb46f15a6391504e354e0df6cdf4abe3777d3bc22ff33e20a40fb4e303",
-    "docs/notes/siyuan/20261026222104-8lctuwh.md": "5df282c691d45aafe3d4ea82a1b123e011a2d944c8c553bde0709152ed7d1c8a",
-    "docs/notes/siyuan/20261026222114-k0wpaw7.md": "5e1a9c170c582f3c987fd7c0e4430c1278dde4e264df1a128cd1a029c4bef7eb",
-    "docs/notes/siyuan/20261026222940-ted3hna.md": "f184ce2d5e46b53a4495f24ac24aabf6e2968f518815828d926107be4385f300",
-    "docs/notes/siyuan/20261026222949-x0n23q9.md": "8aba58bda308ad4fcd700d2f6494b782f0131dc79154f70998aad68a0cf41d4b",
-    "docs/notes/siyuan/20261026222955-awhgw9v.md": "b85ded2e0f6d31965cbc68ffbe8634c480378029ec34b0ef60312f6f075d0fbe",
-    "docs/notes/siyuan/20261026223004-0c1ilrz.md": "3e08d63ff7139852079f82062c2cbdf51f1818ee893e7b7c32ac49b0c9ad9a33",
-    "docs/notes/siyuan/20261026223102-6pnso1j.md": "c7041b2649544117460762bdd89668ea47dc0359976f81184f5bbbb47eedb958",
-    "docs/notes/siyuan/20261026223120-26ko5om.md": "16b48655123fd47471e0842b7fb7daaecabdceffce8e4c466f9526d67bb09423",
-    "docs/notes/siyuan/20261026223133-eabn4wb.md": "e00a1e3292f72921bea9a1169f102a061b1f94949c358e4432f4d09d975ce42d",
-    "docs/notes/siyuan/20261026223137-8z8d3gm.md": "16e901a50e4b3e4be324236a8bd95a25392fc83059aa4df1e83a8bdb8bc44bf8",
-    "docs/notes/siyuan/20261026223512-vktb0ch.md": "8937a4d1ce992b1c4fb45a2ffa056996f2d7c1c4e6e3fad5254091647769f473",
+    "docs/notes/siyuan/20261026222955-awhgw9v.md": "6c020ba47ea6eb08d9fedd44733e0a9778efd06fa4c5950d2faec11c3e666232",
+    "docs/notes/siyuan/20261026223004-0c1ilrz.md": "9ce1e0579dd2e7f49c86f2e842acee30e643dc9a3a267713003950387a0d0005",
+    "docs/notes/siyuan/20261028202609-3h60gne.md": "4376b87e1626f7b44bbb0fdf53b2bbe4513fa651295d447679b9a43c84940663",
+    "docs/notes/siyuan/20261028202641-t2frt8u.md": "9f15ef0fc4861aa756414d5957be81b4dc460b113742cbb28d2fe2ee631f6b98",
+    "docs/notes/siyuan/20261028202835-1s6t89k.md": "e9816a831fdc758d73d4940e7f87da7a074b39f2b554bf50ad306704397049ac",
+    "docs/notes/siyuan/20261028202901-dv35wwi.md": "40fb98c29666bcc9ec2f3792906d6ef2f7537c4033849922da08514d1aeb4831",
+    "docs/notes/siyuan/20261028202945-vkt7awq.md": "b8f482fc0ad74677efc937d48a12b291939c51cb392cee0cbcf488919022f490",
+    "docs/notes/siyuan/20261028202953-rnesi2e.md": "4df39c2432eccd39f1e11dda43056d8d4db717757bc7fa7200eadf08b93c0f0e",
+    "docs/notes/siyuan/20261028203010-znq6ijm.md": "69db2b7c2bb6c4da3377d67fccb3d308743a9c4a68c92a404954ec8d1d13c0b8",
+    "docs/notes/siyuan/20261028203012-ssccngl.md": "ed3943730fb28ecbd9a15fd7ef7c8754739b1757ec070eecd46cc66e0f75ebc6",
+    "docs/notes/siyuan/20261028203317-wmlpo60.md": "b0e317d80b23d54da39982a2d4b82ce1534380fc25a22fe879cc1ddb94a27b19",
+    "docs/notes/siyuan/20261028203340-5nf4csc.md": "451766436c1be427fee601db6502151a57bf031156226949feec9e1a29d2f1a9",
+    "docs/notes/siyuan/20261028203347-9xbfkke.md": "c7dd9a054515a3362f4453d0232847ea7b9a138abf76ebe5d50c12449bd385d0",
+    "docs/notes/siyuan/20261028203810-ys46xz9.md": "30d43da6994ad989dd6aadd7b70414490240e40c97024e8666441efcc9b69f0b",
+    "docs/notes/siyuan/20261028203933-dxc4hii.md": "8279f30dd7601af47acf4530db83ca85ba7b5d461b60a91a3f301dc9b5842120",
+    "docs/notes/siyuan/20261028203952-y6ezqjp.md": "b36554ef81b08a331e0220e606b7d0f6e86b0e96f22b100b26bbec8a25b805ae",
+    "docs/notes/siyuan/20261028204332-ses6iod.md": "9b9b5d3c4aa6a9c0089800404e93b38833e5e8e957d92cb6eec5b23754ade8cc",
+    "docs/notes/siyuan/20261028204607-foa2kns.md": "39573f76a12bbf9e20c2573b407afd85ab3e7866077ecf59fd5d20bc79053c69",
+    "docs/notes/siyuan/20261028204610-djoa9j7.md": "0326ac412bb61b237781a06130814951cb4ef0bd7b2abd3ded261b8b7072b88b",
+    "docs/notes/siyuan/20261028204616-schicj2.md": "41bcc8db4342ca9a4b9f20a3d51e6ac4072897ffd136420b839c7d2256528fdc",
+    "docs/notes/siyuan/20261028204623-2vu6wic.md": "919fa7b35f07ae5e7f48cfd411d455bd1d30b463534078c28e4c047d42c915fe",
+    "docs/notes/siyuan/20261028204641-viw5ott.md": "5350ff39274af653e9b89e39887c7b690b28556c11e2a0f6f9cf735adc90f0c8",
+    "docs/notes/siyuan/20261028204648-aljbird.md": "f6002a3bb7d68f5478141143d0ae63c8480b2929b047bd861c9ffbe2ab76680c",
+    "docs/notes/siyuan/20261028204810-9ragjod.md": "d3fb545232c035043c232ada3a5c56c56f68ab8d6c818ef0ca521ae2ddff1d60",
+    "docs/notes/siyuan/20261028205825-sfjysf5.md": "ec7427184ff5e9b16b65f0d33b1b9856d6e183476e9ff57e44d5d258a242ae94",
+    "docs/notes/siyuan/20261028205834-paeb6dk.md": "d51786087b3ce08bb0a1d1c34ac70691745dafc712279d84c767a2d90f7801f8",
+    "docs/notes/siyuan/20261028205839-uflx7v0.md": "77fc1b58d4e02c92895e1060ab2e147efc2dbb98c311a208cbecac8fe1895b18",
+    "docs/notes/siyuan/20261028205844-y4xcszy.md": "ce1b11a6f841d58dd3ef19a0632ed86fd5f3fa37547a3e291ca2be633422fbb0",
+    "docs/notes/siyuan/20261028205852-ne16bgf.md": "bcfaf984b61c7ec0cdd1af1f1a1bd4d65a0a69e9961b3e8afb670e573a01350b",
+    "docs/notes/siyuan/20261028205857-jy8yfzp.md": "d65fe3a40d251252bfce57c9ba71b82c22f5a7a274ce9db3770cc33cbb62b4a1",
+    "docs/notes/siyuan/20261028205905-48pys4a.md": "a60a61e36b26dec7df51a870508df0b31050e0e8c4138885459b7be7c16f4788",
+    "docs/notes/siyuan/20261028210701-myu0uop.md": "41161c41e96a528492d201093ee76b9119ef664f9b59f62b2b1a6a52f2d80473",
+    "docs/notes/siyuan/20261028210743-pyx8d0d.md": "d04af872c5d33c737c54861a5ede3c673d43edf865225b6c64d1b416231da4e2",
+    "docs/notes/siyuan/20261028210749-y1nfc44.md": "d56563dd4aaf81d5179cdd6dd10a570d96d0c5f4b8669d7160416741598b7693",
+    "docs/notes/siyuan/20261028210755-it83sux.md": "2c78ad68e758ae7af3a0749b1d7f740739463db52095ed8866b48b077de643e3",
+    "docs/notes/siyuan/20261028210810-fzoiqiq.md": "8b7afe50bda82c536414751308ab9163a9a03b43c04c564c00890a8c77b0628e",
     "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
+    "docs/posts/siyuan/20261026235536-n00alwi.md": "aeebf87d735cb0f9921b5d6850be167e6cd8a55bb38f67ba651af16ccc051af2",
+    "docs/posts/siyuan/20261027000244-jdhoppu.md": "55b14b56c0f032c9976ae1c72799c403d9f62c10e22e9a7c03e71600d703a59b",
+    "docs/posts/siyuan/20261027000339-h08mapt.md": "bd1ba9c0b40453324ec59a3dcfce2ba9b620d14b932c86eb53eeca0a46e6032c",
+    "docs/posts/siyuan/20261027000346-fseebt2.md": "d9b43f36ffac057656da34e0d9e43e52cb77b2b049928590d665ae7fe8497dec",
+    "docs/posts/siyuan/20261027000356-hsh9uul.md": "b990ac4117bf6ca2af399cfc7f43b572a6749c84c3d4424af153e3e382d8fcee",
+    "docs/posts/siyuan/20261027000401-s47038a.md": "419e9d99d2e54ecf09220fcccd9b1838668b6e891df65e91da5db50aa13cda48",
+    "docs/posts/siyuan/20261027000422-bffw7wf.md": "9767894a5f424787fed5be5dc9e26decef3f041eb79acb4dedc48fa2b187241c",
+    "docs/posts/siyuan/20261027000456-s61rs3n.md": "c1722b87b92c50bb761d9156518568255fe71abc35df1b8da0c426db5b3d3a69",
+    "docs/posts/siyuan/20261027000505-t52dvd5.md": "4d3f6a9fa946b80dab01cc3cd5293e9da6edd7384e135a34fa9e7d71fc88a482",
+    "docs/posts/siyuan/20261027000512-rwdlheq.md": "4da27043626d36ceefb0c492648a7cc9102fd4b100948eb4cf5d5d00af4f9ecb",
+    "docs/posts/siyuan/20261027000523-i52mtlk.md": "918372670bb0d286fb971d197084d064180d8adb74fb7c70613e90223fab13f9",
     "docs/projects/siyuan/20261012015819-3osv6ek.md": "793a3fef4f03d474992c80c8a645c22dcfc1ff2a4a6589bd75458c4ec293fb99",
     "docs/projects/siyuan/20261012015820-0gg27yz.md": "8a2ed5298b5a7d7400634f184e4f94926fb28903cb2673ee2f5e2bacc574186c",
     "docs/projects/siyuan/20261012020110-1qune8h.md": "1281d97a46d2c8ec1fc7d5f68ba50ebaf00aeb632f928fd58594d528bb1a80a5",
