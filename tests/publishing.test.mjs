@@ -287,6 +287,18 @@ test('resync removes directory articles, preserves empty leaves and resolves chi
   assert.equal((await sync(automatic)).updated.length, 0)
 })
 
+test('configured-topic sync imports SKLearn chapters without publishing other new notebook folders', async t => {
+  const unknown = '20261012030000-ccccccc'
+  const { options, state } = await fixture(t, [
+    document(first, '/知识库/SKLearn', ''),
+    document(second, '/知识库/SKLearn/数据与预处理', ''),
+    document(unknown, '/知识库/其他分类', 'NOT_SELECTED_TOPIC'),
+  ])
+  const result = await sync({ ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes', onlyConfiguredTopics: true }] } })
+  assert.deepEqual(result.documents.map(doc => doc.id), [second])
+  assert.equal(state.exportedIds.includes(unknown), false)
+})
+
 test('SiYuan project tables select a real showcase template and resolve record links, without duplicating catalog entries', async t => {
   const { root, options, state } = await fixture(t, [
     document(first, '/项目/墨影', '项目定位与系统流水线。', { 'custom-blog-project-code': 'moyin', 'custom-blog-project-showcase': second }),

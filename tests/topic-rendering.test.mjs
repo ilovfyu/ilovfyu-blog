@@ -1,12 +1,55 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { resolve } from 'node:path'
-import { createSSRApp, h } from 'vue'
+import { createSSRApp, createRenderer, h, ref, nextTick } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { createServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeNoteId, knowledgeTopicPage } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 import { topicNames, topicAppearance } from '../docs/.vuepress/theme/data/topics.ts'
+
+test('scene motion pauses for reduced motion, offscreen surfaces and hidden documents', async t => {
+  const server = await createServer({ configFile: false, root: resolve(import.meta.dirname, '..'), server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true } })
+  t.after(() => server.close())
+  const { useSceneMotion } = await server.ssrLoadModule('/docs/.vuepress/theme/utils/use-scene-motion.ts')
+  const originals = Object.fromEntries(['document', 'matchMedia', 'IntersectionObserver'].map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]))
+  const documentMock = Object.assign(new EventTarget(), { hidden: false })
+  const preference = Object.assign(new EventTarget(), { matches: false })
+  let enter
+  let disconnected = false
+  Object.assign(globalThis, {
+    document: documentMock,
+    matchMedia: () => preference,
+    IntersectionObserver: class {
+      constructor(callback) { enter = value => callback([{ isIntersecting: value }]) }
+      observe() {}
+      disconnect() { disconnected = true }
+    },
+  })
+  const renderer = createRenderer({
+    createElement: () => ({ props: {} }), patchProp: (element, key, _old, value) => { element.props[key] = value },
+    insert: (child, parent) => { parent.child = child }, remove() {}, setElementText() {},
+    createText: text => ({ text }), createComment: () => ({}), setText() {}, parentNode: () => null, nextSibling: () => null,
+  })
+  let running
+  const app = renderer.createApp({ setup() { running = useSceneMotion(ref({})); return () => h('div') } })
+  try {
+    app.mount({})
+    enter(true); await nextTick(); assert.equal(running.value, true)
+    preference.matches = true; preference.dispatchEvent(new Event('change')); await nextTick(); assert.equal(running.value, false)
+    preference.matches = false; preference.dispatchEvent(new Event('change')); await nextTick(); assert.equal(running.value, true)
+    enter(false); await nextTick(); assert.equal(running.value, false)
+    enter(true); documentMock.hidden = true; documentMock.dispatchEvent(new Event('visibilitychange')); await nextTick(); assert.equal(running.value, false)
+    documentMock.hidden = false; documentMock.dispatchEvent(new Event('visibilitychange')); await nextTick(); assert.equal(running.value, true)
+  } finally {
+    app.unmount()
+    for (const [name, descriptor] of Object.entries(originals)) {
+      if (descriptor) Object.defineProperty(globalThis, name, descriptor)
+      else delete globalThis[name]
+    }
+  }
+  assert.equal(disconnected, true)
+})
 
 // Render the actual recursive SFCs without needing a browser or a VuePress server.
 test('nested topic content and directory navigation render all levels with valid anchors', async t => {
@@ -111,6 +154,7 @@ test('every configured topic renders a distinct subject visual with a complete s
   assert.equal((boosting.match(/class="boosting-residual-bars"/g) || []).length, 3)
 
   const languageVisuals = [
+    { name: 'SKLearn', file: 'SklearnTopicVisual', graphic: 'sklearn-visual', labels: ['PIPELINE', 'EVALUATE', 'TRAIN', 'TEST', 'SCALER', 'ESTIMATOR', 'fit', 'transform', 'predict', 'CROSS-VALIDATION', 'HELD OUT'], shapes: ['sklearn-pipeline', 'sklearn-samples', 'sklearn-step', 'sklearn-validation', 'sklearn-test-set'], motion: false },
     { name: 'Python', file: 'PythonTopicVisual', graphic: 'python-visual', labels: ['LIST COMPREHENSION', 'range(1, 5)', 'ITERATE', 'COLLECT'], shapes: ['python-input', 'python-operation', 'python-output'], motion: false },
     { name: 'Go', file: 'GoTopicVisual', graphic: 'go-visual', labels: ['go fetch()', 'go parse()', 'go save()', 'chan Result', 'receive'], shapes: ['go-worker', 'go-channel', 'go-consumer'], motion: true },
   ]

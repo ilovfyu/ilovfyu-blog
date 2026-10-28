@@ -14,6 +14,15 @@ const source = [
 const notes = normalizeKnowledgeNotes(source)
 const all = { topic: null, tags: [], query: '' }
 
+test('SKLearn reading links start with fundamentals and keep new chapters after the planned learning path', () => {
+  const titles = ['表格赛', '新增章节', '监督模型', 'pipeline与组合', '数据与预处理']
+  const entries = titles.map((title, index) => ({ title, path: `/notes/${index}/`, summary: '', series: 'SKLearn', group: '', tags: [] }))
+  const chapters = knowledgeTopicChapters(entries, 'SKLearn')
+  const result = knowledgeTopicPage(chapters, 1, 10).entries
+  assert.deepEqual(result.map(entry => entry.title), ['数据与预处理', 'pipeline与组合', '监督模型', '表格赛', '新增章节'])
+  assert.equal(entries[0].title, '表格赛')
+})
+
 test('topic pagination and directory anchors use one catalog scroll owner without taking over topic changes', () => {
   const first = { path: '/topics/', query: { series: '线性代数', page: '1' }, hash: '#topic-articles' }
   assert.equal(catalogOwnsScroll({ ...first, query: { ...first.query, page: '2' }, hash: '#topic-note-book' }, first), true)
@@ -56,7 +65,7 @@ test('topics derive counts and chapter groups from published notes; duplicate ti
 })
 test('configured topics exist without articles and merge with their first published note', () => {
   const emptyTopics = knowledgeTopics([], topicNames)
-  assert.deepEqual(new Set(emptyTopics.map(topic => topic.name)), new Set(['微积分', '线性代数', '概率', 'MLearn', '数据分析', 'Python', 'Go', 'GBDT']))
+  assert.deepEqual(new Set(emptyTopics.map(topic => topic.name)), new Set(['微积分', '线性代数', '概率', 'MLearn', '数据分析', 'Python', 'Go', 'GBDT', 'SKLearn']))
   assert.ok(emptyTopics.every(topic => topic.count === 0 && topic.groups.length === 0))
   const entries = normalizeKnowledgeNotes([{ ...source[0], series: '微积分', group: '极限' }])
   const topics = knowledgeTopics(entries, topicNames)

@@ -2,6 +2,7 @@ import { searchArticles } from './article-search.ts'
 import { ARTICLE_PAGE_SIZE } from './article-page-size.ts'
 export { ARTICLE_PAGE_SIZE } from './article-page-size.ts'
 import { knowledgePath } from './knowledge-path.ts'
+import { topicReadingRank } from '../data/topics.ts'
 
 export type KnowledgeNote = {
   title: string; summary: string; path: string; series: string; group: string; groupPath?: string[]; tags: string[]
@@ -83,7 +84,8 @@ function chapterId(path: string[]): string {
 
 /** Build every directory level; a folder can contain both articles and subfolders. */
 export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topic: string): KnowledgeChapter<T>[] {
-  const ordered = notes.filter(note => note.series === topic).sort((a, b) => a.title.localeCompare(b.title, 'zh-CN', { numeric: true }) || a.path.localeCompare(b.path))
+  const ordered = notes.filter(note => note.series === topic).sort((a, b) => topicReadingRank(topic, a.title) - topicReadingRank(topic, b.title)
+    || a.title.localeCompare(b.title, 'zh-CN', { numeric: true }) || a.path.localeCompare(b.path))
   const chapters: KnowledgeChapter<T>[] = []
   const byPath = new Map<string, KnowledgeChapter<T>>()
   for (const note of ordered) {

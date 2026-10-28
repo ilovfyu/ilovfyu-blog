@@ -70,6 +70,13 @@ npm run blog:publish
 
 ## 知识库专题
 
-专题目录预设微积分、线性代数、概率、MLearn、数据分析、Python、Go 和 GBDT，由 `docs/.vuepress/theme/data/topics.ts` 配置。思源「知识库」下的一级专题目录用于组织内容，中间空目录只保留层级；末级文档即使只有标题，也生成文章页并显示「正文待补充」，补写后保留原地址。
+专题目录预设微积分、线性代数、概率、MLearn、数据分析、Python、Go、GBDT 和 SKLearn，由 `docs/.vuepress/theme/data/topics.ts` 配置。思源「知识库」下的一级专题目录用于组织内容，中间空目录只保留层级；末级文档即使只有标题，也生成文章页并显示「正文待补充」，补写后保留原地址。
 
 TS 专题已按用户要求移除；思源中同名 TS / TypeScript 专题目录列入同步排除项，后续同步不会重新发布。
+
+
+2026-10-29 新增 SKLearn 专题，卡片与独立专题首屏共用 `SklearnTopicVisual.vue`：训练/测试划分 → 预处理与估计器 Pipeline → 训练集内交叉验证，测试集保持独立。动画复用 `useSceneMotion`，静态状态保留全部数据流、方法和验证折叠。
+
+知识库同步设置 `onlyConfiguredTopics: true`，以 `topics.ts` 已配置的专题为范围。新增思源分类先在博客配置专属视觉，才进入同步；空的 OS、网络、容器等分类不会变成占位文章或没有视觉的专题。本次同步所有已配置专题的最新章节与正文，正文为空时继续如实显示“正文待补充”。
+
+SKLearn 图形中的预处理复用与测试隔离依据 [scikit-learn 官方实践](https://scikit-learn.org/stable/common_pitfalls.html)。

@@ -399,12 +399,6 @@
       "route": "/notes/20261028210743-pyx8d0d/"
     },
     {
-      "id": "20261028210749-y1nfc44",
-      "path": "docs/notes/siyuan/20261028210749-y1nfc44.md",
-      "title": "未命名文档",
-      "route": "/notes/20261028210749-y1nfc44/"
-    },
-    {
       "id": "20261028210755-it83sux",
       "path": "docs/notes/siyuan/20261028210755-it83sux.md",
       "title": "Textual",
@@ -413,8 +407,224 @@
     {
       "id": "20261028210810-fzoiqiq",
       "path": "docs/notes/siyuan/20261028210810-fzoiqiq.md",
-      "title": "未命名文档",
+      "title": "Matplotlib",
       "route": "/notes/20261028210810-fzoiqiq/"
+    },
+    {
+      "id": "20261028222421-5rxknfj",
+      "path": "docs/notes/siyuan/20261028222421-5rxknfj.md",
+      "title": "决策树与集成学习",
+      "route": "/notes/20261028222421-5rxknfj/"
+    },
+    {
+      "id": "20261028222505-4cdhwph",
+      "path": "docs/notes/siyuan/20261028222505-4cdhwph.md",
+      "title": "GBDT 与 XGBoost 原理",
+      "route": "/notes/20261028222505-4cdhwph/"
+    },
+    {
+      "id": "20261028222511-j6b3v6c",
+      "path": "docs/notes/siyuan/20261028222511-j6b3v6c.md",
+      "title": "XGBoost实战",
+      "route": "/notes/20261028222511-j6b3v6c/"
+    },
+    {
+      "id": "20261028222532-thy3jjg",
+      "path": "docs/notes/siyuan/20261028222532-thy3jjg.md",
+      "title": "LightGBM 原理与实战",
+      "route": "/notes/20261028222532-thy3jjg/"
+    },
+    {
+      "id": "20261028222546-5vmpdg8",
+      "path": "docs/notes/siyuan/20261028222546-5vmpdg8.md",
+      "title": "CatBoost 原理与实战",
+      "route": "/notes/20261028222546-5vmpdg8/"
+    },
+    {
+      "id": "20261028222552-b3ms55y",
+      "path": "docs/notes/siyuan/20261028222552-b3ms55y.md",
+      "title": "三库对比与选型",
+      "route": "/notes/20261028222552-b3ms55y/"
+    },
+    {
+      "id": "20261028222601-eo1wmtg",
+      "path": "docs/notes/siyuan/20261028222601-eo1wmtg.md",
+      "title": "实战全流程与调参",
+      "route": "/notes/20261028222601-eo1wmtg/"
+    },
+    {
+      "id": "20261028222615-2n05rdc",
+      "path": "docs/notes/siyuan/20261028222615-2n05rdc.md",
+      "title": "完整项目实战",
+      "route": "/notes/20261028222615-2n05rdc/"
+    },
+    {
+      "id": "20261028233145-oyk8915",
+      "path": "docs/notes/siyuan/20261028233145-oyk8915.md",
+      "title": "微积分与AI训练",
+      "route": "/notes/20261028233145-oyk8915/"
+    },
+    {
+      "id": "20261028233208-ootx2lk",
+      "path": "docs/notes/siyuan/20261028233208-ootx2lk.md",
+      "title": "极限与连续",
+      "route": "/notes/20261028233208-ootx2lk/"
+    },
+    {
+      "id": "20261028233223-mxgg12m",
+      "path": "docs/notes/siyuan/20261028233223-mxgg12m.md",
+      "title": "泰勒展开与凸性",
+      "route": "/notes/20261028233223-mxgg12m/"
+    },
+    {
+      "id": "20261028233245-bnjbzm4",
+      "path": "docs/notes/siyuan/20261028233245-bnjbzm4.md",
+      "title": "积分期望",
+      "route": "/notes/20261028233245-bnjbzm4/"
+    },
+    {
+      "id": "20261028233256-eotcy3z",
+      "path": "docs/notes/siyuan/20261028233256-eotcy3z.md",
+      "title": "多元微分与反向传播",
+      "route": "/notes/20261028233256-eotcy3z/"
+    },
+    {
+      "id": "20261028233309-etgwdbl",
+      "path": "docs/notes/siyuan/20261028233309-etgwdbl.md",
+      "title": "级数与微分方程",
+      "route": "/notes/20261028233309-etgwdbl/"
+    },
+    {
+      "id": "20261028233322-eesl61x",
+      "path": "docs/notes/siyuan/20261028233322-eesl61x.md",
+      "title": "手写自动微分",
+      "route": "/notes/20261028233322-eesl61x/"
+    },
+    {
+      "id": "20261028233327-pty7xvj",
+      "path": "docs/notes/siyuan/20261028233327-pty7xvj.md",
+      "title": "优化器与训练稳定性",
+      "route": "/notes/20261028233327-pty7xvj/"
+    },
+    {
+      "id": "20261029004726-grymej3",
+      "path": "docs/notes/siyuan/20261029004726-grymej3.md",
+      "title": "从数据到泛化",
+      "route": "/notes/20261029004726-grymej3/"
+    },
+    {
+      "id": "20261029004746-9qv9wi6",
+      "path": "docs/notes/siyuan/20261029004746-9qv9wi6.md",
+      "title": "线性模型",
+      "route": "/notes/20261029004746-9qv9wi6/"
+    },
+    {
+      "id": "20261029004750-8sjxj1o",
+      "path": "docs/notes/siyuan/20261029004750-8sjxj1o.md",
+      "title": "树与集成",
+      "route": "/notes/20261029004750-8sjxj1o/"
+    },
+    {
+      "id": "20261029004811-gcvs4i7",
+      "path": "docs/notes/siyuan/20261029004811-gcvs4i7.md",
+      "title": "最大间隔与核方法",
+      "route": "/notes/20261029004811-gcvs4i7/"
+    },
+    {
+      "id": "20261029004822-u93kop2",
+      "path": "docs/notes/siyuan/20261029004822-u93kop2.md",
+      "title": "无监督与隐变量",
+      "route": "/notes/20261029004822-u93kop2/"
+    },
+    {
+      "id": "20261029004840-xt4mhax",
+      "path": "docs/notes/siyuan/20261029004840-xt4mhax.md",
+      "title": "概率图与序列模型",
+      "route": "/notes/20261029004840-xt4mhax/"
+    },
+    {
+      "id": "20261029004851-1di8bwu",
+      "path": "docs/notes/siyuan/20261029004851-1di8bwu.md",
+      "title": "推荐与排序",
+      "route": "/notes/20261029004851-1di8bwu/"
+    },
+    {
+      "id": "20261029004906-ao8h3o1",
+      "path": "docs/notes/siyuan/20261029004906-ao8h3o1.md",
+      "title": "时间序列与业务建模",
+      "route": "/notes/20261029004906-ao8h3o1/"
+    },
+    {
+      "id": "20261029004921-uti8jgo",
+      "path": "docs/notes/siyuan/20261029004921-uti8jgo.md",
+      "title": "表示学习与图",
+      "route": "/notes/20261029004921-uti8jgo/"
+    },
+    {
+      "id": "20261029004941-kkjmc9r",
+      "path": "docs/notes/siyuan/20261029004941-kkjmc9r.md",
+      "title": "从零实现算法",
+      "route": "/notes/20261029004941-kkjmc9r/"
+    },
+    {
+      "id": "20261029005043-pyfvxfb",
+      "path": "docs/notes/siyuan/20261029005043-pyfvxfb.md",
+      "title": "实战与选型",
+      "route": "/notes/20261029005043-pyfvxfb/"
+    },
+    {
+      "id": "20261029011023-yg96vst",
+      "path": "docs/notes/siyuan/20261029011023-yg96vst.md",
+      "title": "数据与预处理",
+      "route": "/notes/20261029011023-yg96vst/"
+    },
+    {
+      "id": "20261029011035-g45hci3",
+      "path": "docs/notes/siyuan/20261029011035-g45hci3.md",
+      "title": "特征工程与选择",
+      "route": "/notes/20261029011035-g45hci3/"
+    },
+    {
+      "id": "20261029011048-tiox0gt",
+      "path": "docs/notes/siyuan/20261029011048-tiox0gt.md",
+      "title": "评估指标",
+      "route": "/notes/20261029011048-tiox0gt/"
+    },
+    {
+      "id": "20261029011115-qpfd1k6",
+      "path": "docs/notes/siyuan/20261029011115-qpfd1k6.md",
+      "title": "交叉验证与调参",
+      "route": "/notes/20261029011115-qpfd1k6/"
+    },
+    {
+      "id": "20261029011149-50lon02",
+      "path": "docs/notes/siyuan/20261029011149-50lon02.md",
+      "title": "pipeline与组合",
+      "route": "/notes/20261029011149-50lon02/"
+    },
+    {
+      "id": "20261029011223-41qyvr2",
+      "path": "docs/notes/siyuan/20261029011223-41qyvr2.md",
+      "title": "监督模型",
+      "route": "/notes/20261029011223-41qyvr2/"
+    },
+    {
+      "id": "20261029011229-68u2alu",
+      "path": "docs/notes/siyuan/20261029011229-68u2alu.md",
+      "title": "无监督模型",
+      "route": "/notes/20261029011229-68u2alu/"
+    },
+    {
+      "id": "20261029011237-95rpqst",
+      "path": "docs/notes/siyuan/20261029011237-95rpqst.md",
+      "title": "解释与工程化",
+      "route": "/notes/20261029011237-95rpqst/"
+    },
+    {
+      "id": "20261029011247-f7xyzsy",
+      "path": "docs/notes/siyuan/20261029011247-f7xyzsy.md",
+      "title": "表格赛",
+      "route": "/notes/20261029011247-f7xyzsy/"
     }
   ],
   "files": {
@@ -444,7 +654,7 @@
     "docs/notes/siyuan/20261028202953-rnesi2e.md": "4df39c2432eccd39f1e11dda43056d8d4db717757bc7fa7200eadf08b93c0f0e",
     "docs/notes/siyuan/20261028203010-znq6ijm.md": "69db2b7c2bb6c4da3377d67fccb3d308743a9c4a68c92a404954ec8d1d13c0b8",
     "docs/notes/siyuan/20261028203012-ssccngl.md": "ed3943730fb28ecbd9a15fd7ef7c8754739b1757ec070eecd46cc66e0f75ebc6",
-    "docs/notes/siyuan/20261028203317-wmlpo60.md": "b0e317d80b23d54da39982a2d4b82ce1534380fc25a22fe879cc1ddb94a27b19",
+    "docs/notes/siyuan/20261028203317-wmlpo60.md": "2cc26e5c2b5c2135585bb0e23552e232f5d2d37c311979e61e4d66a1c8ca9974",
     "docs/notes/siyuan/20261028203340-5nf4csc.md": "451766436c1be427fee601db6502151a57bf031156226949feec9e1a29d2f1a9",
     "docs/notes/siyuan/20261028203347-9xbfkke.md": "c7dd9a054515a3362f4453d0232847ea7b9a138abf76ebe5d50c12449bd385d0",
     "docs/notes/siyuan/20261028203810-ys46xz9.md": "30d43da6994ad989dd6aadd7b70414490240e40c97024e8666441efcc9b69f0b",
@@ -467,9 +677,44 @@
     "docs/notes/siyuan/20261028205905-48pys4a.md": "a60a61e36b26dec7df51a870508df0b31050e0e8c4138885459b7be7c16f4788",
     "docs/notes/siyuan/20261028210701-myu0uop.md": "41161c41e96a528492d201093ee76b9119ef664f9b59f62b2b1a6a52f2d80473",
     "docs/notes/siyuan/20261028210743-pyx8d0d.md": "d04af872c5d33c737c54861a5ede3c673d43edf865225b6c64d1b416231da4e2",
-    "docs/notes/siyuan/20261028210749-y1nfc44.md": "d56563dd4aaf81d5179cdd6dd10a570d96d0c5f4b8669d7160416741598b7693",
     "docs/notes/siyuan/20261028210755-it83sux.md": "2c78ad68e758ae7af3a0749b1d7f740739463db52095ed8866b48b077de643e3",
-    "docs/notes/siyuan/20261028210810-fzoiqiq.md": "8b7afe50bda82c536414751308ab9163a9a03b43c04c564c00890a8c77b0628e",
+    "docs/notes/siyuan/20261028210810-fzoiqiq.md": "e717face99f750fdc05c309adb6201f64a690fdfa3ab927f26d1a03f1999d46b",
+    "docs/notes/siyuan/20261028222421-5rxknfj.md": "83a62ba2f3459001a86b8c628205f6ee985b7643defc83db33220b72cbfb1afd",
+    "docs/notes/siyuan/20261028222505-4cdhwph.md": "3ef6f0ff0bcb90d676e37e89c483321b47ae8b340fb555617429330cdb869a96",
+    "docs/notes/siyuan/20261028222511-j6b3v6c.md": "d2c6f36ba0daab24c8db20711b4e9f61d08af68f308ba073c80033766548068d",
+    "docs/notes/siyuan/20261028222532-thy3jjg.md": "9b439956737a130de2e5b2ae0d871ea4643ce1e2f097e035a15b814df031ced4",
+    "docs/notes/siyuan/20261028222546-5vmpdg8.md": "9ff72c109c131ab3c7bf2d0e8a37b8acdedbd63506ea0850d9e3994988e949c3",
+    "docs/notes/siyuan/20261028222552-b3ms55y.md": "cf553b5ff92ba6bf2ce5d2f274dd30d078094e49822c8e53de9d539891f9fe7e",
+    "docs/notes/siyuan/20261028222601-eo1wmtg.md": "00b5dc180407b2e104283caf97ecb02de130746381bb38b43da1ab86e7616a9f",
+    "docs/notes/siyuan/20261028222615-2n05rdc.md": "773da8bfe2584fabe037440fe3fa1535f8811327731db9215a6d07976615a966",
+    "docs/notes/siyuan/20261028233145-oyk8915.md": "4550350fad5aebfc984a06f459eba3c4755629ea32d07814564792cd4ee9c0e3",
+    "docs/notes/siyuan/20261028233208-ootx2lk.md": "1011786a435129691430b42ebade5fd27e6a451d3b929a3a3b0da88e31414294",
+    "docs/notes/siyuan/20261028233223-mxgg12m.md": "a639d9a4f24f3ab6a23dc4d6e64505a98f095239135b83d4e1579aa44d465a4c",
+    "docs/notes/siyuan/20261028233245-bnjbzm4.md": "1b32cb13b77cba686d70297ef034228ded8f1d30abd8b8e269fee65109dbfe98",
+    "docs/notes/siyuan/20261028233256-eotcy3z.md": "4fb999b7d85c2c93732af1efe4111b7b398bd2a8910439247ad9e2d32e76eafc",
+    "docs/notes/siyuan/20261028233309-etgwdbl.md": "7d887a280a99f52464b1efaf29bdab0142219e209bba5473f05ae23b440f0110",
+    "docs/notes/siyuan/20261028233322-eesl61x.md": "61077400c2b487cbf1f43f77b552f36b37eb069c3e07c8dca977f94adbbc6fcb",
+    "docs/notes/siyuan/20261028233327-pty7xvj.md": "a31785aa0a0902075a66666357d5417cbbb67e179aeec5afe2518c9ff661c04f",
+    "docs/notes/siyuan/20261029004726-grymej3.md": "a2da6bd9fc9f103ce197a781dd2b305fe84b53eeef8e916a223b9a6c808038f3",
+    "docs/notes/siyuan/20261029004746-9qv9wi6.md": "fc443b0ed57b8f0d420d2f7fe209fd67584e2b4ccf43aed1096fb622bb89dad7",
+    "docs/notes/siyuan/20261029004750-8sjxj1o.md": "11bba7cd7c80caf0a6e933d1d036f23929c809b18c6fd723ec1c66cc84c8e432",
+    "docs/notes/siyuan/20261029004811-gcvs4i7.md": "f9c3a95bea833594dad03cfeb7c706fc154e0dc6b2c4af4ae5caf22f458ec020",
+    "docs/notes/siyuan/20261029004822-u93kop2.md": "897df8b0d4d932823cbf247a5b3b90b821717a0ee56022f4b57ca8d89be2141c",
+    "docs/notes/siyuan/20261029004840-xt4mhax.md": "90ef963c79d38f6a0e228a5e9c76fe7251c0b9fbe418b6fdc10ec10aba9fd649",
+    "docs/notes/siyuan/20261029004851-1di8bwu.md": "3d628c8d3f590c403b2d81aecb4d7d092ff4aa1c1923d645abca1d21c7878c22",
+    "docs/notes/siyuan/20261029004906-ao8h3o1.md": "ae811a3cbb3110381a15e9069ff20d8ec843d73cb66928ac8d66aad8980f26cb",
+    "docs/notes/siyuan/20261029004921-uti8jgo.md": "8eb6d9e6d355b8ad46315168416e45d13053b9497c54dfb636a5a3d6ac2f5920",
+    "docs/notes/siyuan/20261029004941-kkjmc9r.md": "cbd6bc6de4adea9b92148452a2638748c0d7ac112e13e8f573709a698233bd0d",
+    "docs/notes/siyuan/20261029005043-pyfvxfb.md": "aaffbc88a51c46bc88b2bfb9489d54dd4b8fb805ec4b49cbb626151ea69d4da7",
+    "docs/notes/siyuan/20261029011023-yg96vst.md": "c21c2e98343275c951fc704967b6df970b5cf6cd907637e91f5e97916572776b",
+    "docs/notes/siyuan/20261029011035-g45hci3.md": "eb96ed8c97439cb14035c1b91b934675ccbc758272dab5dc1b38e2747ee31a07",
+    "docs/notes/siyuan/20261029011048-tiox0gt.md": "38d3b5b9cc5b29a88f77cbf7cfb4a954ce09b824510a7378a977e71688fc118a",
+    "docs/notes/siyuan/20261029011115-qpfd1k6.md": "5b6203ff24d31a718c746a08e952843faa3135b08809c37d278d81973ccd923f",
+    "docs/notes/siyuan/20261029011149-50lon02.md": "71439fb37a1ff92bbcbdf801014eb421f71a41c9b2b24c6044607ed6b87547ff",
+    "docs/notes/siyuan/20261029011223-41qyvr2.md": "2184dfce1b2140fe540a6e64c3e985603547c9969b8f92d7237407bb16d07d7f",
+    "docs/notes/siyuan/20261029011229-68u2alu.md": "0d3693aaf5878598412b008a60847b6bf22b0032e5e1467bf40dbbb6ef990887",
+    "docs/notes/siyuan/20261029011237-95rpqst.md": "812282d565a6f235cba3f39f9e1783e7800e846f09df0f46813965fbc90ede6b",
+    "docs/notes/siyuan/20261029011247-f7xyzsy.md": "cd70863c33070b00a422849273257948f4e1fdff3c57092d3331414b5d08835e",
     "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
     "docs/posts/siyuan/20261026235536-n00alwi.md": "aeebf87d735cb0f9921b5d6850be167e6cd8a55bb38f67ba651af16ccc051af2",
     "docs/posts/siyuan/20261027000244-jdhoppu.md": "55b14b56c0f032c9976ae1c72799c403d9f62c10e22e9a7c03e71600d703a59b",

@@ -27,7 +27,8 @@
     },
     {
       "path": "/知识库",
-      "collection": "notes"
+      "collection": "notes",
+      "onlyConfiguredTopics": true
     },
     {
       "path": "/项目",

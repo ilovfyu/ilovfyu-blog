@@ -49,6 +49,10 @@ function selectSection(doc, config) {
   const section = config.sections.filter(item => under(doc.hpath, item.path)).sort((a, b) => b.path.length - a.path.length)[0]
   if (section?.path === doc.hpath) return null // Section documents are folders in the publishing layout.
   const selected = section || { collection: config.defaultCollection }
+  if (selected.collection === 'notes' && selected.onlyConfiguredTopics) {
+    const topic = selected.series || doc.hpath.slice(selected.path?.length || 0).split('/').filter(Boolean)[0]
+    if (!topicNames.includes(topic)) return null
+  }
   // Project publishing is opt-in by exact document ID; children never inherit access.
   if ((selected.collection === 'projects' || under(doc.hpath, '/项目')) && !config.projectDocumentIds.includes(doc.id)) return null
   return selected
@@ -61,7 +65,10 @@ function readConfig(input) {
   for (const prefix of [...config.excludePaths, ...config.sections.map(section => section.path)]) {
     if (typeof prefix !== 'string' || !prefix.startsWith('/') || prefix.endsWith('/')) throw new Error('目录路径须以 / 开头且不以 / 结尾。')
   }
-  for (const section of config.sections) if (!collections.has(section.collection)) throw new Error('collection 只能是 posts、notes 或 projects。')
+  for (const section of config.sections) {
+    if (!collections.has(section.collection)) throw new Error('collection 只能是 posts、notes 或 projects。')
+    if (section.onlyConfiguredTopics !== undefined && typeof section.onlyConfiguredTopics !== 'boolean') throw new Error('onlyConfiguredTopics 须为布尔值。')
+  }
   if (!Array.isArray(config.projectDocumentIds) || !config.projectDocumentIds.every(id => typeof id === 'string' && idPattern.test(id))) throw new Error('projectDocumentIds 须为明确允许发布的文档 ID 数组。')
   return config
 }
