@@ -9,7 +9,7 @@
     "ALLOWED_ORIGINS": "https://ilovfyu.github.io",
     "KNOWLEDGE_URL": "https://ilovfyu.github.io/ilovfyu-blog/assistant/knowledge.json",
     "GLOBAL_DAILY_LIMIT": "50",
-    "IP_DAILY_LIMIT": "5"
+    "IP_DAILY_LIMIT": "10"
   },
   "durable_objects": {
     "bindings": [{ "name": "QUOTA", "class_name": "UsageQuota" }]

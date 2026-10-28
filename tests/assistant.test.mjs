@@ -90,8 +90,10 @@ test('Worker fixes model/output settings, uses its own public corpus, sends cred
   assert.equal(result.status, 200)
   assert.equal(calls.length, 2)
   assert.equal(calls[0].headers?.Authorization, undefined)
+  assert.equal(calls[0].redirect, 'manual')
   assert.equal(calls[1].url, 'https://api.deepseek.com/chat/completions')
   assert.equal(calls[1].headers.Authorization, `Bearer ${env.DEEPSEEK_API_KEY}`)
+  assert.equal(calls[1].redirect, 'manual')
   const payload = JSON.parse(calls[1].body)
   assert.equal(payload.model, 'deepseek-flash')
   assert.equal(payload.max_tokens, 768)
@@ -117,6 +119,23 @@ test('provider failures and exhausted budgets are closed safely; placeholder-onl
   // Regression: runtime context must not be mistaken for the injected fetcher.
   const health = await worker.fetch(new Request('https://assistant.example/health'), env, { waitUntil() {} })
   assert.equal((await health.json()).configured, true)
+})
+
+test('edge-compatible fetch rejects upstream redirects without forwarding credentials or exception text', async () => {
+  let count = 0
+  const result = await handleRequest(request(), env, async (url, init = {}) => {
+    assert.notEqual(init.redirect, 'error', 'Cloudflare rejects the browser-only error redirect mode')
+    assert.equal(init.redirect, 'manual')
+    count++
+    if (String(url) === env.KNOWLEDGE_URL) return Response.json([source])
+    return new Response(null, { status: 302, headers: { Location: 'https://evil.example/steal' } })
+  })
+  assert.equal(count, 2)
+  assert.equal(result.status, 502)
+  const exception = await handleRequest(request(), env, async () => { throw new Error(`private diagnostic ${env.DEEPSEEK_API_KEY}`) })
+  const text = await exception.text()
+  assert.doesNotMatch(text, /private diagnostic|test-only-provider-secret/)
+  assert.equal(JSON.parse(text).stage, 'knowledge-fetch')
 })
 
 function atomicStore() {

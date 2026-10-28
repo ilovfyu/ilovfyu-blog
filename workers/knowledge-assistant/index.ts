@@ -34,7 +34,7 @@ export class UsageQuota {
       if (!budget || budget.day !== day) budget = { day, total: 0, visitors: {} }
       const entry = budget.visitors[visitor] || { count: 0, last: 0 }
       if (budget.total >= limit(this.env.GLOBAL_DAILY_LIMIT, 50, 1000)
-        || entry.count >= limit(this.env.IP_DAILY_LIMIT, 5, 100)
+        || entry.count >= limit(this.env.IP_DAILY_LIMIT, 10, 100)
         || entry.last && now - entry.last < 10_000) return json({ allowed: false }, 429)
       budget.total++
       budget.visitors[visitor] = { count: entry.count + 1, last: now }
@@ -83,7 +83,7 @@ async function visitorHash(ip: string, secret: string) {
   return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('')
 }
 
-export async function handleRequest(request: Request, env: WorkerEnv, fetcher: typeof fetch = fetch) {
+export async function handleRequest(request: Request, env: WorkerEnv, fetcher: typeof fetch = (input, init) => globalThis.fetch(input, init)) {
   const path = new URL(request.url).pathname
   if (path === '/health' && request.method === 'GET') return json({ configured: !!(env.DEEPSEEK_API_KEY && env.IP_HASH_SECRET && env.QUOTA) })
   const origin = request.headers.get('Origin') || ''
@@ -108,37 +108,53 @@ export async function handleRequest(request: Request, env: WorkerEnv, fetcher: t
   if (!ip) return json({ error: 'missing-client-address' }, 403, origin)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 28_000)
+  let stage = 'quota'
   try {
     const visitor = await visitorHash(ip, env.IP_HASH_SECRET)
     const quota = env.QUOTA.get(env.QUOTA.idFromName('global-budget-v1'))
     const admitted = await quota.fetch(new Request('https://internal/consume', { method: 'POST', body: JSON.stringify({ visitor }) }))
     if (!admitted.ok) return json({ error: 'quota-exceeded' }, admitted.status === 429 ? 429 : 503, origin)
+    stage = 'knowledge-fetch'
     const knowledgeURL = new URL(env.KNOWLEDGE_URL)
     if (knowledgeURL.protocol !== 'https:' || knowledgeURL.username || knowledgeURL.password) throw new Error('invalid-index-location')
-    const index = await fetcher(knowledgeURL, { signal: controller.signal, redirect: 'error', cf: { cacheTtl: 300, cacheEverything: true } } as RequestInit)
-    if (!index.ok) throw new Error('index-unavailable')
+    // Workers supports manual/follow only. Reject non-2xx responses ourselves;
+    // never follow a redirect carrying the provider's Authorization header.
+    const index = await fetcher(knowledgeURL.href, { signal: controller.signal, redirect: 'manual', cache: 'no-store', headers: { Accept: 'application/json', 'User-Agent': 'ILOVFYU-Knowledge-Assistant/1.0' } })
+    if (!index.ok) { stage = `knowledge-http-${index.status}`; throw new Error('index-unavailable') }
+    stage = 'knowledge-index'
     const chunks = publicChunks(await boundedJson(index, 4_000_000))
+    stage = 'retrieval'
     const previous = input.history.filter(turn => turn.role === 'user').slice(-1).map(turn => turn.content).join(' ')
     const direct = retrieveKnowledge(chunks, input.message)
     const matches = direct.length ? direct : retrieveKnowledge(chunks, `${input.message} ${previous}`)
     const sources = matches.filter(match => match.ready).slice(0, 4)
     if (!sources.length) return json({ answer: localKnowledgeReply(matches), sources: matches }, 200, origin)
+    stage = 'provider'
     const upstream = await fetcher(API_URL, {
       method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.DEEPSEEK_API_KEY}` },
       body: JSON.stringify({ model: MODEL, thinking: { type: 'disabled' }, max_tokens: 768, temperature: 0.3, stream: false,
         messages: [{ role: 'system', content: SYSTEM }, ...input.history,
           { role: 'user', content: JSON.stringify({ question: input.message, references: sources.map((source, index) => ({ number: index + 1, title: source.title, text: source.text })) }) }],
-      }), signal: controller.signal, redirect: 'error',
+      }), signal: controller.signal, redirect: 'manual',
     })
     // Never relay provider error bodies, which can contain sensitive diagnostics.
     if (!upstream.ok) return json({ error: 'provider-unavailable' }, 502, origin)
+    stage = 'answer'
     const result = await boundedJson(upstream, 96_000)
     const answer = result?.choices?.[0]?.message?.content
     if (typeof answer !== 'string' || !answer.trim()) throw new Error('empty-answer')
     // Defense in depth: never return the credential even if an upstream response echoes it.
     const safeAnswer = answer.split(env.DEEPSEEK_API_KEY).join('[已隐藏凭证]').slice(0, 12_000)
     return json({ answer: safeAnswer, sources }, 200, origin)
-  } catch { return json({ error: controller.signal.aborted ? 'timeout' : 'service-unavailable' }, controller.signal.aborted ? 504 : 503, origin) }
+  } catch (error) {
+    // Diagnostics are an allowlist of fixed codes, never an exception message.
+    const message = error instanceof Error ? error.message : ''
+    const reason = /Illegal invocation|incorrect this/i.test(message) ? 'runtime-binding'
+      : /DNS|resolve|network|fetch failed/i.test(message) ? 'network'
+        : /Unsupported|not supported/i.test(message) ? 'runtime-option'
+          : message === 'invalid-index-location' ? 'index-location' : 'runtime'
+    return json({ error: controller.signal.aborted ? 'timeout' : 'service-unavailable', stage, reason }, controller.signal.aborted ? 504 : 503, origin)
+  }
   finally { clearTimeout(timeout) }
 }
 
