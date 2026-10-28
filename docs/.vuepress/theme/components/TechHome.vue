@@ -97,7 +97,7 @@ onBeforeUnmount(() => {
             <a class="btn btn-primary" href="#latest">{{ notes.length ? '开始阅读' : '探索博客' }} <b>↓</b></a>
           </div>
           <a class="hero-secondary" :href="withBase('/projects/')">看看正在构建的项目 <span aria-hidden="true">↗</span></a>
-          <p class="hero-coordinate">SHENZHEN, CN <span>／</span> CODE · SYSTEMS · LIFE</p>
+          <p class="hero-coordinate">SHANGHAI, CN <span>／</span> CODE · SYSTEMS · LIFE</p>
         </div>
         <div class="hero-signal" aria-label="代码、构建与写作">
           <div class="hero-signal-heading"><span>PERSONAL SIGNAL / 001</span><i aria-hidden="true" /> <span>LIVE IDEAS</span></div>
@@ -190,7 +190,7 @@ onBeforeUnmount(() => {
       </div>
     </section>
     <div class="section home-footer-section">
-      <footer class="cosmic-footer"><span><b>ILOVFYU</b></span><span>记录代码、系统与思考</span><span>深圳 · {{ now }}</span></footer>
+      <footer class="cosmic-footer"><span><b>ILOVFYU</b></span><span>记录代码、系统与思考</span><span>上海 · {{ now }}</span></footer>
     </div>
   </main>
 </template>
