@@ -458,7 +458,7 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   assert.match(catalog, /"title":"目录分组测试"[^\n]+?"series":"目录测试","group":"基础 \/ 请求与响应","groupPath":\["基础","请求与响应"\]/)
   const projects = JSON.parse(catalog.match(/export const projects = (.+);/)[1])
   assert.deepEqual(projects.filter(entry => !['持续构建', '已完成作品'].includes(entry.project?.group)).map(entry => entry.title), ['模型微调训练'])
-  assert.equal(projects.length, 5)
+  assert.equal(projects.length, 8)
   assert.doesNotMatch(catalog, /PRIVATE_PROJECT_SENTINEL/)
   await assert.rejects(readFile(resolve(root, 'docs/.vuepress/dist/projects/private-fixture/index.html')), { code: 'ENOENT' })
   assert.equal(projects.find(entry => entry.title === 'Wyvern')?.project.group, '持续构建')
@@ -473,6 +473,24 @@ test('exported articles build with the real blog theme and valid GitHub Pages im
   assert.ok(projectIndex.includes('id="project-planned-title"'))
   assert.ok(projectIndex.includes('data-kind="fine-tuning"'))
   assert.ok(projectIndex.includes('PLANNED'))
+  for (const [code, title] of [['siskin-base-control', 'Siskin-Base-Control'], ['tagline', 'Tagline'], ['shipgate', 'ShipGate']]) {
+    const entry = projects.find(entry => entry.project?.code === code)
+    assert.equal(entry?.title, title)
+    assert.equal(entry?.project.group, '持续构建')
+    assert.equal(entry?.project.repository, `https://github.com/ilovfyu/${title}`)
+    assert.ok(projectIndex.includes(`data-project="${code}"`))
+    for (const html of [projectIndex, await readFile(resolve(root, `docs/.vuepress/dist/projects/${code}/index.html`), 'utf8')]) {
+      assert.ok(html.includes(`data-kind="${code}"`))
+      assert.ok(html.includes(`href="https://github.com/ilovfyu/${title}"`))
+      assert.ok(!html.includes('<animateMotion'))
+    }
+  }
+  assert.ok(!projects.some(entry => entry.project?.code === 'ilovfyu-blog'))
+  for (const [code, repository] of [['promptlsm', 'ilovfyu/SkillCache'], ['roostai', 'RoostBase/RoostAI'], ['wyvern', 'ilovfyu/Wyvern']]) {
+    const entry = projects.find(entry => entry.project?.code === code)
+    const recordHtml = await readFile(resolve(root, `docs/.vuepress/dist${entry.path}index.html`), 'utf8')
+    for (const html of [projectIndex, recordHtml]) assert.ok(html.includes(`href="https://github.com/${repository}"`))
+  }
   const html = await readFile(resolve(root, `docs/.vuepress/dist/posts/${first}/index.html`), 'utf8')
   assert.match(html, /<table>/)
   assert.match(html, /src="\/ilovfyu-blog\/siyuan\/[a-f0-9]{64}\.png"/)

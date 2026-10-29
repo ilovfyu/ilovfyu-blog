@@ -43,6 +43,9 @@
     "20261012015820-0gg27yz"
   ],
   "projectManualFiles": [
-    "wyvern.md"
+    "wyvern.md",
+    "siskin-base-control.md",
+    "tagline.md",
+    "shipgate.md"
   ]
 }

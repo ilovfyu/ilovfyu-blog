@@ -10,6 +10,9 @@ import { createServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 for (const scene of [
+  { name: 'Siskin', file: 'SiskinProjectVisual', cellClass: 'siskin-state-cell', count: 9, motions: 1, transforms: 0, labels: ['GO / STATEFUL RUNTIME', 'STATE', 'ON DEMAND', 'RUN → SLEEP → RESUME'] },
+  { name: 'Tagline', file: 'TaglineProjectVisual', cellClass: 'tagline-fix', count: 3, motions: 0, transforms: 0, labels: ['tagline diagnose', 'INFERENCE TRACE', 'SCORE', 'FIXES / RANKED BY IMPACT'] },
+  { name: 'ShipGate', file: 'ShipGateProjectVisual', cellClass: 'shipgate-policy', count: 3, motions: 2, transforms: 0, labels: ['SHIP SAFELY.', 'POLICY GATE', 'BLOCK', 'INSPECT / ALLOW / BLOCK'] },
   { name: 'Wyvern', file: 'WyvernProjectVisual', cellClass: 'wyvern-cell', count: 64, transforms: 1, labels: ['FROZEN ATTENTION', '02 / δ WRITE', '03 / READ', 'M ← M + β (v − Mk) kᵀ'] },
   { name: 'Fine-tuning', file: 'FineTuningProjectVisual', cellClass: 'training-weight', count: 25, transforms: 0, labels: ['FORWARD → LOSS → BACKWARD', '02 / WEIGHTS θ', '03 / LOSS', 'θ ← θ − η ∇θ L'] },
 ]) {
@@ -51,7 +54,7 @@ test(`${scene.name} keeps its full diagram while stopping all motion offscreen, 
     insert(el, parent, anchor = null) { el.parent = parent; const index = anchor ? parent.children.indexOf(anchor) : -1; parent.children.splice(index < 0 ? parent.children.length : index, 0, el) },
     remove(el) { const index = el.parent?.children.indexOf(el); if (index >= 0) el.parent.children.splice(index, 1); el.parent = null },
   })
-  const root = node('root'), app = renderer.createApp(Visual)
+  const root = node('root'), app = renderer.createApp(Visual, scene.props || {})
   app.mount(root)
   t.after(() => { bookTransitionActive.value = false })
   const all = (el = root) => [el, ...el.children.flatMap(child => all(child))]
@@ -60,7 +63,7 @@ test(`${scene.name} keeps its full diagram while stopping all motion offscreen, 
     assert.equal(root.children[0].props['data-motion'], running ? 'running' : 'still')
     assert.equal(nodes.filter(el => el.props.class === scene.cellClass).length, scene.count)
     for (const label of scene.labels) assert.ok(nodes.some(el => el.text === label))
-    assert.equal(nodes.filter(el => el.type === 'animateMotion').length, running ? 2 : 0)
+    assert.equal(nodes.filter(el => el.type === 'animateMotion').length, running ? (scene.motions ?? 2) : 0)
     assert.equal(nodes.filter(el => el.type === 'animateTransform').length, running ? scene.transforms : 0)
   }
   verify(false)

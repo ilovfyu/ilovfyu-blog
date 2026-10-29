@@ -16,7 +16,7 @@ const showcases = computed(() => projects.filter(project => project.project?.sho
       <div class="project-lab-intro">
         <p class="catalog-kicker"><i aria-hidden="true" /> PROJECTS / BUILD IN PUBLIC</p>
         <h1>项目<span>让想法，持续生长。</span></h1>
-        <p class="catalog-description">探索提示词缓存、智能体应用交付，以及 Wyvern 的 δ-mem 算子与工具库。记录构建过程，让每个想法都有清晰的实现路径。</p>
+        <p class="catalog-description">从提示词缓存、δ-mem 算子，到有状态 Serverless 运行时、推理性能分诊与 AI 应用安全。记录构建过程，让每个想法都有清晰的实现路径。</p>
         <dl class="project-lab-stats"><div><dt>项目记录</dt><dd>{{ String(projects.length).padStart(2, '0') }}</dd></div><div><dt>产品展示</dt><dd>{{ String(showcases).padStart(2, '0') }}</dd></div><div><dt>持续构建</dt><dd>{{ String(building.length).padStart(2, '0') }}</dd></div></dl>
       </div>
       <BuildSculpture />

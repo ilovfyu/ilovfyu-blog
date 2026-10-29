@@ -15,8 +15,10 @@
 .building-card .building-process-cover > .project-process-visual { position: absolute; inset: 38px 0 0; }
 .project-record-hero > .project-process-visual { margin-top: 32px; border: 1px solid var(--space-line); border-radius: 10px; }
 .building-card { --build-accent: #08778a; --build-secondary: #987039; position: relative; isolation: isolate; min-width: 0; overflow: hidden; border: 1px solid color-mix(in srgb, var(--build-accent) 30%, var(--space-line)); border-radius: 10px; background: var(--space-1); color: var(--text-1); transition: transform .35s ease, box-shadow .35s, border-color .35s; }
+.building-card[data-tone="amber"] { --build-accent: #986016; --build-secondary: #1d736d; }
 .building-card[data-tone="violet"] { --build-accent: #7755a0; --build-secondary: #08778a; }
 [data-theme="dark"] .building-card { --build-accent: #6ad7e5; --build-secondary: #e8b65b; }
+[data-theme="dark"] .building-card[data-tone="amber"] { --build-accent: #efba67; --build-secondary: #7ad4c4; }
 [data-theme="dark"] .building-card[data-tone="violet"] { --build-accent: #bca0eb; --build-secondary: #6ad7e5; }
 .building-card::before { position: absolute; content: ''; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(340px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), color-mix(in srgb, var(--build-accent) 5%, transparent), transparent 75%); opacity: 0; transition: opacity .3s; }
 .building-card:hover::before { opacity: 1; }
@@ -45,7 +47,7 @@
 .building-copy { padding: 26px 28px 28px; }
 .building-card .building-copy .building-stage { display: flex; align-items: center; gap: 8px; color: var(--build-accent); font: 11px var(--font-sans); margin: 0 0 14px; }
 .building-stage i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 9px color-mix(in srgb, currentColor 25%, transparent); }
-.building-card .building-copy h3 { color: var(--text-1); font: 600 clamp(30px, 3.4vw, 43px)/1.15 var(--font-disp); letter-spacing: -.025em; margin: 0 0 16px; padding: 0; border: 0; }
+.building-card .building-copy h3 { color: var(--text-1); font: 600 clamp(30px, 3.4vw, 43px)/1.15 var(--font-disp); letter-spacing: -.025em; margin: 0 0 16px; padding: 0; border: 0; overflow-wrap: anywhere; }
 .building-card .building-copy .building-summary { color: var(--text-2); font: 13px/1.9 var(--font-sans); min-height: 74px; margin: 0; }
 .building-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .building-stack span { padding: 5px 9px; border: 1px solid var(--space-line); border-radius: 3px; font: 9px var(--font-code); color: var(--text-2); }
