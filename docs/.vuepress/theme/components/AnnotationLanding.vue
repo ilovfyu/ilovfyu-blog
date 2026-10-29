@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import { withBase, usePageData } from 'vuepress/client'
 import type { ProjectMeta } from '../data/content'
+import { useLandingEffects } from '../utils/use-landing-effects'
 const page = usePageData()
 const project = computed(() => page.value.frontmatter.project as ProjectMeta)
 
@@ -20,44 +21,7 @@ const workflow = computed(() => project.value.flow.map(f => ({ ...f, step: f.cod
 
 const deliveryStandards = computed(() => project.value.landing.standards)
 
-const scrollPct = ref(0)
-let scrollRaf = 0
-let revealObserver: IntersectionObserver | null = null
-
-function onScroll() {
-  if (scrollRaf) return
-  scrollRaf = requestAnimationFrame(() => {
-    const max = document.documentElement.scrollHeight - innerHeight
-    scrollPct.value = max > 0 ? (scrollY / max) * 100 : 0
-    scrollRaf = 0
-  })
-}
-
-function scrollToId(id: string) {
-  document.querySelector(id)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' })
-}
-
-onMounted(() => {
-  onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-  revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return
-        entry.target.classList.add('in')
-        revealObserver?.unobserve(entry.target)
-      })
-    },
-    { threshold: 0.1 },
-  )
-  document.querySelectorAll('.annotate-reveal').forEach((el) => revealObserver?.observe(el))
-})
-
-onBeforeUnmount(() => {
-  cancelAnimationFrame(scrollRaf)
-  window.removeEventListener('scroll', onScroll)
-  revealObserver?.disconnect()
-})
+const { scrollPct, scrollToId } = useLandingEffects('.annotate-reveal')
 </script>
 
 <template>

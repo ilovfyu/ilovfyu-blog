@@ -14,7 +14,7 @@ for (const scene of [
   { name: 'Fine-tuning', file: 'FineTuningProjectVisual', cellClass: 'training-weight', count: 25, transforms: 0, labels: ['FORWARD → LOSS → BACKWARD', '02 / WEIGHTS θ', '03 / LOSS', 'θ ← θ − η ∇θ L'] },
 ]) {
 test(`${scene.name} keeps its full diagram while stopping all motion offscreen, in background and with reduced motion`, async t => {
-  const server = await createServer({ configFile: false, root: resolve(import.meta.dirname, '..'), server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true }, plugins: [vue()] })
+  const server = await createServer({ configFile: false, root: resolve(import.meta.dirname, '..'), server: { middlewareMode: true, ws: false }, optimizeDeps: { noDiscovery: true }, plugins: [vue()] })
   t.after(() => server.close())
   const { useSceneMotion } = await server.ssrLoadModule('/docs/.vuepress/theme/utils/use-scene-motion.ts')
   // Compile the real client template so lifecycle and SVG animation nodes are exercised together.

@@ -7,12 +7,24 @@ export function useSceneMotion(surface: Ref<HTMLElement | null>) {
   let visible = false
   let observer: IntersectionObserver | undefined
   let preference: MediaQueryList | undefined
-  const sync = () => { running.value = visible && !document.hidden && !preference?.matches && !bookTransitionActive.value }
+  let observedSurface: HTMLElement | null | undefined
+  const sync = () => { running.value = !!preference && visible && !document.hidden && !preference.matches && !bookTransitionActive.value }
+  const observeSurface = () => {
+    if (!preference || observedSurface === surface.value) return
+    observer?.disconnect()
+    observedSurface = surface.value
+    visible = false
+    sync()
+    if (surface.value) observer?.observe(surface.value)
+  }
   watch(bookTransitionActive, sync)
+  watch(surface, observeSurface, { flush: 'post' })
   onMounted(() => {
     preference = matchMedia('(prefers-reduced-motion: reduce)')
-    observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync() }, { threshold: .05 })
-    if (surface.value) observer.observe(surface.value)
+    if (typeof IntersectionObserver !== 'undefined') {
+      observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync() }, { threshold: .05 })
+    }
+    observeSurface()
     preference.addEventListener('change', sync)
     document.addEventListener('visibilitychange', sync)
   })

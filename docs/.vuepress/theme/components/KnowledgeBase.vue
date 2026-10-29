@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LocationQueryRaw } from 'vue-router'
 import { ArrowUpRight, RotateCcw } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
@@ -40,7 +41,7 @@ watch(() => route.query, restore)
 onMounted(restore)
 function persist(replace = false) {
   clearTimeout(searchTimer)
-  const next = { ...route.query, size: String(pageSize.value) }
+  const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }
   for (const property of ['topic', 'series', 'tag', 'q', 'page']) delete next[property]
   if (activeTags.value.length) next.tag = [...activeTags.value]
   if (query.value.trim()) next.q = query.value

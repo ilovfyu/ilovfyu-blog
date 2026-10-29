@@ -16,43 +16,14 @@ import {
   Terminal,
   Zap,
 } from '@lucide/vue'
-import { computed, onBeforeUnmount, onMounted, ref, type Component } from 'vue'
+import { computed, type Component } from 'vue'
 import { withBase, usePageData } from 'vuepress/client'
 import type { ProjectMeta } from '../data/content'
+import { useLandingEffects } from '../utils/use-landing-effects'
 const page = usePageData()
 const project = computed(() => page.value.frontmatter.project as ProjectMeta)
 
-type PlatformKind = 'sre' | 'relay'
-type LinkItem = { label: string; href: string; external?: boolean }
-type Feature = { icon: Component; tag: string; title: string; description: string }
-type FlowStep = { code: string; title: string; description: string }
-type ConsoleRow = { label: string; value: string; state: string; tone: 'cyan' | 'lime' | 'violet' | 'amber' }
-type PlatformConfig = {
-  kind: PlatformKind
-  name: string
-  eyebrow: string
-  title: string
-  accentTitle: string
-  description: string
-  appUrl: string
-  docsUrl: string
-  docsLabel: string
-  nav: LinkItem[]
-  stats: Array<{ value: string; label: string; note: string }>
-  features: Feature[]
-  flow: FlowStep[]
-  consoleTitle: string
-  consoleSubtitle: string
-  consoleRows: ConsoleRow[]
-  consoleFooter: string
-  consoleMetric: string
-  consoleMetricLabel: string
-  standardEyebrow: string
-  standardTitle: string
-  standardDescription: string
-  standards: Array<{ code: string; title: string; description: string }>
-  footerLabel: string
-}
+type LinkItem = { label: string; href: string }
 
 const icons: Record<string, Component> = { Activity, ArrowUpRight, Bot, Check, CircleGauge, GitBranch, LockKeyhole, Network, RadioTower, Route, ServerCog, ShieldCheck, SlidersHorizontal, Terminal, Zap }
 const landing = computed(() => ({ ...project.value.landing,
@@ -60,51 +31,14 @@ const landing = computed(() => ({ ...project.value.landing,
  flow: project.value.flow.map(f => ({ ...f, description: f.desc })),
  nav: [{ label: '能力', href: '#platform-features' }, { label: '工作流', href: '#platform-flow' }, { label: '项目文档', href: project.value.record }],
  docsUrl: project.value.record, appUrl: withBase(project.value.record),
-}) as PlatformConfig)
-const scrollPct = ref(0)
-let scrollRaf = 0
-let revealObserver: IntersectionObserver | null = null
-
-function scrollToId(id: string) {
-  document.querySelector(id)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' })
-}
+}))
+const { scrollPct, scrollToId } = useLandingEffects('.platform-reveal')
 
 function handleNavClick(event: MouseEvent, link: LinkItem) {
-  if (!link.href.startsWith('#')) return
+  if (!link.href.startsWith('#') || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
   event.preventDefault()
   scrollToId(link.href)
 }
-
-function onScroll() {
-  if (scrollRaf) return
-  scrollRaf = requestAnimationFrame(() => {
-    const max = document.documentElement.scrollHeight - innerHeight
-    scrollPct.value = max > 0 ? (scrollY / max) * 100 : 0
-    scrollRaf = 0
-  })
-}
-
-onMounted(() => {
-  onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-  revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return
-        entry.target.classList.add('in')
-        revealObserver?.unobserve(entry.target)
-      })
-    },
-    { threshold: 0.1 },
-  )
-  document.querySelectorAll('.platform-reveal').forEach((el) => revealObserver?.observe(el))
-})
-
-onBeforeUnmount(() => {
-  cancelAnimationFrame(scrollRaf)
-  window.removeEventListener('scroll', onScroll)
-  revealObserver?.disconnect()
-})
 </script>
 
 <template>
@@ -120,9 +54,9 @@ onBeforeUnmount(() => {
         <a
           v-for="link in landing.nav"
           :key="link.label"
-          :href="link.external ? link.href : link.href.startsWith('#') ? undefined : withBase(link.href)"
-          :target="link.external || !link.href.startsWith('#') ? '_blank' : undefined"
-          :rel="link.external || !link.href.startsWith('#') ? 'noopener noreferrer' : undefined"
+          :href="link.href.startsWith('#') ? link.href : withBase(link.href)"
+          :target="!link.href.startsWith('#') ? '_blank' : undefined"
+          :rel="!link.href.startsWith('#') ? 'noopener noreferrer' : undefined"
           @click="handleNavClick($event, link)"
         >
           {{ link.label }}

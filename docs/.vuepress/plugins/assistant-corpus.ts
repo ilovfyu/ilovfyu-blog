@@ -4,7 +4,7 @@ import { gfmFromMarkdown } from 'mdast-util-gfm'
 import type { KnowledgeChunk } from '../theme/utils/assistant-knowledge'
 import { safeKnowledgePath } from '../theme/utils/assistant-knowledge.ts'
 
-type PublicPage = { filePathRelative?: string; path: string; title: string; content: string; frontmatter: Record<string, unknown>; data?: { encrypt?: boolean } }
+type PublicPage = { filePathRelative?: string | null; path: string; title: string; content: string; frontmatter: Record<string, unknown>; data?: Record<string, unknown> }
 type TextNode = { type: string; value?: string; children?: TextNode[] }
 function text(node: TextNode): string {
   if (['html', 'yaml', 'image', 'imageReference', 'definition', 'thematicBreak'].includes(node.type)) return ''

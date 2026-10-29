@@ -25,9 +25,32 @@ export type ProjectMeta = {
   flow: Array<{ code: string; title: string; desc: string }>
   platforms: Array<{ name: string; note: string }>
   progress: Array<{ label: string; value: string }>
-  landing: Record<string, any>
+  landing: ProjectLanding
 }
 
 export const notes: ContentEntry[] = postEntries
 export const knowledge: ContentEntry[] = knowledgeEntries
 export const projects: ContentEntry[] = projectEntries
+
+/** Structured SiYuan tables plus optional text fields from 展示配置. */
+export type ProjectLanding = {
+  kind?: string
+  name?: string
+  eyebrow?: string
+  title?: string
+  accentTitle?: string
+  description?: string
+  docsLabel?: string
+  consoleTitle?: string
+  consoleSubtitle?: string
+  consoleFooter?: string
+  consoleMetric?: string
+  consoleMetricLabel?: string
+  standardEyebrow?: string
+  standardTitle?: string
+  standardDescription?: string
+  footerLabel?: string
+  stats: Array<{ value: string; label: string; note: string }>
+  consoleRows: Array<{ label: string; value: string; state: string; tone: string }>
+  standards: Array<{ code: string; title: string; description: string; desc: string }>
+}

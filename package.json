@@ -6,6 +6,9 @@
     "node": ">=22.18.0"
   },
   "scripts": {
+    "typecheck": "vue-tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run typecheck && npm test",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "blog:doctor": "node --env-file-if-exists=.env scripts/siyuan-sync.mjs --doctor",
@@ -15,7 +18,7 @@
     "test:publishing": "node --test tests/publishing.test.mjs",
     "test:knowledge": "node --test tests/knowledge.test.mjs tests/knowledge-path.test.mjs tests/topic-rendering.test.mjs tests/article-search.test.mjs",
     "test:reading": "node --test tests/article-preview.test.mjs tests/reading-progress.test.mjs",
-    "test:rendering": "node --test tests/rendering.test.mjs tests/project-rendering.test.mjs",
+    "test:rendering": "node --test tests/rendering.test.mjs tests/project-rendering.test.mjs tests/landing-effects.test.mjs",
     "test:assistant": "node --test tests/assistant.test.mjs",
     "ai:dev": "wrangler dev --config workers/knowledge-assistant/wrangler.jsonc",
     "ai:check": "wrangler deploy --dry-run --config workers/knowledge-assistant/wrangler.jsonc",
@@ -30,6 +33,7 @@
     "micromark-extension-gfm": "^3.0.0",
     "typescript": "^6.0.3",
     "vue": "^3.5.34",
+    "vue-tsc": "^3.3.13",
     "vuepress": "2.0.0-rc.30",
     "vuepress-theme-plume": "1.0.0-rc.204",
     "wrangler": "^4.154.0"

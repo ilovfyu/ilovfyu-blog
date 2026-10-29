@@ -1,13 +1,14 @@
+// Contracts for modules written by blog-contentPlugin; no build is needed to check types.
 declare module '@temp/blog-content' {
-  import type { ContentEntry } from './theme/data/content'
-  export const notes: ContentEntry[]
-  export const knowledge: ContentEntry[]
-  export const projects: ContentEntry[]
+  export const notes: import('./theme/data/content').ContentEntry[]
+  export const knowledge: import('./theme/data/content').ContentEntry[]
+  export const projects: import('./theme/data/content').ContentEntry[]
 }
 
 declare module '@temp/assistant-knowledge' {
-  import type { KnowledgeChunk } from './theme/utils/assistant-knowledge'
-  export const chunks: KnowledgeChunk[]
+  export const chunks: import('./theme/utils/assistant-knowledge').KnowledgeChunk[]
 }
 
-declare module '@temp/assistant-config' { export const endpoint: string }
+declare module '@temp/assistant-config' {
+  export const endpoint: string
+}

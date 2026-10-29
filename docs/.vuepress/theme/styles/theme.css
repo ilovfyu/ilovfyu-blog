@@ -2639,12 +2639,6 @@ body:has(.article-page) .article-breath-field > i { opacity: .1; }
 /* Blog content states and real project records. */
 .technical-home .catalog-empty { background: color-mix(in srgb, var(--space-1) 70%, transparent); }
 .technical-home .catalog-empty h3 { color: var(--text-1); font-size: clamp(24px, 3vw, 36px); }
-.project-catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.project-catalog-grid .article-card { position: relative; display: flex; flex-direction: column; min-height: 240px; padding: 28px; border: 1px solid var(--space-line); border-radius: var(--site-radius); background: var(--space-1); color: var(--text-1); }
-.project-catalog-grid h3 { font-size: 28px; }
-.project-catalog-grid p:not(.catalog-kicker) { color: var(--text-2); line-height: 1.8; }
-.project-catalog-grid svg { width: 20px; height: 20px; margin-top: auto; color: var(--fx-cyan); }
-@media (max-width: 600px) { .project-catalog-grid { grid-template-columns: 1fr; } }
 
 /* Plume's prose containers belong to the blog reader, even without article files. */
 .theme-plume.article-page { position: relative; z-index: 1; background: transparent; }

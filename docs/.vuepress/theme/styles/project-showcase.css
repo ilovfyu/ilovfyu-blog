@@ -1,8 +1,4 @@
 /* Project records and historical product layouts; active covers live in building-projects.css. */
-.project-display-links { display: flex; gap: 25px; margin-top: 28px; }
-.project-display-links a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 0; color: var(--text-2); font-size: 13px; text-decoration: none; }
-.project-display-links svg { width: 14px; height: 14px; }
-.project-planned-heading { margin: 56px 0 24px; font: 600 26px var(--font-disp); }
 .project-record-page .vp-doc-title, .project-record-page .vp-doc-meta { display: none; }
 .project-record-hero { position: relative; padding: 22px 0 40px; margin-bottom: 35px; border-bottom: 1px solid var(--space-line); background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--fx-cyan) 7%, transparent), transparent 60%); }
 .project-record-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
@@ -35,16 +31,6 @@
 .project-lab-stats { display: flex; gap: 40px; margin: 34px 0 0; }
 .project-lab-stats dt { font: 11px var(--font-code); color: var(--text-3); }
 .project-lab-stats dd { margin: 10px 0 0; color: var(--text-1); font: 500 28px var(--font-code); }
-.project-section-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 24px; gap: 20px; }
-.project-section-heading p { margin: 0; font: 10px var(--font-code); letter-spacing: .18em; color: var(--fx-cyan); }
-.project-section-heading span, .project-section-heading h2 { margin: 0; font: 500 18px var(--font-disp); color: var(--text-2); }
-.project-section-heading.project-planned-heading { margin-top: 60px; }
-.project-display-links { margin-top: 20px; }.project-display-links a:hover { color: var(--project-accent); }
-.project-log-card { --project-accent: var(--fx-cyan); }
-.project-log-card a:focus-visible { outline: 2px solid var(--project-accent); outline-offset: 4px; }
-.project-index .article-card { position: relative; overflow: hidden; border-top: 2px solid color-mix(in srgb, var(--fx-cyan) 30%, transparent); }
-.project-log-number { position: absolute; top: 18px; right: 20px; color: var(--text-3); font: 11px var(--font-code); }
-.project-index .article-card .catalog-kicker { padding-right: 30px; }
 [data-theme="dark"] .project-lab-intro h1 span { background-image: linear-gradient(110deg, #f1f0e9, #70dfec 60%, #ba9ce9); }
-[data-theme="dark"] .project-section-heading p, [data-theme="dark"] .project-lab-intro .catalog-kicker { color: #70d7e3; }
+[data-theme="dark"] .project-lab-intro .catalog-kicker { color: #70d7e3; }
 @media (prefers-reduced-motion: reduce) { .project-showcase *, .project-showcase *::before, .project-showcase *::after { animation: none !important; transition: none !important; } }

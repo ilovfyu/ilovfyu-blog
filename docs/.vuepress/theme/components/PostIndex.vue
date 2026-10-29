@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LocationQueryRaw } from 'vue-router'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ArrowUpRight, Shuffle } from '@lucide/vue'
 import { withBase, useRoute, useRouter } from 'vuepress/client'
@@ -37,7 +38,7 @@ watch(() => route.query, restore)
 onMounted(restore)
 function persist(replace = false, hash = '') {
   clearTimeout(timer)
-  const next = { ...route.query, size: String(pageSize.value) }
+  const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }
   for (const property of ['q', 'category', 'page']) delete next[property]
   if (query.value.trim()) next.q = query.value
   if (category.value !== 'all') next.category = category.value

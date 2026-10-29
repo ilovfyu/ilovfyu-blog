@@ -1,7 +1,7 @@
 import { serverEvents } from '../../docs/.vuepress/theme/utils/assistant-stream.ts'
 import { retrieveKnowledge, safeKnowledgePath, type ChatTurn, type KnowledgeChunk } from '../../docs/.vuepress/theme/utils/assistant-knowledge.ts'
 
-type Store = { get: (key: string) => Promise<any>; put: (key: string, value: unknown) => Promise<void>; transaction: <T>(callback: (store: Store) => Promise<T>) => Promise<T> }
+type Store = { get: (key: string) => Promise<unknown>; put: (key: string, value: unknown) => Promise<void>; transaction: <T>(callback: (store: Store) => Promise<T>) => Promise<T> }
 type WorkerEnv = {
   DEEPSEEK_API_KEY?: string; IP_HASH_SECRET?: string; ALLOWED_ORIGINS?: string; KNOWLEDGE_URL?: string
   GLOBAL_DAILY_LIMIT?: string; IP_DAILY_LIMIT?: string

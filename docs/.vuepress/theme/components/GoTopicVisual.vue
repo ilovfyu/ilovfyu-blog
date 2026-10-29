@@ -12,7 +12,7 @@ const workers = [
     <text class="go-heading" x="22" y="22">CONCURRENT / FAN-IN</text>
     <text class="go-label" x="22" y="37">goroutines</text>
     <path v-for="worker in workers" :key="worker.name" class="go-route" :d="worker.route" />
-    <g v-for="(worker, i) in workers" :key="worker.name">
+    <g v-for="worker in workers" :key="worker.name">
       <rect class="go-worker" x="22" :y="worker.y" width="96" height="36" rx="6" />
       <circle class="go-worker-dot" cx="33" :cy="worker.y + 18" r="2" />
       <text class="go-code" x="42" :y="worker.y + 21">{{ worker.name }}</text>

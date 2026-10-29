@@ -9,7 +9,7 @@ import { knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeNoteId, know
 import { topicNames, topicAppearance } from '../docs/.vuepress/theme/data/topics.ts'
 
 test('scene motion pauses for reduced motion, offscreen surfaces and hidden documents', async t => {
-  const server = await createServer({ configFile: false, root: resolve(import.meta.dirname, '..'), server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true } })
+  const server = await createServer({ configFile: false, root: resolve(import.meta.dirname, '..'), server: { middlewareMode: true, ws: false }, optimizeDeps: { noDiscovery: true } })
   t.after(() => server.close())
   const { useSceneMotion } = await server.ssrLoadModule('/docs/.vuepress/theme/utils/use-scene-motion.ts')
   const originals = Object.fromEntries(['document', 'matchMedia', 'IntersectionObserver'].map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]))
@@ -32,15 +32,21 @@ test('scene motion pauses for reduced motion, offscreen surfaces and hidden docu
     createText: text => ({ text }), createComment: () => ({}), setText() {}, parentNode: () => null, nextSibling: () => null,
   })
   let running
-  const app = renderer.createApp({ setup() { running = useSceneMotion(ref({})); return () => h('div') } })
+  const surface = ref(null)
+  const app = renderer.createApp({ setup() { running = useSceneMotion(surface); return () => h('div') } })
   try {
     app.mount({})
+    assert.equal(running.value, false)
+    surface.value = {}; await nextTick()
     enter(true); await nextTick(); assert.equal(running.value, true)
     preference.matches = true; preference.dispatchEvent(new Event('change')); await nextTick(); assert.equal(running.value, false)
     preference.matches = false; preference.dispatchEvent(new Event('change')); await nextTick(); assert.equal(running.value, true)
     enter(false); await nextTick(); assert.equal(running.value, false)
     enter(true); documentMock.hidden = true; documentMock.dispatchEvent(new Event('visibilitychange')); await nextTick(); assert.equal(running.value, false)
     documentMock.hidden = false; documentMock.dispatchEvent(new Event('visibilitychange')); await nextTick(); assert.equal(running.value, true)
+    surface.value = null; await nextTick(); assert.equal(running.value, false)
+    surface.value = {}; await nextTick(); assert.equal(running.value, false)
+    enter(true); await nextTick(); assert.equal(running.value, true)
   } finally {
     app.unmount()
     for (const [name, descriptor] of Object.entries(originals)) {
@@ -56,7 +62,7 @@ test('nested topic content and directory navigation render all levels with valid
   const server = await createServer({
     configFile: false,
     root: resolve(import.meta.dirname, '..'),
-    server: { middlewareMode: true },
+    server: { middlewareMode: true, ws: false },
     optimizeDeps: { noDiscovery: true },
     plugins: [vue(), {
       name: 'topic-test-base',
@@ -119,7 +125,7 @@ test('every configured topic renders a distinct subject visual with a complete s
   const server = await createServer({
     configFile: false,
     root: resolve(import.meta.dirname, '..'),
-    server: { middlewareMode: true },
+    server: { middlewareMode: true, ws: false },
     optimizeDeps: { noDiscovery: true },
     plugins: [vue()],
   })

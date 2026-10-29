@@ -50,6 +50,8 @@ tags: [工程实践]
 
 ## 主题代码
 
+修改代码后运行 `npm run check`，统一执行 Vue/TypeScript 严格类型检查和全部回归测试；发布前再运行 `npm run docs:build`。GitHub Actions 也会执行类型检查、回归测试与构建。类型检查覆盖主题组件、内容插件和 AI Worker，`docs/.vuepress/temp.d.ts` 为构建时生成的数据模块声明接口，无需先启动 VuePress。
+
 - `docs/.vuepress/config.ts`：站点、导航、部署与评论配置。
 - `docs/.vuepress/client.ts`：博客页面与全局动态组件。
 - `docs/.vuepress/theme/components/`：首页、目录、个人介绍和动态效果。

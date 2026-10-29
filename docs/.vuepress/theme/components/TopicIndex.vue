@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LocationQueryRaw } from 'vue-router'
 import { ArrowLeft, ArrowUpRight, BookOpen } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, withBase } from 'vuepress/client'
@@ -95,7 +96,7 @@ function queueChapter() { if (!scrollFrame) scrollFrame = requestAnimationFrame(
 watch([page, reveal], async () => { await nextTick(); updateChapter() })
 async function goPage(target: number, hash = '#topic-articles') {
   const current = knowledgeTopicPage(chapters.value, target, pageSize.value).currentPage
-  const next = { ...route.query, size: String(pageSize.value) }
+  const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }
   if (current > 1) next.page = String(current); else delete next.page
   if (query.value.trim()) next.q = query.value; else delete next.q
   clearTimeout(timer)
@@ -117,7 +118,7 @@ function followDirectory(event: MouseEvent) {
 }
 function changePageSize(value: number) {
   clearTimeout(timer); rememberPageSize(value)
-  const next = { ...route.query, size: String(pageSize.value) }; delete next.page
+  const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }; delete next.page
   if (query.value.trim()) next.q = query.value; else delete next.q
   void router.push({ path: route.path, query: next, hash: '' })
 }
@@ -131,7 +132,7 @@ watch(query, value => {
   clearTimeout(timer)
   if (value === (typeof route.query.q === 'string' ? route.query.q : '')) return
   timer = setTimeout(() => {
-    const next = { ...route.query, size: String(pageSize.value) }; delete next.q; delete next.page
+    const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }; delete next.q; delete next.page
     if (value.trim()) next.q = value
     void router.replace({ path: route.path, query: next, hash: '' })
   }, 220)
