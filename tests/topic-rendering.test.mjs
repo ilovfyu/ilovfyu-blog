@@ -159,12 +159,16 @@ test('every configured topic renders a distinct subject visual with a complete s
   assert.equal((boosting.match(/class="boosting-root"/g) || []).length, 3)
   assert.equal((boosting.match(/class="boosting-residual-bars"/g) || []).length, 3)
 
-  const languageVisuals = [
+  const subjectVisuals = [
     { name: 'SKLearn', file: 'SklearnTopicVisual', graphic: 'sklearn-visual', labels: ['PIPELINE', 'EVALUATE', 'TRAIN', 'TEST', 'SCALER', 'ESTIMATOR', 'fit', 'transform', 'predict', 'CROSS-VALIDATION', 'HELD OUT'], shapes: ['sklearn-pipeline', 'sklearn-samples', 'sklearn-step', 'sklearn-validation', 'sklearn-test-set'], motion: false },
     { name: 'Python', file: 'PythonTopicVisual', graphic: 'python-visual', labels: ['LIST COMPREHENSION', 'range(1, 5)', 'ITERATE', 'COLLECT'], shapes: ['python-input', 'python-operation', 'python-output'], motion: false },
     { name: 'Go', file: 'GoTopicVisual', graphic: 'go-visual', labels: ['go fetch()', 'go parse()', 'go save()', 'chan Result', 'receive'], shapes: ['go-worker', 'go-channel', 'go-consumer'], motion: true },
+    { name: '算法与数据结构', file: 'AlgorithmsTopicVisual', graphic: 'algorithms-visual', labels: ['BINARY SEARCH', 'target = 23', 'COMPARE', 'NARROW', 'FOUND', 'O(log n)'], shapes: ['algorithm-cell', 'algorithm-probe', 'algorithm-found', 'algorithm-bounds'], motion: false },
+    { name: '容器', file: 'ContainersTopicVisual', graphic: 'containers-visual', labels: ['CONTAINER A', 'CONTAINER B', 'WRITABLE / CoW', 'SHARED IMAGE', 'READ ONLY', 'namespaces + cgroups'], shapes: ['container-namespace', 'container-process', 'container-writable', 'container-image-layer', 'container-kernel'], motion: true },
+    { name: 'OS', file: 'OsTopicVisual', graphic: 'os-visual', labels: ['ROUND ROBIN', 'READY QUEUE', 'CPU', 'RUNNING', 'WAITING', 'IO COMPLETE', 'CONTEXT SWITCH'], shapes: ['os-process', 'os-cpu', 'os-wait', 'os-time-slice'], motion: true },
+    { name: '网络', file: 'NetworkTopicVisual', graphic: 'network-visual', labels: ['ENCAPSULATION', 'ETH', 'IP', 'TCP', 'DATA', 'SENDER', 'ROUTER', 'RECEIVER', 'ACK = 2', '1 BYTE OF TCP DATA'], shapes: ['network-header', 'network-endpoint', 'network-router', 'network-packet', 'network-ack-route'], motion: true },
   ]
-  for (const { name, file, graphic, labels, shapes, motion } of languageVisuals) {
+  for (const { name, file, graphic, labels, shapes, motion } of subjectVisuals) {
     const card = await renderToString(createSSRApp({ render: () => h(Visual, { name }) }))
     assert.ok(card.includes(`class="${graphic}"`), `${name} must select its dedicated renderer`)
     const { default: Subject } = await server.ssrLoadModule(`/docs/.vuepress/theme/components/${file}.vue`)

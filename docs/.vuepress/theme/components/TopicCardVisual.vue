@@ -9,6 +9,10 @@ import PythonTopicVisual from './PythonTopicVisual.vue'
 import GoTopicVisual from './GoTopicVisual.vue'
 import BoostingTopicVisual from './BoostingTopicVisual.vue'
 import SklearnTopicVisual from './SklearnTopicVisual.vue'
+import AlgorithmsTopicVisual from './AlgorithmsTopicVisual.vue'
+import ContainersTopicVisual from './ContainersTopicVisual.vue'
+import OsTopicVisual from './OsTopicVisual.vue'
+import NetworkTopicVisual from './NetworkTopicVisual.vue'
 
 const props = defineProps<{ name: string }>()
 const appearance = computed(() => topicAppearance(props.name))
@@ -26,6 +30,10 @@ const running = useSceneMotion(stage)
     <GoTopicVisual v-else-if="kind === 'go'" :running="running" />
     <BoostingTopicVisual v-else-if="kind === 'boosting'" :running="running" />
     <SklearnTopicVisual v-else-if="kind === 'sklearn'" :running="running" />
+    <AlgorithmsTopicVisual v-else-if="kind === 'algorithms'" :running="running" />
+    <ContainersTopicVisual v-else-if="kind === 'containers'" :running="running" />
+    <OsTopicVisual v-else-if="kind === 'os'" :running="running" />
+    <NetworkTopicVisual v-else-if="kind === 'network'" :running="running" />
     <span v-if="appearance.caption" class="topic-visual-caption">{{ appearance.caption }}</span>
   </div>
 </template>

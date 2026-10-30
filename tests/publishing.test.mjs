@@ -299,6 +299,30 @@ test('configured-topic sync imports SKLearn chapters without publishing other ne
   assert.equal(state.exportedIds.includes(unknown), false)
 })
 
+test('systems topics sync their children while empty roots, private notes and unrelated folders stay out of articles', async t => {
+  const sources = [
+    document(first, '/知识库/算法与数据结构', ''),
+    document(second, '/知识库/算法与数据结构/数组链表', '数组正文'),
+    document('20261012030000-ccccccc', '/知识库/容器', ''),
+    document('20261012040000-ddddddd', '/知识库/容器/Docker', '镜像正文'),
+    document('20261012050000-eeeeeee', '/知识库/OS', ''),
+    document('20261012060000-fffffff', '/知识库/OS/进程线程', '调度正文'),
+    document('20261012070000-ggggggg', '/知识库/网络', ''),
+    document('20261012080000-hhhhhhh', '/知识库/OS/内部笔记', 'PRIVATE_NOTE', { 'custom-blog-status': 'private' }),
+    document('20261012090000-iiiiiii', '/知识库/尚未发布/示例', 'UNCONFIGURED_NOTE'),
+  ]
+  const { root, options, state } = await fixture(t, sources)
+  const result = await sync({ ...options, config: { ...config, sections: [{ path: '/知识库', collection: 'notes', onlyConfiguredTopics: true }] } })
+  assert.deepEqual(result.documents.map(doc => doc.id), [second, '20261012040000-ddddddd', '20261012060000-fffffff'])
+  for (const [index, series] of [[1, '算法与数据结构'], [3, '容器'], [5, 'OS']]) {
+    const markdown = await readFile(resolve(root, `docs/notes/siyuan/${sources[index].id}.md`), 'utf8')
+    assert.ok(markdown.includes(`series: "${series}"`))
+    assert.ok(markdown.includes(sources[index].body))
+  }
+  assert.equal(state.exportedIds.includes('20261012080000-hhhhhhh'), false)
+  assert.equal(state.exportedIds.includes('20261012090000-iiiiiii'), false)
+})
+
 test('SiYuan project tables select a real showcase template and resolve record links, without duplicating catalog entries', async t => {
   const { root, options, state } = await fixture(t, [
     document(first, '/项目/墨影', '项目定位与系统流水线。', { 'custom-blog-project-code': 'moyin', 'custom-blog-project-showcase': second }),

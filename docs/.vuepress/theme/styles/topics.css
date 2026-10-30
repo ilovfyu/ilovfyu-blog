@@ -19,10 +19,18 @@
 :is(.topic-card, .topic-hero-visual)[data-tone="go"] { --topic-accent: #087c89; --topic-secondary: #5268a0; }
 :is(.topic-card, .topic-hero-visual)[data-tone="boosting"] { --topic-accent: #387849; --topic-secondary: #98602e; }
 :is(.topic-card, .topic-hero-visual)[data-tone="sklearn"] { --topic-accent: #a65c24; --topic-secondary: #187b85; }
+:is(.topic-card, .topic-hero-visual)[data-tone="algorithms"] { --topic-accent: #6e55a6; --topic-secondary: #22785b; }
+:is(.topic-card, .topic-hero-visual)[data-tone="containers"] { --topic-accent: #286da6; --topic-secondary: #986125; }
+:is(.topic-card, .topic-hero-visual)[data-tone="os"] { --topic-accent: #9b5935; --topic-secondary: #5e65a0; }
+:is(.topic-card, .topic-hero-visual)[data-tone="network"] { --topic-accent: #167a79; --topic-secondary: #a14d79; }
 [data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="python"] { --topic-accent: #79b9e5; --topic-secondary: #f0c767; }
 [data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="go"] { --topic-accent: #61d3de; --topic-secondary: #a4b6f5; }
 [data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="boosting"] { --topic-accent: #91d6a0; --topic-secondary: #eab37d; }
 [data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="sklearn"] { --topic-accent: #f1b26e; --topic-secondary: #73cbd2; }
+[data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="algorithms"] { --topic-accent: #bfa5ef; --topic-secondary: #7ed7b0; }
+[data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="containers"] { --topic-accent: #81c3f2; --topic-secondary: #efbf7d; }
+[data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="os"] { --topic-accent: #efb38b; --topic-secondary: #aeb7f1; }
+[data-theme="dark"] :is(.topic-card, .topic-hero-visual)[data-tone="network"] { --topic-accent: #75d5cf; --topic-secondary: #efa3c9; }
 .topic-card::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--topic-accent); opacity: .5; transition: opacity .3s; }
 .topic-card:is(:hover, :focus-visible) { border-color: var(--topic-accent); box-shadow: 0 8px 32px color-mix(in srgb, var(--topic-accent) 8%, transparent); }.topic-card:is(:hover, :focus-visible)::before { opacity: 1; }
 .topic-card-copy { min-width: 0; overflow-wrap: anywhere; }.topic-card-code { display: flex; gap: 8px; align-items: center; color: var(--topic-accent); font: 9px var(--font-code); letter-spacing: .12em; }.topic-card-code svg { width: 14px; height: 14px; }

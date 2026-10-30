@@ -625,6 +625,132 @@
       "path": "docs/notes/siyuan/20261029011247-f7xyzsy.md",
       "title": "表格赛",
       "route": "/notes/20261029011247-f7xyzsy/"
+    },
+    {
+      "id": "20261030174751-vyt5w7g",
+      "path": "docs/notes/siyuan/20261030174751-vyt5w7g.md",
+      "title": "安全",
+      "route": "/notes/20261030174751-vyt5w7g/"
+    },
+    {
+      "id": "20261030174758-lo64w8h",
+      "path": "docs/notes/siyuan/20261030174758-lo64w8h.md",
+      "title": "存储",
+      "route": "/notes/20261030174758-lo64w8h/"
+    },
+    {
+      "id": "20261030174801-kr5r9x7",
+      "path": "docs/notes/siyuan/20261030174801-kr5r9x7.md",
+      "title": "进程线程",
+      "route": "/notes/20261030174801-kr5r9x7/"
+    },
+    {
+      "id": "20261030174805-puy49gd",
+      "path": "docs/notes/siyuan/20261030174805-puy49gd.md",
+      "title": "内存死锁",
+      "route": "/notes/20261030174805-puy49gd/"
+    },
+    {
+      "id": "20261030174814-160fx2h",
+      "path": "docs/notes/siyuan/20261030174814-160fx2h.md",
+      "title": "同步异步",
+      "route": "/notes/20261030174814-160fx2h/"
+    },
+    {
+      "id": "20261030174821-yem0ucx",
+      "path": "docs/notes/siyuan/20261030174821-yem0ucx.md",
+      "title": "问题排查",
+      "route": "/notes/20261030174821-yem0ucx/"
+    },
+    {
+      "id": "20261030174829-kx8acai",
+      "path": "docs/notes/siyuan/20261030174829-kx8acai.md",
+      "title": "GPU",
+      "route": "/notes/20261030174829-kx8acai/"
+    },
+    {
+      "id": "20261030174834-2tyle6t",
+      "path": "docs/notes/siyuan/20261030174834-2tyle6t.md",
+      "title": "IO",
+      "route": "/notes/20261030174834-2tyle6t/"
+    },
+    {
+      "id": "20261030174838-4rl0ffq",
+      "path": "docs/notes/siyuan/20261030174838-4rl0ffq.md",
+      "title": "Linux",
+      "route": "/notes/20261030174838-4rl0ffq/"
+    },
+    {
+      "id": "20261030174911-6y4bukr",
+      "path": "docs/notes/siyuan/20261030174911-6y4bukr.md",
+      "title": "Docker",
+      "route": "/notes/20261030174911-6y4bukr/"
+    },
+    {
+      "id": "20261030174915-4s09n5u",
+      "path": "docs/notes/siyuan/20261030174915-4s09n5u.md",
+      "title": "Kuberentes",
+      "route": "/notes/20261030174915-4s09n5u/"
+    },
+    {
+      "id": "20261030175011-jmzv5u4",
+      "path": "docs/notes/siyuan/20261030175011-jmzv5u4.md",
+      "title": "大数",
+      "route": "/notes/20261030175011-jmzv5u4/"
+    },
+    {
+      "id": "20261030175015-yzwpxk5",
+      "path": "docs/notes/siyuan/20261030175015-yzwpxk5.md",
+      "title": "树",
+      "route": "/notes/20261030175015-yzwpxk5/"
+    },
+    {
+      "id": "20261030175018-h1714ja",
+      "path": "docs/notes/siyuan/20261030175018-h1714ja.md",
+      "title": "动态规划",
+      "route": "/notes/20261030175018-h1714ja/"
+    },
+    {
+      "id": "20261030175021-2mk5df1",
+      "path": "docs/notes/siyuan/20261030175021-2mk5df1.md",
+      "title": "贪心",
+      "route": "/notes/20261030175021-2mk5df1/"
+    },
+    {
+      "id": "20261030175027-zyiqa02",
+      "path": "docs/notes/siyuan/20261030175027-zyiqa02.md",
+      "title": "搜索",
+      "route": "/notes/20261030175027-zyiqa02/"
+    },
+    {
+      "id": "20261030175029-n9lexyh",
+      "path": "docs/notes/siyuan/20261030175029-n9lexyh.md",
+      "title": "字符串",
+      "route": "/notes/20261030175029-n9lexyh/"
+    },
+    {
+      "id": "20261030175036-w2uhgu5",
+      "path": "docs/notes/siyuan/20261030175036-w2uhgu5.md",
+      "title": "图论",
+      "route": "/notes/20261030175036-w2uhgu5/"
+    },
+    {
+      "id": "20261030175046-w0svjo5",
+      "path": "docs/notes/siyuan/20261030175046-w0svjo5.md",
+      "title": "二分",
+      "route": "/notes/20261030175046-w0svjo5/"
+    },
+    {
+      "id": "20261030175050-ps6qdmx",
+      "path": "docs/notes/siyuan/20261030175050-ps6qdmx.md",
+      "title": "字符串",
+      "route": "/notes/20261030175050-ps6qdmx/"
+    },
+    {
+      "id": "20261030175057-rjkp8di",
+      "path": "docs/notes/siyuan/20261030175057-rjkp8di.md",
+      "title": "数组链表",
+      "route": "/notes/20261030175057-rjkp8di/"
     }
   ],
   "files": {
@@ -715,6 +841,27 @@
     "docs/notes/siyuan/20261029011229-68u2alu.md": "0d3693aaf5878598412b008a60847b6bf22b0032e5e1467bf40dbbb6ef990887",
     "docs/notes/siyuan/20261029011237-95rpqst.md": "812282d565a6f235cba3f39f9e1783e7800e846f09df0f46813965fbc90ede6b",
     "docs/notes/siyuan/20261029011247-f7xyzsy.md": "cd70863c33070b00a422849273257948f4e1fdff3c57092d3331414b5d08835e",
+    "docs/notes/siyuan/20261030174751-vyt5w7g.md": "a1d4f436a6fa1b8c9549440383c45779ccc05afb2d6432eec7378751feab6aca",
+    "docs/notes/siyuan/20261030174758-lo64w8h.md": "4fddd55b5f35558c014643eb198fe53ab62db3a18827219b7ba046d26c6889e0",
+    "docs/notes/siyuan/20261030174801-kr5r9x7.md": "b942fa3242b57127650ee617cc14a61c1c081259f84e0a1b0375b0e354a72bf2",
+    "docs/notes/siyuan/20261030174805-puy49gd.md": "e940c01cc9959962769fb1b35af7a5af73873efc10b3d48757fb21a65d710af0",
+    "docs/notes/siyuan/20261030174814-160fx2h.md": "2b6ed813d970e281e12b15aa2d216cb791500d66888e30c11a1f562bcb6a2b36",
+    "docs/notes/siyuan/20261030174821-yem0ucx.md": "1082f12586ca4a413ba4d053c1a2a8c61b124088f562c77f46d29eacf533872d",
+    "docs/notes/siyuan/20261030174829-kx8acai.md": "f819afecf15919ac53ed848dadf2caa3c4c8fffb935b6f36d6665a6b5e5c901d",
+    "docs/notes/siyuan/20261030174834-2tyle6t.md": "ae2614ce136ed1f67b00f4f37db18d349e7a52404b8b555b31bcc516bc7aba27",
+    "docs/notes/siyuan/20261030174838-4rl0ffq.md": "e236ae4ae67285c6636c285a29256de2e6a49ea4bd8e0f88bd751f6f7a792c35",
+    "docs/notes/siyuan/20261030174911-6y4bukr.md": "2044bc4e0d685129966a3f6357bf1e4b445317d70584e80c72074987ac2d7827",
+    "docs/notes/siyuan/20261030174915-4s09n5u.md": "117131a2be574e3f0ae9f0077f0fb21b56802475a1c464b67841cc002db41bdd",
+    "docs/notes/siyuan/20261030175011-jmzv5u4.md": "14e166992dfdc34463318080853e7de4934cc207f76db5f8abaac860bd690483",
+    "docs/notes/siyuan/20261030175015-yzwpxk5.md": "8fcb1a1e970daafeb61e91fefc21567297aaf9c677a99e7c1027428157c19fd6",
+    "docs/notes/siyuan/20261030175018-h1714ja.md": "09b24c5d690bd7f6d9685fff8b48516f99f76640bed8ca512c6ca0efd764fa8e",
+    "docs/notes/siyuan/20261030175021-2mk5df1.md": "882941a0b6c15bf06508f8148d4eee9e23c36a52a6bf8159af61c5d4713aa2cf",
+    "docs/notes/siyuan/20261030175027-zyiqa02.md": "0a4e244a608cfa113fd2d4475ea22f8a59877a268408624d79b2348b3789a901",
+    "docs/notes/siyuan/20261030175029-n9lexyh.md": "6cf8fc3d5bebc008434bcfcae43536e230785774bedc8c8aa8b8083e4c4c848b",
+    "docs/notes/siyuan/20261030175036-w2uhgu5.md": "25be7f884d180d5844d32084c6a6c5732901646d6ae94118f3d457215de39c02",
+    "docs/notes/siyuan/20261030175046-w0svjo5.md": "8e217954b6730f48664b9688247e56fc20a172c803045b5be5002c92577be5e1",
+    "docs/notes/siyuan/20261030175050-ps6qdmx.md": "f63d1807440a9d86ef84faa83731235ebd0af812d83068756f864fd100f0b510",
+    "docs/notes/siyuan/20261030175057-rjkp8di.md": "d632328de5e259f863b2a7567b36cea0da7d0b9638eba1969a4219fb53d557c5",
     "docs/posts/siyuan/20261012014354-eo3fzz7.md": "026507caf9dc3bddf4147f35b3b342a4388643ace2b310b15b748ccd0bbf225a",
     "docs/posts/siyuan/20261026235536-n00alwi.md": "aeebf87d735cb0f9921b5d6850be167e6cd8a55bb38f67ba651af16ccc051af2",
     "docs/posts/siyuan/20261027000244-jdhoppu.md": "55b14b56c0f032c9976ae1c72799c403d9f62c10e22e9a7c03e71600d703a59b",
