@@ -627,6 +627,60 @@
       "route": "/notes/20261029011247-f7xyzsy/"
     },
     {
+      "id": "20261030052423-i1abrxw",
+      "path": "docs/notes/siyuan/20261030052423-i1abrxw.md",
+      "title": "基础语法",
+      "route": "/notes/20261030052423-i1abrxw/"
+    },
+    {
+      "id": "20261030052442-r1wzasi",
+      "path": "docs/notes/siyuan/20261030052442-r1wzasi.md",
+      "title": "核心语法",
+      "route": "/notes/20261030052442-r1wzasi/"
+    },
+    {
+      "id": "20261030052447-b19ore9",
+      "path": "docs/notes/siyuan/20261030052447-b19ore9.md",
+      "title": "网络编程",
+      "route": "/notes/20261030052447-b19ore9/"
+    },
+    {
+      "id": "20261030052454-wallfjx",
+      "path": "docs/notes/siyuan/20261030052454-wallfjx.md",
+      "title": "标准库",
+      "route": "/notes/20261030052454-wallfjx/"
+    },
+    {
+      "id": "20261030052500-7o0g5fb",
+      "path": "docs/notes/siyuan/20261030052500-7o0g5fb.md",
+      "title": "三方库",
+      "route": "/notes/20261030052500-7o0g5fb/"
+    },
+    {
+      "id": "20261030052504-vvicuty",
+      "path": "docs/notes/siyuan/20261030052504-vvicuty.md",
+      "title": "测试依赖",
+      "route": "/notes/20261030052504-vvicuty/"
+    },
+    {
+      "id": "20261030053615-9qt1tc7",
+      "path": "docs/notes/siyuan/20261030053615-9qt1tc7.md",
+      "title": "Typer",
+      "route": "/notes/20261030053615-9qt1tc7/"
+    },
+    {
+      "id": "20261030053621-lg2zywt",
+      "path": "docs/notes/siyuan/20261030053621-lg2zywt.md",
+      "title": "Langflow",
+      "route": "/notes/20261030053621-lg2zywt/"
+    },
+    {
+      "id": "20261030174530-f66gcfz",
+      "path": "docs/notes/siyuan/20261030174530-f66gcfz.md",
+      "title": "Celery",
+      "route": "/notes/20261030174530-f66gcfz/"
+    },
+    {
       "id": "20261030174751-vyt5w7g",
       "path": "docs/notes/siyuan/20261030174751-vyt5w7g.md",
       "title": "安全",
@@ -841,6 +895,15 @@
     "docs/notes/siyuan/20261029011229-68u2alu.md": "0d3693aaf5878598412b008a60847b6bf22b0032e5e1467bf40dbbb6ef990887",
     "docs/notes/siyuan/20261029011237-95rpqst.md": "812282d565a6f235cba3f39f9e1783e7800e846f09df0f46813965fbc90ede6b",
     "docs/notes/siyuan/20261029011247-f7xyzsy.md": "cd70863c33070b00a422849273257948f4e1fdff3c57092d3331414b5d08835e",
+    "docs/notes/siyuan/20261030052423-i1abrxw.md": "0170f9bc228b449a93f25ee28c841cc47e39694188531e41deac24cc919c8dc7",
+    "docs/notes/siyuan/20261030052442-r1wzasi.md": "7ac45f67529aa9c661e26ac4f7ca40fca65b706c3929533773cbbc5964892338",
+    "docs/notes/siyuan/20261030052447-b19ore9.md": "ba6cda03f86f4d716a4653a1af2fd531e8a8bc587e93a0a6ecef9301210121f9",
+    "docs/notes/siyuan/20261030052454-wallfjx.md": "f86b085d36365ecd80bed929011068ecb0940a3e1260f6466e3d6db6d370ff75",
+    "docs/notes/siyuan/20261030052500-7o0g5fb.md": "4e3ed15aac90b6bf34dbd93673dbb99197757159e56ef7e65c50ab8a2c338ed0",
+    "docs/notes/siyuan/20261030052504-vvicuty.md": "710016acc68979bd2b2f46b37bba3182cc537b1522359ee63a693e6208633442",
+    "docs/notes/siyuan/20261030053615-9qt1tc7.md": "16a697eedf0fc391f1fcdee2e6c64a4044e4425b1ecb855ae082cb3b1b34d62b",
+    "docs/notes/siyuan/20261030053621-lg2zywt.md": "dfddaaa29d97c4e57aedc7177be30d4ab70f2afb59fba311649bd6aa54ff987c",
+    "docs/notes/siyuan/20261030174530-f66gcfz.md": "8f69d576ceb4399cb6c8855f1904cc30a96af8119fda4b2e453b1e4e1daf2a4f",
     "docs/notes/siyuan/20261030174751-vyt5w7g.md": "a1d4f436a6fa1b8c9549440383c45779ccc05afb2d6432eec7378751feab6aca",
     "docs/notes/siyuan/20261030174758-lo64w8h.md": "4fddd55b5f35558c014643eb198fe53ab62db3a18827219b7ba046d26c6889e0",
     "docs/notes/siyuan/20261030174801-kr5r9x7.md": "b942fa3242b57127650ee617cc14a61c1c081259f84e0a1b0375b0e354a72bf2",
