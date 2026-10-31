@@ -3,6 +3,8 @@ import { ARTICLE_PAGE_SIZE } from './article-page-size.ts'
 export { ARTICLE_PAGE_SIZE } from './article-page-size.ts'
 import { knowledgePath } from './knowledge-path.ts'
 import { topicReadingRank } from '../data/topics.ts'
+import { knowledgeChapterId, knowledgeNoteId } from './topic-anchors.ts'
+export { knowledgeNoteId } from './topic-anchors.ts'
 
 export type KnowledgeNote = {
   title: string; summary: string; path: string; series: string; group: string; groupPath?: string[]; tags: string[]
@@ -77,11 +79,6 @@ export type KnowledgeChapter<T extends KnowledgeNote = KnowledgeNote> = {
   id: string; name: string; path: string[]; entries: T[]; children: KnowledgeChapter<T>[]; count: number
 }
 
-/** Full directory identity avoids collisions between same-named folders in different branches. */
-function chapterId(path: string[]): string {
-  return path.length ? 'topic-group-' + path.map(part => Array.from(part, char => char.codePointAt(0)!.toString(16)).join('-')).join('--') : 'topic-ungrouped'
-}
-
 /** Build every directory level; a folder can contain both articles and subfolders. */
 export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topic: string): KnowledgeChapter<T>[] {
   const ordered = notes.filter(note => note.series === topic).sort((a, b) => topicReadingRank(topic, a.title) - topicReadingRank(topic, b.title)
@@ -98,7 +95,7 @@ export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topi
       const identity = JSON.stringify(current)
       let chapter = byPath.get(identity)
       if (!chapter) {
-        chapter = { id: chapterId(current), name: current.at(-1) || '未分组', path: current, entries: [], children: [], count: 0 }
+        chapter = { id: knowledgeChapterId(current), name: current.at(-1) || '未分组', path: current, entries: [], children: [], count: 0 }
         byPath.set(identity, chapter)
         siblings.push(chapter)
       }
@@ -119,11 +116,6 @@ export function knowledgeTopicChapters<T extends KnowledgeNote>(notes: T[], topi
 /** Preorder is shared by the first-reading link, scroll tracking and chapter counts. */
 export function flattenKnowledgeChapters<T extends KnowledgeNote>(chapters: KnowledgeChapter<T>[]): KnowledgeChapter<T>[] {
   return chapters.flatMap(chapter => [chapter, ...flattenKnowledgeChapters(chapter.children)])
-}
-
-/** Stable article anchors also serve as destinations in the full directory tree. */
-export function knowledgeNoteId(path: string): string {
-  return 'topic-note-' + Array.from(path, char => char.codePointAt(0)!.toString(16)).join('-')
 }
 
 /** Paginate articles once, then retain only their ancestor directories on the current page. */

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { topicNames } from '../docs/.vuepress/theme/data/topics.ts'
 import { catalogOwnsScroll } from '../docs/.vuepress/theme/utils/catalog-scroll-policy.ts'
 import { topicReadingPosition } from '../docs/.vuepress/theme/utils/topic-reading-position.ts'
+import { knowledgeChapterId, resolveTopicAnchor } from '../docs/.vuepress/theme/utils/topic-anchors.ts'
 import { filterKnowledgeNotes, knowledgePage, knowledgeTopicPage, knowledgeNoteId, knowledgeTagFacets, knowledgeTags, knowledgeTopics, knowledgeTopicChapters, flattenKnowledgeChapters, knowledgeTopicPath, normalizeKnowledgeNotes, readKnowledgeFilters } from '../docs/.vuepress/theme/utils/knowledge-index.ts'
 
 const source = [
@@ -13,6 +14,32 @@ const source = [
 ]
 const notes = normalizeKnowledgeNotes(source)
 const all = { topic: null, tags: [], query: '' }
+
+test('article and directory anchors stay short, stable and distinct across full paths', () => {
+  assert.equal(knowledgeNoteId('/notes/20261030052454-wallfjx/'), 'note-20261030052454-wallfjx')
+  const paths = ['/notes/a/intro/', '/notes/b/intro/', '/notes/a-intro/', '/notes/请求 & 响应/', '/notes/请求#响应/']
+  const ids = paths.map(knowledgeNoteId)
+  assert.equal(new Set(ids).size, paths.length)
+  assert.ok(ids.every(id => /^[a-z0-9-]+$/.test(id) && id.length < 50))
+  assert.equal(knowledgeNoteId(paths[0]), ids[0])
+  const folders = [['基础', '请求'], ['进阶', '请求'], ['基础 / 请求'], ['基础', '请求', '参数 🚀'.repeat(50)]]
+  const groups = folders.map(knowledgeChapterId)
+  assert.equal(new Set(groups).size, folders.length)
+  assert.ok(groups.every(id => /^[a-z0-9-]+$/.test(id) && id.length < 50))
+})
+
+test('legacy article and nested directory links resolve without losing Unicode or hierarchy', () => {
+  const hex = text => Array.from(text, char => char.codePointAt(0).toString(16)).join('-')
+  const path = '/notes/20261030052454-wallfjx/'
+  assert.equal(resolveTopicAnchor(`#topic-note-${hex(path)}`), knowledgeNoteId(path))
+  const folders = ['基础', '请求 & 响应 #1?', '输入 🚀']
+  assert.equal(resolveTopicAnchor(`#topic-group-${folders.map(hex).join('--')}`), knowledgeChapterId(folders))
+  assert.equal(resolveTopicAnchor('#note-20261030052454-wallfjx'), 'note-20261030052454-wallfjx')
+  assert.equal(resolveTopicAnchor('#topic-articles'), 'topic-articles')
+  assert.equal(resolveTopicAnchor('#topic-ungrouped'), 'topic-ungrouped')
+  assert.equal(resolveTopicAnchor('#%E0%A4%A'), '')
+  for (const invalid of ['topic-note-110000', 'topic-note-d800', 'topic-group-nope', 'topic-note-2f--2f']) assert.equal(resolveTopicAnchor(`#${invalid}`), invalid)
+})
 
 test('SKLearn reading links start with fundamentals and keep new chapters after the planned learning path', () => {
   const titles = ['表格赛', '新增章节', '监督模型', 'pipeline与组合', '数据与预处理']

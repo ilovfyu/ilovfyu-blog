@@ -13,6 +13,7 @@ import { searchArticles } from '../utils/article-search'
 import { readArticlePageSize, useArticlePageSize } from '../utils/article-page-size'
 import { useCatalogScroll } from '../utils/catalog-navigation'
 import { topicReadingPosition, type TopicReadingMarker } from '../utils/topic-reading-position'
+import { resolveTopicAnchor } from '../utils/topic-anchors'
 import CatalogScene from './CatalogScene.vue'
 import TopicCardVisual from './TopicCardVisual.vue'
 import TopicGroupNav from './TopicGroupNav.vue'
@@ -56,7 +57,7 @@ const topicSearch = topics.map(item => ({ ...item, title: item.name, summary: it
 const results = computed(() => searchArticles(topicSearch, query.value))
 const activeChapter = ref('')
 const activeNote = ref('')
-const reveal = computed(() => { try { return decodeURIComponent(route.hash.slice(1)) } catch { return '' } })
+const reveal = computed(() => resolveTopicAnchor(route.hash))
 const orderedNotes = computed(() => flatChapters.value.flatMap(chapter => chapter.entries))
 const readProgress = computed(() => {
   const index = orderedNotes.value.findIndex(note => knowledgeNoteId(note.path) === activeNote.value)
@@ -68,8 +69,7 @@ const readProgress = computed(() => {
 })
 let scrollFrame = 0
 function topicScrollPosition(hash: string) {
-  let id = hash.slice(1)
-  try { id = decodeURIComponent(id) } catch { return false as const }
+  const id = resolveTopicAnchor(hash)
   const target = document.getElementById(id)
   if (!target) return false as const
   const inset = Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 112
@@ -94,6 +94,22 @@ function updateChapter() {
 }
 function queueChapter() { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateChapter) }
 watch([page, reveal], async () => { await nextTick(); updateChapter() })
+watch([hydrated, () => route.fullPath], async ([ready], [wasReady]) => {
+  if (!ready || !topic.value || !reveal.value) return
+  const targetPage = page.value.destinations[reveal.value]
+  if (!targetPage) return
+  // A bookmark can outlive page boundaries when articles are added or page size changes.
+  if (route.hash !== `#${reveal.value}` || readKnowledgeFilters(route.query, [], []).page !== targetPage) {
+    const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }
+    if (targetPage > 1) next.page = String(targetPage); else delete next.page
+    await router.replace({ path: route.path, query: next, hash: `#${reveal.value}` })
+  } else if (!wasReady) {
+    // The initial page is server-rendered as the overview before its topic is hydrated.
+    await nextTick()
+    const position = topicScrollPosition(route.hash)
+    if (position) window.scrollTo(position)
+  }
+}, { flush: 'post' })
 async function goPage(target: number, hash = '#topic-articles') {
   const current = knowledgeTopicPage(chapters.value, target, pageSize.value).currentPage
   const next: LocationQueryRaw = { ...route.query, size: String(pageSize.value) }
@@ -109,12 +125,11 @@ function followDirectory(event: MouseEvent) {
   if (!link || link.hasAttribute('download') || link.target && link.target !== '_self') return
   const url = new URL(link.href, location.href)
   if (url.origin !== location.origin || url.pathname !== location.pathname) return
-  let id = url.hash.slice(1)
-  try { id = decodeURIComponent(id) } catch { return }
+  const id = resolveTopicAnchor(url.hash)
   const targetPage = page.value.destinations[id]
   if (!targetPage) return
   event.preventDefault()
-  void goPage(targetPage, url.hash)
+  void goPage(targetPage, `#${id}`)
 }
 function changePageSize(value: number) {
   clearTimeout(timer); rememberPageSize(value)
